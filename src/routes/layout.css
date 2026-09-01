@@ -1,0 +1,375 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #fdf8f8;
+  --color-surface-dim: #ddd9d8;
+  --color-surface-bright: #fdf8f8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f7f3f2;
+  --color-surface-container: #f1edec;
+  --color-surface-container-high: #ebe7e6;
+  --color-surface-container-highest: #e5e2e1;
+  --color-on-surface: #1c1b1b;
+  --color-on-surface-variant: #444748;
+  --color-inverse-surface: #313030;
+  --color-inverse-on-surface: #f4f0ef;
+  --color-outline: #747878;
+  --color-outline-variant: #c4c7c7;
+  --color-surface-tint: #5f5e5e;
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1c1b1b;
+  --color-on-primary-container: #858383;
+  --color-inverse-primary: #c8c6c5;
+  --color-secondary: #6d5b48;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #f4dbc3;
+  --color-on-secondary-container: #725f4c;
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #1b1c19;
+  --color-on-tertiary-container: #848480;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #e5e2e1;
+  --color-primary-fixed-dim: #c8c6c5;
+  --color-on-primary-fixed: #1c1b1b;
+  --color-on-primary-fixed-variant: #474746;
+  --color-secondary-fixed: #f7dec6;
+  --color-secondary-fixed-dim: #dac2ab;
+  --color-on-secondary-fixed: #26190a;
+  --color-on-secondary-fixed-variant: #544432;
+  --color-tertiary-fixed: #e4e2dd;
+  --color-tertiary-fixed-dim: #c8c6c2;
+  --color-on-tertiary-fixed: #1b1c19;
+  --color-on-tertiary-fixed-variant: #474744;
+  --color-background: #fdf8f8;
+  --color-on-background: #1c1b1b;
+  --color-surface-variant: #e5e2e1;
+  --color-deep-charcoal: #1a1a1a;
+  --color-muted-gold: #b7a18b;
+  --color-soft-cream: #f9f7f2;
+  --color-rich-wood: #4a3728;
+  --color-ink-black: #000000;
+
+  --font-headline: "Playfair Display", serif;
+  --font-serif: "Playfair Display", serif;
+  --font-display: "Playfair Display", serif;
+  --font-body: "Work Sans", sans-serif;
+  --font-sans: "Work Sans", sans-serif;
+
+  --spacing-margin-desktop: 64px;
+  --spacing-margin-mobile: 20px;
+  --spacing-gutter: 24px;
+  --spacing-section-gap: 120px;
+  --spacing-container-max: 1280px;
+}
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #fdf8f8;
+    color: #1c1b1b;
+    font-family: "Work Sans", sans-serif;
+    font-size: 15px;
+  }
+
+  @media (min-width: 1024px) {
+    html,
+    body {
+      font-size: 16px;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
+  }
+}
+
+/* Custom typography utility classes with refined, responsive scale */
+.font-display-lg {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.4rem, 3.2vw, 2.75rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  font-weight: 400;
+}
+
+.font-headline-lg {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.2rem, 2.4vw, 2.15rem);
+  line-height: 1.22;
+  font-weight: 400;
+}
+
+.font-headline-md {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+  line-height: 1.3;
+  font-weight: 400;
+}
+
+.font-body-lg {
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.85rem, 1.15vw, 1.05rem);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.font-body-md {
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.775rem, 0.95vw, 0.925rem);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.font-label-caps {
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.575rem, 0.75vw, 0.725rem);
+  line-height: 1;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ========================================================
+   LUXURY DOUBLE-BORDERED RECTANGULAR BUTTON FRAMING SYSTEM
+   Inspired by classic grand hotel stationery & bespoke signage
+   ======================================================== */
+.btn-luxury-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: #b7a18b;
+  color: #1a1a1a;
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.55rem, 0.7vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.15rem;
+  border: 1px solid #1a1a1a;
+  outline: 1.25px solid #b7a18b;
+  outline-offset: 2.5px;
+  border-radius: 0px;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-luxury-primary:hover {
+  background-color: #f9f7f2;
+  color: #1a1a1a;
+  outline-color: #f9f7f2;
+  box-shadow: 0 5px 16px rgba(183, 161, 139, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-luxury-primary:active {
+  transform: translateY(0);
+  outline-offset: 2px;
+}
+
+.btn-luxury-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: transparent;
+  color: #f9f7f2;
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.55rem, 0.7vw, 0.65rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.15rem;
+  border: 1px solid rgba(249, 247, 242, 0.8);
+  outline: 1.25px solid rgba(183, 161, 139, 0.6);
+  outline-offset: 2.5px;
+  border-radius: 0px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-luxury-secondary:hover {
+  background-color: #b7a18b;
+  color: #1a1a1a;
+  border-color: #b7a18b;
+  outline-color: #f9f7f2;
+  transform: translateY(-1px);
+}
+
+.btn-luxury-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: #1a1a1a;
+  color: #f9f7f2;
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.55rem, 0.7vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.15rem;
+  border: 1px solid #b7a18b;
+  outline: 1.25px solid #1a1a1a;
+  outline-offset: 2.5px;
+  border-radius: 0px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-luxury-dark:hover {
+  background-color: #b7a18b;
+  color: #1a1a1a;
+  border-color: #1a1a1a;
+  outline-color: #b7a18b;
+  outline-offset: 3px;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.btn-luxury-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: transparent;
+  color: #1a1a1a;
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.55rem, 0.7vw, 0.65rem);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid #1a1a1a;
+  outline: 1px solid rgba(26, 26, 26, 0.25);
+  outline-offset: 2px;
+  border-radius: 0px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-luxury-outline:hover {
+  background-color: #1a1a1a;
+  color: #f9f7f2;
+  outline-color: #1a1a1a;
+  outline-offset: 3px;
+}
+
+/* ========================================================
+   ORNATE LUXURY BUTTON VARIANT (Primary CTAs Only)
+   Cream/white bg, thin outer border, inset secondary border line,
+   rotated-square diamond ornament on left, serif letterspaced label.
+   ======================================================== */
+.btn-ornate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background-color: #f9f7f2;
+  color: #1a1a1a;
+  font-family: "Work Sans", sans-serif;
+  font-size: clamp(0.55rem, 0.7vw, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid #1a1a1a;
+  outline: 1.25px solid #b7a18b;
+  outline-offset: 2.5px;
+  border-radius: 0px;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.btn-ornate:hover {
+  background-color: #ffffff;
+  color: #1a1a1a;
+  outline-color: #f9f7f2;
+  box-shadow: 0 5px 16px rgba(183, 161, 139, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-ornate:active {
+  transform: translateY(0);
+  outline-offset: 2px;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scrollDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 1s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes slideUpBox {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 36px) scale(0.97);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translate(-50%, -2px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.animate-slide-up-box {
+  animation: slideUpBox 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
