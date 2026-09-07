@@ -50,7 +50,7 @@ export const bookings = pgTable('bookings', {
   specialRequests: text('special_requests'),
   eventType: varchar('event_type', { length: 255 }), // For hall bookings
   totalPrice: decimal('total_price', { precision: 10, scale: 2 }).notNull(),
-  paymentMethod: varchar('payment_method', { length: 50 }).default('hotel'), // 'hotel', 'mtn_momo', 'orange_money', 'card'
+  paymentMethod: varchar('payment_method', { length: 50 }).default('hotel'), // 'hotel', 'cinetpay'
   paymentTransactionId: varchar('payment_transaction_id', { length: 255 }),
   status: varchar('status', { length: 50 }).default('pending_payment').notNull(), // 'pending_payment', 'confirmed', 'failed', 'cancelled'
   createdAt: timestamp('created_at').defaultNow().notNull(),

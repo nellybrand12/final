@@ -136,22 +136,50 @@
   <form method="POST" class="space-y-8" onsubmit={handlePaymentSubmit}>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="p-6 border-b border-gray-200">
-        <h3 class="text-lg font-medium text-gray-900">APIs de Paiement</h3>
-        <p class="text-sm text-gray-500 mt-1">Identifiants pour le traitement des paiements. (Sécurisé par code PIN)</p>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Passerelle de Paiement CinetPay (Seamless)</h3>
+            <p class="text-sm text-gray-500 mt-1">Fournisseur unique pour MTN Mobile Money, Orange Money et Cartes Bancaires (Visa / Mastercard). Sécurisé par code PIN.</p>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+            CinetPay Seamless
+          </span>
+        </div>
       </div>
+      
+      <!-- Prerequisite Notice Banner -->
+      <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mx-6 mt-6 rounded-r-md">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <span class="material-symbols-outlined text-amber-500 text-xl">info</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-amber-800">
+              Prérequis obligatoire — Autorisation Seamless
+            </p>
+            <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+              L'intégration Seamless (popup contextuelle sur le site sans redirection externe) nécessite une autorisation préalable accordée par CinetPay. Le marchand doit impérativement faire une demande d'activation pour son <strong>Site ID</strong> auprès de <a href="mailto:support@cinetpay.com" class="underline font-semibold hover:text-amber-900">support@cinetpay.com</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div class="p-6 space-y-6">
-        <div class="grid grid-cols-1 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="mtn_api_key" class="block text-sm font-medium text-gray-700">MTN MoMo API Key / Token</label>
-            <input type="password" name="mtn_api_key" id="mtn_api_key" value={settings.mtn_api_key} class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm" />
+            <label for="cinetpay_api_key" class="block text-sm font-medium text-gray-700">CinetPay API Key (Clé API) *</label>
+            <input type="password" name="cinetpay_api_key" id="cinetpay_api_key" value={settings.cinetpay_api_key} placeholder="Ex: 1234567890abcdef..." class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm font-mono" />
+            <p class="text-xs text-gray-500 mt-1">Disponible dans votre espace marchand CinetPay > Paramètres > API.</p>
           </div>
           <div>
-            <label for="orange_api_key" class="block text-sm font-medium text-gray-700">Orange Money API Key</label>
-            <input type="password" name="orange_api_key" id="orange_api_key" value={settings.orange_api_key} class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm" />
+            <label for="cinetpay_site_id" class="block text-sm font-medium text-gray-700">CinetPay Site ID (Identifiant du Site) *</label>
+            <input type="text" name="cinetpay_site_id" id="cinetpay_site_id" value={settings.cinetpay_site_id} placeholder="Ex: 586940" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm font-mono" />
+            <p class="text-xs text-gray-500 mt-1">Numéro unique identifiant votre site chez CinetPay.</p>
           </div>
-          <div>
-            <label for="card_api_key" class="block text-sm font-medium text-gray-700">Card Gateway Secret Key (Stripe/Flutterwave)</label>
-            <input type="password" name="card_api_key" id="card_api_key" value={settings.card_api_key} class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm" />
+          <div class="md:col-span-2">
+            <label for="cinetpay_secret_key" class="block text-sm font-medium text-gray-700">CinetPay Secret Key (Clé Secrète HMAC pour Webhooks)</label>
+            <input type="password" name="cinetpay_secret_key" id="cinetpay_secret_key" value={settings.cinetpay_secret_key} placeholder="Clé secrète pour validation du header X-TOKEN" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-deep-charcoal focus:border-deep-charcoal sm:text-sm font-mono" />
+            <p class="text-xs text-gray-500 mt-1">Utilisé pour vérifier la signature cryptographique des notifications transmises à votre webhook.</p>
           </div>
         </div>
       </div>

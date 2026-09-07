@@ -1,54 +1,43 @@
-export type PaymentProvider = 'hotel' | 'mtn_momo' | 'orange_money' | 'card';
+export type PaymentProvider = 'hotel' | 'cinetpay';
 
 export type PaymentTransactionStatus = 'pending' | 'successful' | 'failed' | 'timeout';
 
-export interface MobileMoneyPaymentRequest {
-  bookingReference: string;
-  amount: number;
-  phone: string;
-  currency?: string; // Default: 'XAF'
-  guestName: string;
-  guestEmail: string;
+export interface CinetPayConfig {
+  apiKey: string;
+  siteId: string;
+  secretKey?: string;
+  mode?: 'PRODUCTION' | 'SANDBOX';
 }
 
-export interface PaymentRequestResult {
-  success: boolean;
-  transactionId: string;
-  provider: PaymentProvider;
-  status: PaymentTransactionStatus;
-  message: string;
-  phone?: string;
-  amount: number;
-  expiresAt?: string;
+export interface CinetPayCustomer {
+  name: string;
+  surname: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  city: string;
+  country: string; // ISO 2-letter e.g. 'CM'
+  state: string;   // ISO 2-letter e.g. 'CM'
+  zipCode: string;
 }
 
-export interface PaymentStatusResult {
-  transactionId: string;
-  bookingReference: string;
-  provider: PaymentProvider;
-  status: PaymentTransactionStatus;
-  amount: number;
-  message?: string;
-  financialTransactionId?: string;
-}
-
-export interface CardPaymentDetails {
+export interface CinetPayInitParams {
   bookingReference: string;
   amount: number;
   currency?: string;
-  cardNumber: string;
-  cardHolder: string;
-  expiryMonth: string;
-  expiryYear: string;
-  cvc: string;
-  guestEmail: string;
+  description: string;
+  customer: CinetPayCustomer;
+  notifyUrl: string;
 }
 
-export interface CardPaymentResult {
+export interface CinetPayCheckResponse {
   success: boolean;
-  transactionId: string;
-  status: 'successful' | 'failed';
-  message: string;
-  last4?: string;
-  cardBrand?: string;
+  code?: string;
+  message?: string;
+  status: 'ACCEPTED' | 'WAITING_FOR_CUSTOMER' | 'REFUSED' | 'UNKNOWN';
+  amount?: number;
+  currency?: string;
+  paymentMethod?: string;
+  operatorId?: string;
+  raw?: any;
 }

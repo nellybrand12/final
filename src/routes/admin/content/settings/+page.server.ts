@@ -15,9 +15,9 @@ export const load: PageServerLoad = async () => {
     social_bookingcom: '',
     social_tripcom: '',
     contact_map_coords: '',
-    mtn_api_key: '',
-    orange_api_key: '',
-    card_api_key: ''
+    cinetpay_api_key: '',
+    cinetpay_site_id: '',
+    cinetpay_secret_key: ''
   };
 
   if (db && isDbHealthy) {

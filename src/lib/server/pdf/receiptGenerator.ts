@@ -28,6 +28,8 @@ export function getPaymentMethodLabel(method: string | null | undefined): string
   switch (method) {
     case 'hotel':
       return "Paiement sur place a l'arrivee (Hotel)";
+    case 'cinetpay':
+      return 'CinetPay (Mobile Money / Carte Bancaire)';
     case 'mtn_momo':
       return 'MTN Mobile Money Cameroun';
     case 'orange_money':

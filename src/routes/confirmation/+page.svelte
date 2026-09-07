@@ -18,6 +18,8 @@
     switch (method) {
       case 'hotel':
         return i18n.locale === 'fr' ? "Paiement sur place à l'arrivée" : 'Pay upon arrival at hotel';
+      case 'cinetpay':
+        return i18n.locale === 'fr' ? 'Paiement en ligne sécurisé (CinetPay)' : 'Secure Online Payment (CinetPay)';
       case 'mtn_momo':
         return 'MTN Mobile Money';
       case 'orange_money':
@@ -126,20 +128,20 @@
         </div>
       </div>
 
-      <!-- Email Notification Banner -->
-      {#if data.booking?.guestEmail}
-        <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 text-xs text-left flex items-start gap-3 rounded-sm">
-          <span class="material-symbols-outlined text-lg mt-0.5 text-emerald-600">mail</span>
-          <div class="space-y-0.5">
-            <span class="font-bold block">
-              {i18n.t.confirmation.emailSentNotice} <span class="underline font-mono">{data.booking.guestEmail}</span>
-            </span>
-            <span class="text-[11px] text-emerald-700/90 block">
-              Vérifiez votre boîte de réception ainsi que votre dossier de courriers indésirables (Spams).
-            </span>
-          </div>
+      <!-- PDF Receipt Notice Banner -->
+      <div class="p-4 bg-muted-gold/10 border border-muted-gold/30 text-deep-charcoal text-xs text-left flex items-start gap-3 rounded-sm">
+        <span class="material-symbols-outlined text-lg mt-0.5 text-muted-gold">description</span>
+        <div class="space-y-0.5">
+          <span class="font-bold block text-deep-charcoal">
+            {i18n.locale === 'fr' ? 'Reçu officiel disponible' : 'Official Receipt Available'}
+          </span>
+          <span class="text-[11px] text-on-surface-variant block">
+            {i18n.locale === 'fr' 
+              ? 'Votre reçu officiel au format PDF est prêt. Cliquez sur « Télécharger le reçu (PDF) » ci-dessus pour conserver votre justificatif ou le présenter à votre arrivée.' 
+              : 'Your official PDF receipt is ready. Click "Download Receipt (PDF)" above to keep your confirmation or present it upon check-in.'}
+          </span>
         </div>
-      {/if}
+      </div>
 
       <!-- Detailed Receipt Breakdown -->
       {#if data.booking}

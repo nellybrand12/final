@@ -28,35 +28,25 @@
   let guestPhone = $state('');
   let specialRequests = $state('');
 
-  // Payment Method Selection: 'hotel' | 'mtn_momo' | 'orange_money' | 'card'
-  let paymentMethod = $state<'hotel' | 'mtn_momo' | 'orange_money' | 'card'>('hotel');
+  // Guest Details extra fields
+  let guestAddress = $state('');
+  let guestCity = $state('');
 
-  // Specific Payment Method Input States
-  let momoPhone = $state('');
-  let orangePhone = $state('');
-  let cardHolder = $state('');
-  let cardNumber = $state('');
-  let cardExpiry = $state('');
-  let cardCvc = $state('');
+  // Payment Method Selection: 'cinetpay' | 'hotel'
+  let paymentMethod = $state<'cinetpay' | 'hotel'>('cinetpay');
 
   // Payment Processing & Polling State
   let activeBookingRef = $state<string | null>(null);
   let activeTransactionId = $state<string | null>(null);
-  let paymentStepState = $state<'idle' | 'initiating' | 'pending_approval' | 'processing_card' | 'success' | 'failed' | 'timeout'>('idle');
+  let paymentStepState = $state<'idle' | 'initiating' | 'pending_approval' | 'verifying' | 'success' | 'failed'>('idle');
   let paymentErrorMessage = $state<string | null>(null);
 
   let pollingTimer: any = null;
-  let countdownTimer: any = null;
-  let remainingSeconds = $state(120);
-
-  const formattedCountdown = $derived(
-    `${Math.floor(remainingSeconds / 60).toString().padStart(2, '0')}:${(remainingSeconds % 60).toString().padStart(2, '0')}`
-  );
 
   const isInFlight = $derived(
     paymentStepState === 'initiating' || 
     paymentStepState === 'pending_approval' || 
-    paymentStepState === 'processing_card'
+    paymentStepState === 'verifying'
   );
 
   const selectedRoom = $derived(
@@ -78,15 +68,6 @@
     return base * nights * count;
   });
 
-  // Detect card brand live
-  const detectedCardBrand = $derived.by(() => {
-    const digits = cardNumber.replace(/\D/g, '');
-    if (/^4/.test(digits)) return 'Visa';
-    if (/^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[01]|2720)/.test(digits)) return 'Mastercard';
-    if (/^3[47]/.test(digits)) return 'Amex';
-    return null;
-  });
-
   function formatPrice(amount: string | number) {
     const num = typeof amount === 'string' ? parseFloat(amount.toString()) : amount;
     return new Intl.NumberFormat(i18n.locale === 'fr' ? 'fr-FR' : 'en-US').format(num);
@@ -97,13 +78,9 @@
       clearInterval(pollingTimer);
       pollingTimer = null;
     }
-    if (countdownTimer) {
-      clearInterval(countdownTimer);
-      countdownTimer = null;
-    }
   }
 
-  function selectPaymentMethod(method: 'hotel' | 'mtn_momo' | 'orange_money' | 'card') {
+  function selectPaymentMethod(method: 'cinetpay' | 'hotel') {
     if (paymentMethod === method) return;
 
     clearTimers();
@@ -111,40 +88,6 @@
     paymentStepState = 'idle';
     paymentErrorMessage = null;
     activeTransactionId = null;
-
-    // Reset previous inputs & prefill appropriate defaults
-    if (method === 'mtn_momo') {
-      momoPhone = guestPhone || '';
-    } else if (method === 'orange_money') {
-      orangePhone = guestPhone || '';
-    } else if (method === 'card') {
-      cardHolder = guestName || '';
-      cardNumber = '';
-      cardExpiry = '';
-      cardCvc = '';
-    }
-  }
-
-  function handleCardNumberInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    let val = target.value.replace(/\D/g, '').substring(0, 16);
-    let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
-    cardNumber = formatted;
-  }
-
-  function handleCardExpiryInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    let val = target.value.replace(/\D/g, '').substring(0, 4);
-    if (val.length >= 2) {
-      cardExpiry = `${val.substring(0, 2)}/${val.substring(2, 4)}`;
-    } else {
-      cardExpiry = val;
-    }
-  }
-
-  function handleCardCvcInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    cardCvc = target.value.replace(/\D/g, '').substring(0, 4);
   }
 
   function nextStep() {
@@ -153,9 +96,6 @@
       currentStep = 2;
     } else if (currentStep === 2) {
       if (!guestName || !guestEmail) return;
-      if (!momoPhone) momoPhone = guestPhone;
-      if (!orangePhone) orangePhone = guestPhone;
-      if (!cardHolder) cardHolder = guestName;
       currentStep = 3;
     }
   }
@@ -169,83 +109,38 @@
     }
   }
 
-  async function createOrUpdatePendingBooking(): Promise<string | null> {
-    try {
-      const res = await fetch('/api/payments/create-pending-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          roomId: selectedRoomId,
-          guestName,
-          guestEmail,
-          guestPhone,
-          checkInDate: checkIn,
-          checkOutDate: checkOut,
-          roomsCount: selectedRoom?.type === 'hall' ? 1 : roomsCount,
-          guestsCount: expectedAttendees,
-          eventType: eventType,
-          specialRequests,
-          paymentMethod,
-          existingBookingReference: activeBookingRef
-        })
-      });
-
-      const resData = await res.json();
-      if (!res.ok || !resData.success) {
-        throw new Error(resData.error || 'Erreur lors de la création de la réservation.');
-      }
-
-      activeBookingRef = resData.bookingReference;
-      return resData.bookingReference;
-    } catch (err: any) {
-      paymentStepState = 'failed';
-      paymentErrorMessage = err.message || 'Erreur serveur lors de la réservation.';
-      return null;
-    }
-  }
-
-  function startPolling(provider: 'mtn_momo' | 'orange_money', transactionId: string) {
+  function pollAuthoritativeStatus(transactionId: string, bookingRef: string, email: string) {
     clearTimers();
-    remainingSeconds = 120;
-
-    countdownTimer = setInterval(() => {
-      remainingSeconds--;
-      if (remainingSeconds <= 0) {
-        clearTimers();
-        paymentStepState = 'timeout';
-        paymentErrorMessage = i18n.t.reserve.momoTimeoutWarning;
-      }
-    }, 1000);
-
-    const endpoint = provider === 'mtn_momo'
-      ? `/api/payments/mtn-momo/status/${transactionId}`
-      : `/api/payments/orange-money/status/${transactionId}`;
+    let attempts = 0;
+    const maxAttempts = 30; // 30 * 2.5s = 75 seconds max polling
 
     pollingTimer = setInterval(async () => {
+      attempts++;
       try {
-        const res = await fetch(endpoint);
+        const res = await fetch(`/api/payments/cinetpay/check-status/${encodeURIComponent(transactionId)}`);
         if (!res.ok) return;
-        const statusData = await res.json();
+        const data = await res.json();
 
-        if (statusData.status === 'successful') {
+        if (data.status === 'confirmed') {
           clearTimers();
           paymentStepState = 'success';
           setTimeout(() => {
-            goto(`/confirmation?ref=${activeBookingRef}&email=${encodeURIComponent(guestEmail)}`);
+            goto(`/confirmation?ref=${encodeURIComponent(bookingRef)}&email=${encodeURIComponent(email)}`);
           }, 1200);
-        } else if (statusData.status === 'failed') {
+        } else if (data.status === 'failed') {
           clearTimers();
           paymentStepState = 'failed';
-          paymentErrorMessage = statusData.message || i18n.t.reserve.paymentFailed;
-        } else if (statusData.status === 'timeout') {
+          paymentErrorMessage = i18n.t.reserve.paymentFailed;
+        } else if (attempts >= maxAttempts) {
           clearTimers();
-          paymentStepState = 'timeout';
-          paymentErrorMessage = i18n.t.reserve.momoTimeoutWarning;
+          paymentErrorMessage = i18n.locale === 'fr'
+            ? 'Votre paiement est en cours de traitement par votre opérateur. Vous pourrez télécharger votre reçu officiel dès confirmation de votre séjour.'
+            : 'Your payment is being processed by your provider. You will be able to download your official receipt once your booking is confirmed.';
         }
-      } catch (e) {
-        console.warn('Polling error:', e);
+      } catch (err) {
+        console.warn('Polling status error:', err);
       }
-    }, 3000);
+    }, 2500);
   }
 
   async function handlePaymentSubmit(e?: Event) {
@@ -257,10 +152,37 @@
     // 1. HOTEL: Pay on arrival
     if (paymentMethod === 'hotel') {
       paymentStepState = 'initiating';
-      const ref = await createOrUpdatePendingBooking();
-      if (!ref) return;
 
       try {
+        const initRes = await fetch('/api/payments/cinetpay/initialize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId: selectedRoomId,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            totalPrice,
+            guestName,
+            guestEmail,
+            guestPhone,
+            guestAddress: guestAddress || 'Bastos, Yaoundé',
+            guestCity: guestCity || 'Yaoundé',
+            guestCountry: 'CM',
+            guestsCount: selectedRoom?.type === 'hall' ? 1 : roomsCount,
+            specialRequests,
+            eventType,
+            bookingReference: activeBookingRef
+          })
+        });
+
+        const initData = await initRes.json();
+        if (!initRes.ok || !initData.success) {
+          throw new Error(initData.error || 'Erreur lors de la réservation.');
+        }
+
+        const ref = initData.bookingReference;
+        activeBookingRef = ref;
+
         const confirmRes = await fetch('/api/payments/hotel/confirm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -274,7 +196,7 @@
         paymentStepState = 'success';
         setTimeout(() => {
           goto(`/confirmation?ref=${ref}&email=${encodeURIComponent(guestEmail)}`);
-        }, 500);
+        }, 600);
       } catch (err: any) {
         paymentStepState = 'failed';
         paymentErrorMessage = err.message || 'Erreur lors de la confirmation.';
@@ -282,127 +204,98 @@
       return;
     }
 
-    // 2. MTN MOBILE MONEY
-    if (paymentMethod === 'mtn_momo') {
-      if (!momoPhone.trim()) {
-        paymentErrorMessage = i18n.locale === 'fr'
-          ? 'Veuillez saisir votre numéro MTN Mobile Money.'
-          : 'Please enter your MTN Mobile Money phone number.';
-        return;
-      }
-
+    // 2. CINETPAY SEAMLESS (Popup)
+    if (paymentMethod === 'cinetpay') {
       paymentStepState = 'initiating';
-      const ref = await createOrUpdatePendingBooking();
-      if (!ref) return;
 
       try {
-        const reqRes = await fetch('/api/payments/mtn-momo/request', {
+        // Step 1: Call our backend to initialize and generate transaction_id
+        const initRes = await fetch('/api/payments/cinetpay/initialize', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            bookingReference: ref,
-            phone: momoPhone,
-            amount: totalPrice
+            roomId: selectedRoomId,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            totalPrice,
+            guestName,
+            guestEmail,
+            guestPhone,
+            guestAddress: guestAddress || 'Bastos, Yaoundé',
+            guestCity: guestCity || 'Yaoundé',
+            guestCountry: 'CM',
+            guestsCount: selectedRoom?.type === 'hall' ? 1 : roomsCount,
+            specialRequests,
+            eventType,
+            bookingReference: activeBookingRef
           })
         });
 
-        const reqData = await reqRes.json();
-        if (!reqRes.ok || !reqData.success) {
-          throw new Error(reqData.message || reqData.error || 'Échec de la demande MTN MoMo.');
+        const initData = await initRes.json();
+        if (!initRes.ok || !initData.success) {
+          throw new Error(initData.error || 'Erreur lors de l\'initialisation du paiement CinetPay.');
         }
 
-        activeTransactionId = reqData.transactionId;
+        activeBookingRef = initData.bookingReference;
+        activeTransactionId = initData.transactionId;
+
+        // Check if CinetPay Seamless SDK is loaded
+        if (typeof window === 'undefined' || !(window as any).CinetPay) {
+          throw new Error(
+            i18n.locale === 'fr'
+              ? 'Le module CinetPay n\'a pas pu être chargé. Veuillez rafraîchir la page ou vérifier votre connexion.'
+              : 'CinetPay module could not be loaded. Please refresh the page or check your connection.'
+          );
+        }
+
+        const CinetPay = (window as any).CinetPay;
+
+        // Configure CinetPay
+        CinetPay.setConfig({
+          apikey: initData.apiKey,
+          site_id: initData.siteId,
+          notify_url: initData.notifyUrl,
+          mode: initData.mode || 'PRODUCTION'
+        });
+
+        // Launch Seamless Checkout Popup
+        CinetPay.getCheckout({
+          transaction_id: initData.transactionId,
+          amount: initData.amount,
+          currency: initData.currency || 'XAF',
+          channels: 'ALL',
+          description: initData.description,
+          customer_name: initData.customer.name,
+          customer_surname: initData.customer.surname,
+          customer_email: initData.customer.email,
+          customer_phone_number: initData.customer.phoneNumber,
+          customer_address: initData.customer.address,
+          customer_city: initData.customer.city,
+          customer_country: initData.customer.country,
+          customer_state: initData.customer.state,
+          customer_zip_code: initData.customer.zipCode
+        });
+
         paymentStepState = 'pending_approval';
-        startPolling('mtn_momo', reqData.transactionId);
-      } catch (err: any) {
-        paymentStepState = 'failed';
-        paymentErrorMessage = err.message || 'Impossible d’envoyer la demande MTN MoMo.';
-      }
-      return;
-    }
 
-    // 3. ORANGE MONEY
-    if (paymentMethod === 'orange_money') {
-      if (!orangePhone.trim()) {
-        paymentErrorMessage = i18n.locale === 'fr'
-          ? 'Veuillez saisir votre numéro Orange Money.'
-          : 'Please enter your Orange Money phone number.';
-        return;
-      }
-
-      paymentStepState = 'initiating';
-      const ref = await createOrUpdatePendingBooking();
-      if (!ref) return;
-
-      try {
-        const reqRes = await fetch('/api/payments/orange-money/request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            bookingReference: ref,
-            phone: orangePhone,
-            amount: totalPrice
-          })
+        // Listen for client-side feedback (non-authoritative)
+        CinetPay.waitResponse(async (response: any) => {
+          console.log('[CinetPay waitResponse]:', response);
+          paymentStepState = 'verifying';
+          // Immediately poll authoritative status from our server
+          pollAuthoritativeStatus(initData.transactionId, initData.bookingReference, initData.customer.email);
         });
 
-        const reqData = await reqRes.json();
-        if (!reqRes.ok || !reqData.success) {
-          throw new Error(reqData.message || reqData.error || 'Échec de la demande Orange Money.');
+        if (typeof CinetPay.onError === 'function') {
+          CinetPay.onError((err: any) => {
+            console.warn('[CinetPay onError]:', err);
+            paymentStepState = 'failed';
+            paymentErrorMessage = err?.message || 'La session de paiement CinetPay a rencontré une erreur.';
+          });
         }
-
-        activeTransactionId = reqData.transactionId;
-        paymentStepState = 'pending_approval';
-        startPolling('orange_money', reqData.transactionId);
       } catch (err: any) {
         paymentStepState = 'failed';
-        paymentErrorMessage = err.message || 'Impossible d’envoyer la demande Orange Money.';
-      }
-      return;
-    }
-
-    // 4. CREDIT CARD (VISA / MASTERCARD)
-    if (paymentMethod === 'card') {
-      const rawCard = cardNumber.replace(/\s/g, '');
-      if (!cardHolder.trim() || rawCard.length < 15 || !cardExpiry.includes('/') || cardCvc.length < 3) {
-        paymentErrorMessage = i18n.locale === 'fr'
-          ? 'Veuillez renseigner tous les champs de la carte bancaire.'
-          : 'Please complete all credit card fields.';
-        return;
-      }
-
-      const [expM, expY] = cardExpiry.split('/');
-
-      paymentStepState = 'processing_card';
-      const ref = await createOrUpdatePendingBooking();
-      if (!ref) return;
-
-      try {
-        const cardRes = await fetch('/api/payments/card/process', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            bookingReference: ref,
-            cardHolder,
-            cardNumber: rawCard,
-            expiryMonth: expM,
-            expiryYear: expY,
-            cvc: cardCvc,
-            amount: totalPrice
-          })
-        });
-
-        const cardData = await cardRes.json();
-        if (!cardRes.ok || !cardData.success) {
-          throw new Error(cardData.message || cardData.error || 'Le paiement par carte bancaire a échoué.');
-        }
-
-        paymentStepState = 'success';
-        setTimeout(() => {
-          goto(`/confirmation?ref=${ref}&email=${encodeURIComponent(guestEmail)}`);
-        }, 1000);
-      } catch (err: any) {
-        paymentStepState = 'failed';
-        paymentErrorMessage = err.message || 'Échec du paiement par carte bancaire.';
+        paymentErrorMessage = err.message || 'Impossible d\'ouvrir la fenêtre de paiement CinetPay.';
       }
     }
   }
@@ -422,6 +315,7 @@
 <svelte:head>
   <title>{i18n.t.reserve.metaTitle}</title>
   <meta name="description" content={i18n.t.reserve.metaDesc} />
+  <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
 </svelte:head>
 
 <div class="w-full bg-surface py-10 md:py-16">
@@ -679,6 +573,33 @@
                 </div>
               </div>
 
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="guestAddress" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                    Adresse de facturation (Optionnel)
+                  </label>
+                  <input
+                    id="guestAddress"
+                    type="text"
+                    placeholder="Ex: Bastos, Yaoundé"
+                    bind:value={guestAddress}
+                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                  />
+                </div>
+                <div>
+                  <label for="guestCity" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                    Ville (Optionnel)
+                  </label>
+                  <input
+                    id="guestCity"
+                    type="text"
+                    placeholder="Ex: Yaoundé"
+                    bind:value={guestCity}
+                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label for="specialRequests" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
                   {i18n.t.reserve.specialRequestsLabel}
@@ -725,7 +646,38 @@
                   {i18n.t.reserve.paymentTitle}
                 </span>
 
-                <!-- 1. Pay at hotel -->
+                <!-- 1. Online Payment via CinetPay Seamless -->
+                <label
+                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'cinetpay' ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
+                >
+                  <div class="flex items-center gap-4">
+                    <input
+                      type="radio"
+                      name="paymentRadio"
+                      value="cinetpay"
+                      disabled={isInFlight}
+                      checked={paymentMethod === 'cinetpay'}
+                      onchange={() => selectPaymentMethod('cinetpay')}
+                      class="accent-muted-gold w-4 h-4 cursor-pointer"
+                    />
+                    <div>
+                      <span class="font-headline text-base font-bold text-deep-charcoal block">
+                        {i18n.t.reserve.payOnlineTitle}
+                      </span>
+                      <span class="text-xs text-on-surface-variant">
+                        {i18n.t.reserve.payOnlineDesc}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                    <span class="bg-[#FFCC00] text-black font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">MoMo</span>
+                    <span class="bg-[#FF7900] text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">OM</span>
+                    <span class="font-bold text-xs tracking-wider text-[#1A1F71] bg-white px-1.5 py-0.5 border border-gray-300">VISA</span>
+                    <span class="font-bold text-xs tracking-wider text-[#EB001B] bg-white px-1.5 py-0.5 border border-gray-300">MC</span>
+                  </div>
+                </label>
+
+                <!-- 2. Pay at Hotel -->
                 <label
                   class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'hotel' ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
                 >
@@ -746,90 +698,77 @@
                   </div>
                   <span class="material-symbols-outlined text-muted-gold text-2xl">hotel</span>
                 </label>
-
-                <!-- 2. MTN Mobile Money -->
-                <label
-                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'mtn_momo' ? 'border-[#FFCC00] bg-[#FFCC00]/10 outline outline-1 outline-[#FFCC00]' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
-                >
-                  <div class="flex items-center gap-4">
-                    <input
-                      type="radio"
-                      name="paymentRadio"
-                      value="mtn_momo"
-                      disabled={isInFlight}
-                      checked={paymentMethod === 'mtn_momo'}
-                      onchange={() => selectPaymentMethod('mtn_momo')}
-                      class="accent-[#FFCC00] w-4 h-4 cursor-pointer"
-                    />
-                    <div>
-                      <div class="flex items-center gap-2">
-                        <span class="font-headline text-base font-bold text-deep-charcoal block">{i18n.t.reserve.payMtnTitle}</span>
-                        <span class="bg-[#FFCC00] text-black font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">MoMo</span>
-                      </div>
-                      <span class="text-xs text-on-surface-variant">{i18n.t.reserve.payMtnDesc}</span>
-                    </div>
-                  </div>
-                  <span class="material-symbols-outlined text-[#E5B800] text-2xl">phone_android</span>
-                </label>
-
-                <!-- 3. Orange Money -->
-                <label
-                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'orange_money' ? 'border-[#FF7900] bg-[#FF7900]/10 outline outline-1 outline-[#FF7900]' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
-                >
-                  <div class="flex items-center gap-4">
-                    <input
-                      type="radio"
-                      name="paymentRadio"
-                      value="orange_money"
-                      disabled={isInFlight}
-                      checked={paymentMethod === 'orange_money'}
-                      onchange={() => selectPaymentMethod('orange_money')}
-                      class="accent-[#FF7900] w-4 h-4 cursor-pointer"
-                    />
-                    <div>
-                      <div class="flex items-center gap-2">
-                        <span class="font-headline text-base font-bold text-deep-charcoal block">{i18n.t.reserve.payOrangeTitle}</span>
-                        <span class="bg-[#FF7900] text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">OM</span>
-                      </div>
-                      <span class="text-xs text-on-surface-variant">{i18n.t.reserve.payOrangeDesc}</span>
-                    </div>
-                  </div>
-                  <span class="material-symbols-outlined text-[#FF7900] text-2xl">contactless</span>
-                </label>
-
-                <!-- 4. Credit Card (Visa / Mastercard) -->
-                <label
-                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'card' ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
-                >
-                  <div class="flex items-center gap-4">
-                    <input
-                      type="radio"
-                      name="paymentRadio"
-                      value="card"
-                      disabled={isInFlight}
-                      checked={paymentMethod === 'card'}
-                      onchange={() => selectPaymentMethod('card')}
-                      class="accent-muted-gold w-4 h-4 cursor-pointer"
-                    />
-                    <div>
-                      <span class="font-headline text-base font-bold text-deep-charcoal block">{i18n.t.reserve.payCardTitle}</span>
-                      <span class="text-xs text-on-surface-variant">{i18n.t.reserve.payCardDesc}</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="font-bold text-xs tracking-wider text-[#1A1F71] bg-white px-2 py-0.5 border border-gray-300">VISA</span>
-                    <span class="font-bold text-xs tracking-wider text-[#EB001B] bg-white px-2 py-0.5 border border-gray-300">MC</span>
-                  </div>
-                </label>
               </div>
 
               <!-- ========================================================================= -->
-              <!-- DYNAMIC PAYMENT PANEL (Renders in space between Credit Card & Cancellation Notice) -->
+              <!-- DYNAMIC PAYMENT PANEL -->
               <!-- ========================================================================= -->
               <div class="transition-all duration-300">
+                <!-- 1. DYNAMIC PANEL: CINETPAY SEAMLESS -->
+                {#if paymentMethod === 'cinetpay'}
+                  <div class="p-6 bg-surface-container border border-muted-gold/40 space-y-4 animate-fade-in">
+                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+                      <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-muted-gold">lock</span>
+                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
+                          CinetPay Seamless • {i18n.t.reserve.cinetpaySecurityBadge}
+                        </h4>
+                      </div>
+                      <span class="font-headline text-sm font-bold text-deep-charcoal">
+                        {formatPrice(totalPrice)} FCFA
+                      </span>
+                    </div>
 
-                <!-- 1. DYNAMIC PANEL: HOTEL (Pay upon arrival) -->
-                {#if paymentMethod === 'hotel'}
+                    {#if paymentStepState === 'initiating'}
+                      <div class="p-5 bg-muted-gold/10 border border-muted-gold text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-8 h-8 border-2 border-muted-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p class="text-xs text-deep-charcoal font-medium">Préparation du paiement sécurisé CinetPay...</p>
+                      </div>
+                    {:else if paymentStepState === 'pending_approval'}
+                      <div class="p-5 bg-amber-500/10 border border-amber-400 text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center mx-auto animate-pulse">
+                          <span class="material-symbols-outlined text-2xl">open_in_new</span>
+                        </div>
+                        <p class="text-xs text-deep-charcoal font-medium">
+                          {i18n.t.reserve.cinetpayModalOpen}
+                        </p>
+                      </div>
+                    {:else if paymentStepState === 'verifying'}
+                      <div class="p-5 bg-muted-gold/10 border border-muted-gold text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-8 h-8 border-2 border-muted-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p class="text-xs text-deep-charcoal font-medium">
+                          {i18n.t.reserve.cinetpayVerifying}
+                        </p>
+                      </div>
+                    {:else if paymentStepState === 'success'}
+                      <div class="p-5 bg-emerald-500/10 border border-emerald-500 text-center space-y-2 rounded-sm animate-fade-in">
+                        <span class="material-symbols-outlined text-3xl text-emerald-600">check_circle</span>
+                        <h5 class="font-headline text-sm font-bold text-emerald-800">
+                          {i18n.t.reserve.paymentSuccess}
+                        </h5>
+                      </div>
+                    {:else if paymentStepState === 'failed'}
+                      <div class="p-4 bg-rose-500/10 border border-rose-400 text-left space-y-3 rounded-sm animate-fade-in">
+                        <div class="flex items-center gap-2 text-rose-700 font-bold text-xs">
+                          <span class="material-symbols-outlined text-lg">error</span>
+                          <span>{paymentErrorMessage || i18n.t.reserve.paymentFailed}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onclick={handleRetry}
+                          class="btn-luxury-primary text-[11px] py-1.5 px-4"
+                        >
+                          <span class="material-symbols-outlined text-xs">refresh</span>
+                          <span>Réessayer le paiement</span>
+                        </button>
+                      </div>
+                    {:else}
+                      <p class="text-xs text-on-surface-variant leading-relaxed">
+                        {i18n.t.reserve.cinetpayPopupNotice}
+                      </p>
+                    {/if}
+                  </div>
+                {:else if paymentMethod === 'hotel'}
                   <div class="p-5 bg-surface-container border border-muted-gold/40 space-y-3 animate-fade-in">
                     <div class="flex items-start gap-3">
                       <span class="material-symbols-outlined text-muted-gold text-xl mt-0.5">verified_user</span>
@@ -840,310 +779,6 @@
                         <p class="font-body-md text-xs text-on-surface-variant leading-relaxed">
                           {i18n.t.reserve.payHotelNotice}
                         </p>
-                      </div>
-                    </div>
-                  </div>
-                {/if}
-
-                <!-- 2. DYNAMIC PANEL: MTN MOBILE MONEY -->
-                {#if paymentMethod === 'mtn_momo'}
-                  <div class="p-6 bg-surface-container border border-[#FFCC00]/50 space-y-5 animate-fade-in">
-                    
-                    <!-- Header with MTN Badge -->
-                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
-                      <div class="flex items-center gap-2.5">
-                        <span class="w-3 h-3 rounded-full bg-[#FFCC00] animate-pulse"></span>
-                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
-                          MTN Mobile Money
-                        </h4>
-                      </div>
-                      <span class="font-headline text-sm font-bold text-deep-charcoal">
-                        {formatPrice(totalPrice)} FCFA
-                      </span>
-                    </div>
-
-                    <!-- State A: Pending USSD Approval -->
-                    {#if paymentStepState === 'pending_approval'}
-                      <div class="p-6 bg-amber-500/10 border border-[#FFCC00] text-center space-y-4 rounded-sm animate-fade-in">
-                        <div class="w-12 h-12 rounded-full bg-[#FFCC00]/20 text-[#8F7000] flex items-center justify-center mx-auto animate-bounce">
-                          <span class="material-symbols-outlined text-2xl">phonelink_ring</span>
-                        </div>
-
-                        <div class="space-y-2">
-                          <h5 class="font-headline text-base font-bold text-deep-charcoal">
-                            {i18n.t.reserve.momoPendingInstruction}
-                          </h5>
-                          <p class="font-display-lg text-lg sm:text-xl text-[#8F7000] font-bold">
-                            {formatPrice(totalPrice)} FCFA
-                          </p>
-                          <p class="font-mono text-xs text-on-surface-variant font-medium">
-                            Numéro ciblé : <span class="font-bold text-deep-charcoal">{momoPhone}</span>
-                          </p>
-                        </div>
-
-                        <!-- Countdown timer -->
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant/40 text-xs font-mono text-deep-charcoal">
-                          <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-                          <span>Temps restant : <strong>{formattedCountdown}</strong></span>
-                        </div>
-
-                        <p class="text-[11px] text-on-surface-variant italic">
-                          {i18n.t.reserve.momoWaitingApproval}
-                        </p>
-                      </div>
-
-                    <!-- State B: Success Animation -->
-                    {:else if paymentStepState === 'success'}
-                      <div class="p-6 bg-emerald-500/10 border border-emerald-500 text-center space-y-3 rounded-sm animate-fade-in">
-                        <span class="material-symbols-outlined text-3xl text-emerald-600">check_circle</span>
-                        <h5 class="font-headline text-base font-bold text-emerald-800">
-                          {i18n.t.reserve.paymentSuccess}
-                        </h5>
-                      </div>
-
-                    <!-- State C: Failure / Timeout -->
-                    {:else if paymentStepState === 'failed' || paymentStepState === 'timeout'}
-                      <div class="p-5 bg-rose-500/10 border border-rose-400 text-left space-y-3 rounded-sm animate-fade-in">
-                        <div class="flex items-center gap-2 text-rose-700 font-bold text-xs">
-                          <span class="material-symbols-outlined text-lg">error</span>
-                          <span>{paymentErrorMessage || i18n.t.reserve.paymentFailed}</span>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 pt-2">
-                          <button
-                            type="button"
-                            onclick={handleRetry}
-                            class="btn-luxury-primary text-[11px] py-1.5 px-4"
-                          >
-                            <span class="material-symbols-outlined text-xs">refresh</span>
-                            <span>{i18n.t.reserve.momoRetryBtn}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                    <!-- State D: Idle / Input Form -->
-                    {:else}
-                      <div class="space-y-3">
-                        <label for="momoPhoneInput" class="block font-label-caps text-xs text-on-surface-variant">
-                          {i18n.t.reserve.momoPhoneLabel} *
-                        </label>
-                        <div class="relative">
-                          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-on-surface-variant font-bold">
-                            +237
-                          </span>
-                          <input
-                            id="momoPhoneInput"
-                            type="tel"
-                            placeholder="6 XX XX XX XX"
-                            bind:value={momoPhone}
-                            disabled={isInFlight}
-                            class="w-full bg-surface-container-lowest border border-outline-variant/50 pl-14 pr-4 py-3 text-sm font-mono text-deep-charcoal focus:outline-none focus:border-[#FFCC00]"
-                          />
-                        </div>
-                        <span class="text-[11px] text-on-surface-variant block">
-                          {i18n.t.reserve.payMtnDesc}
-                        </span>
-                      </div>
-                    {/if}
-                  </div>
-                {/if}
-
-                <!-- 3. DYNAMIC PANEL: ORANGE MONEY -->
-                {#if paymentMethod === 'orange_money'}
-                  <div class="p-6 bg-surface-container border border-[#FF7900]/50 space-y-5 animate-fade-in">
-                    
-                    <!-- Header with Orange Badge -->
-                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
-                      <div class="flex items-center gap-2.5">
-                        <span class="w-3 h-3 rounded-full bg-[#FF7900] animate-pulse"></span>
-                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
-                          Orange Money Cameroun
-                        </h4>
-                      </div>
-                      <span class="font-headline text-sm font-bold text-deep-charcoal">
-                        {formatPrice(totalPrice)} FCFA
-                      </span>
-                    </div>
-
-                    <!-- State A: Pending USSD Approval -->
-                    {#if paymentStepState === 'pending_approval'}
-                      <div class="p-6 bg-orange-500/10 border border-[#FF7900] text-center space-y-4 rounded-sm animate-fade-in">
-                        <div class="w-12 h-12 rounded-full bg-[#FF7900]/20 text-[#D45000] flex items-center justify-center mx-auto animate-bounce">
-                          <span class="material-symbols-outlined text-2xl">phonelink_ring</span>
-                        </div>
-
-                        <div class="space-y-2">
-                          <h5 class="font-headline text-base font-bold text-deep-charcoal">
-                            {i18n.t.reserve.momoPendingInstruction}
-                          </h5>
-                          <p class="font-display-lg text-lg sm:text-xl text-[#D45000] font-bold">
-                            {formatPrice(totalPrice)} FCFA
-                          </p>
-                          <p class="font-mono text-xs text-on-surface-variant font-medium">
-                            Numéro ciblé : <span class="font-bold text-deep-charcoal">{orangePhone}</span>
-                          </p>
-                        </div>
-
-                        <!-- Countdown timer -->
-                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant/40 text-xs font-mono text-deep-charcoal">
-                          <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
-                          <span>Temps restant : <strong>{formattedCountdown}</strong></span>
-                        </div>
-
-                        <p class="text-[11px] text-on-surface-variant italic">
-                          {i18n.t.reserve.momoWaitingApproval}
-                        </p>
-                      </div>
-
-                    <!-- State B: Success Animation -->
-                    {:else if paymentStepState === 'success'}
-                      <div class="p-6 bg-emerald-500/10 border border-emerald-500 text-center space-y-3 rounded-sm animate-fade-in">
-                        <span class="material-symbols-outlined text-3xl text-emerald-600">check_circle</span>
-                        <h5 class="font-headline text-base font-bold text-emerald-800">
-                          {i18n.t.reserve.paymentSuccess}
-                        </h5>
-                      </div>
-
-                    <!-- State C: Failure / Timeout -->
-                    {:else if paymentStepState === 'failed' || paymentStepState === 'timeout'}
-                      <div class="p-5 bg-rose-500/10 border border-rose-400 text-left space-y-3 rounded-sm animate-fade-in">
-                        <div class="flex items-center gap-2 text-rose-700 font-bold text-xs">
-                          <span class="material-symbols-outlined text-lg">error</span>
-                          <span>{paymentErrorMessage || i18n.t.reserve.paymentFailed}</span>
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 pt-2">
-                          <button
-                            type="button"
-                            onclick={handleRetry}
-                            class="btn-luxury-primary text-[11px] py-1.5 px-4"
-                          >
-                            <span class="material-symbols-outlined text-xs">refresh</span>
-                            <span>{i18n.t.reserve.momoRetryBtn}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                    <!-- State D: Idle / Input Form -->
-                    {:else}
-                      <div class="space-y-3">
-                        <label for="orangePhoneInput" class="block font-label-caps text-xs text-on-surface-variant">
-                          {i18n.t.reserve.momoPhoneLabel} *
-                        </label>
-                        <div class="relative">
-                          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-on-surface-variant font-bold">
-                            +237
-                          </span>
-                          <input
-                            id="orangePhoneInput"
-                            type="tel"
-                            placeholder="6 XX XX XX XX"
-                            bind:value={orangePhone}
-                            disabled={isInFlight}
-                            class="w-full bg-surface-container-lowest border border-outline-variant/50 pl-14 pr-4 py-3 text-sm font-mono text-deep-charcoal focus:outline-none focus:border-[#FF7900]"
-                          />
-                        </div>
-                        <span class="text-[11px] text-on-surface-variant block">
-                          {i18n.t.reserve.payOrangeDesc}
-                        </span>
-                      </div>
-                    {/if}
-                  </div>
-                {/if}
-
-                <!-- 4. DYNAMIC PANEL: CREDIT CARD (VISA / MASTERCARD) -->
-                {#if paymentMethod === 'card'}
-                  <div class="p-6 bg-surface-container border border-muted-gold/40 space-y-4 animate-fade-in">
-                    
-                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
-                      <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-muted-gold">credit_card</span>
-                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
-                          {i18n.t.reserve.payCardTitle}
-                        </h4>
-                      </div>
-                      <div class="flex items-center gap-1">
-                        <span class="text-[10px] font-label-caps text-muted-gold font-bold">{detectedCardBrand || 'SSL SECURE'}</span>
-                      </div>
-                    </div>
-
-                    <!-- Failure Banner -->
-                    {#if paymentStepState === 'failed'}
-                      <div class="p-3.5 bg-rose-500/10 border border-rose-400 text-rose-700 text-xs flex items-center gap-2">
-                        <span class="material-symbols-outlined text-base">error</span>
-                        <span>{paymentErrorMessage || i18n.t.reserve.paymentFailed}</span>
-                      </div>
-                    {/if}
-
-                    <div class="space-y-4">
-                      <!-- Cardholder Name -->
-                      <div>
-                        <label for="cardHolderInput" class="block font-label-caps text-xs text-on-surface-variant mb-1">
-                          {i18n.t.reserve.cardHolderLabel} *
-                        </label>
-                        <input
-                          id="cardHolderInput"
-                          type="text"
-                          placeholder={i18n.t.reserve.cardHolderPlaceholder}
-                          bind:value={cardHolder}
-                          disabled={isInFlight}
-                          class="w-full bg-surface-container-lowest border border-outline-variant/40 px-4 py-2.5 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
-                        />
-                      </div>
-
-                      <!-- Card Number -->
-                      <div>
-                        <label for="cardNumberInput" class="block font-label-caps text-xs text-on-surface-variant mb-1">
-                          {i18n.t.reserve.cardNumberLabel} *
-                        </label>
-                        <div class="relative">
-                          <input
-                            id="cardNumberInput"
-                            type="text"
-                            placeholder="4532 •••• •••• ••••"
-                            value={cardNumber}
-                            oninput={handleCardNumberInput}
-                            disabled={isInFlight}
-                            class="w-full bg-surface-container-lowest border border-outline-variant/40 px-4 py-2.5 text-sm font-mono text-deep-charcoal focus:outline-none focus:border-muted-gold"
-                          />
-                          {#if detectedCardBrand}
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold bg-muted-gold/20 text-muted-gold px-2 py-0.5">
-                              {detectedCardBrand}
-                            </span>
-                          {/if}
-                        </div>
-                      </div>
-
-                      <!-- Expiry & CVC Grid -->
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <label for="cardExpiryInput" class="block font-label-caps text-xs text-on-surface-variant mb-1">
-                            {i18n.t.reserve.cardExpiryLabel} *
-                          </label>
-                          <input
-                            id="cardExpiryInput"
-                            type="text"
-                            placeholder="MM/AA"
-                            value={cardExpiry}
-                            oninput={handleCardExpiryInput}
-                            disabled={isInFlight}
-                            class="w-full bg-surface-container-lowest border border-outline-variant/40 px-4 py-2.5 text-sm font-mono text-deep-charcoal focus:outline-none focus:border-muted-gold text-center"
-                          />
-                        </div>
-                        <div>
-                          <label for="cardCvcInput" class="block font-label-caps text-xs text-on-surface-variant mb-1">
-                            {i18n.t.reserve.cardCvcLabel} *
-                          </label>
-                          <input
-                            id="cardCvcInput"
-                            type="password"
-                            placeholder="•••"
-                            value={cardCvc}
-                            oninput={handleCardCvcInput}
-                            disabled={isInFlight}
-                            class="w-full bg-surface-container-lowest border border-outline-variant/40 px-4 py-2.5 text-sm font-mono text-deep-charcoal focus:outline-none focus:border-muted-gold text-center"
-                          />
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -1174,18 +809,16 @@
                   {#if isInFlight}
                     <span class="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                     <span>
-                      {paymentMethod === 'card' 
-                        ? i18n.t.reserve.cardProcessing 
-                        : (paymentMethod === 'mtn_momo' || paymentMethod === 'orange_money')
-                        ? i18n.t.reserve.momoSending
-                        : 'Validation...'}
+                      {paymentStepState === 'initiating'
+                        ? 'Initialisation...'
+                        : paymentStepState === 'verifying'
+                        ? 'Vérification...'
+                        : 'En attente de paiement...'}
                     </span>
                   {:else}
                     <span>
-                      {paymentMethod === 'card'
-                        ? `${i18n.t.reserve.cardPayBtn} ${formatPrice(totalPrice)} FCFA`
-                        : (paymentMethod === 'mtn_momo' || paymentMethod === 'orange_money')
-                        ? i18n.t.reserve.momoSendBtn
+                      {paymentMethod === 'cinetpay'
+                        ? `${i18n.t.reserve.payNowBtn} • ${formatPrice(totalPrice)} FCFA`
                         : i18n.t.reserve.confirmSubmit}
                     </span>
                     <span class="material-symbols-outlined text-xs">arrow_forward</span>

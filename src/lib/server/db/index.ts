@@ -304,10 +304,12 @@ export async function createBooking(data: Omit<schema.Booking, 'id' | 'createdAt
           throw new Error('Not enough rooms available');
         }
 
-        // 3. Decrement available inventory
-        await tx.update(schema.rooms)
-          .set({ availableRooms: sql`${schema.rooms.availableRooms} - ${requestedCount}` })
-          .where(sql`${schema.rooms.id} = ${data.roomId}`);
+        // 3. Decrement available inventory only if immediately confirmed (e.g. hotel pay-on-arrival)
+        if (data.status === 'confirmed') {
+          await tx.update(schema.rooms)
+            .set({ availableRooms: sql`${schema.rooms.availableRooms} - ${requestedCount}` })
+            .where(sql`${schema.rooms.id} = ${data.roomId}`);
+        }
 
         // 4. Create the booking
         const [inserted] = await tx.insert(schema.bookings).values(data).returning();
@@ -350,6 +352,21 @@ export async function updateBookingStatus(
 
   if (dbInstance && isDbHealthy) {
     try {
+      const [existing] = await dbInstance
+        .select()
+        .from(schema.bookings)
+        .where(eq(schema.bookings.bookingReference, cleanedRef));
+
+      if (existing && existing.status !== 'confirmed' && status === 'confirmed') {
+        const requestedRooms = existing.guestsCount || 1;
+        await dbInstance
+          .update(schema.rooms)
+          .set({
+            availableRooms: sql`GREATEST(${schema.rooms.availableRooms} - ${requestedRooms}, 0)`
+          })
+          .where(eq(schema.rooms.id, existing.roomId));
+      }
+
       const updateData: Partial<typeof schema.bookings.$inferInsert> = { status };
       if (transactionId !== undefined) updateData.paymentTransactionId = transactionId;
       if (paymentMethod !== undefined) updateData.paymentMethod = paymentMethod;
