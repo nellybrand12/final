@@ -127,7 +127,7 @@
         class="absolute inset-0 bg-cover bg-center opacity-100 scale-105 transform origin-center transition-transform duration-[20s] ease-out hover:scale-100"
         style="background-image: url('/images/Hero-Image.jpg')"
       ></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/75 via-deep-charcoal/25 to-deep-charcoal/10"></div>
+      <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(20,17,15,0.30)_0%,rgba(20,17,15,0.45)_45%,rgba(20,17,15,0.75)_100%)] pointer-events-none"></div>
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(26,26,26,0.18)_100%)]"></div>
     </div>
 
@@ -185,18 +185,18 @@
         ? 'opacity-100 translate-y-0 scale-100'
         : 'opacity-0 translate-y-16 scale-95 pointer-events-none'}"
     >
-      <!-- Top Tagline -->
-      <span class="inline-block font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] mb-3 sm:mb-4 uppercase">
+      <!-- Top Tagline (deliberately the largest line in the hierarchy) -->
+      <span class="hero-eyebrow inline-block font-label-caps text-soft-cream mb-3 sm:mb-4 uppercase">
         {i18n.t.hero.welcomeTag}
       </span>
 
       <!-- Main Headline -->
-      <h1 class="font-display-lg text-soft-cream mb-3 max-w-4xl mx-auto leading-[1.14] drop-shadow-2xl uppercase">
+      <h1 class="hero-title font-display-lg text-soft-cream mb-3 max-w-4xl mx-auto leading-[1.14] drop-shadow-2xl uppercase">
         {i18n.t.hero.showcaseTitle}
       </h1>
 
       <!-- Subtitle -->
-      <p class="font-headline text-sm sm:text-base md:text-lg text-soft-cream/90 max-w-2xl mx-auto mb-7 font-light italic">
+      <p class="hero-subtitle font-headline text-sm sm:text-base md:text-lg text-soft-cream/90 max-w-2xl mx-auto mb-7 font-light italic">
         {i18n.t.hero.showcaseSubtitle}
       </p>
 

@@ -83,7 +83,7 @@
           {i18n.t.faq.contactFormBtn}
         </a>
         <a
-          href="https://wa.me/237699000000"
+          href="https://wa.me/237691890963"
           target="_blank"
           rel="noopener noreferrer"
           class="btn-luxury-secondary text-xs py-2.5 px-6 text-center"

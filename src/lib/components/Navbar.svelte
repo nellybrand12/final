@@ -49,7 +49,7 @@
       <button
         onclick={() => (isDrawerOpen = true)}
         type="button"
-        class="group flex items-center gap-3 py-2 px-1 text-warm-taupe hover:text-muted-gold transition-all duration-300 cursor-pointer focus:outline-none"
+        class="group flex items-center gap-3 py-2 px-1 text-soft-cream hover:text-muted-gold transition-all duration-300 cursor-pointer focus:outline-none [filter:drop-shadow(0_1px_3px_rgba(0,0,0,0.5))]"
         aria-label={i18n.t.nav.menu}
       >
         <!-- Sandwich Icon -->
@@ -317,7 +317,7 @@
         <span>{i18n.t.nav.address}</span>
         <div class="flex items-center justify-between pt-2 text-soft-cream/80">
           <a
-            href="tel:+237699000000"
+            href="tel:+237691890963"
             class="hover:text-muted-gold transition-colors font-medium"
           >
             {i18n.t.nav.phone}

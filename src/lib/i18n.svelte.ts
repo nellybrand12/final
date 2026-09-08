@@ -155,14 +155,14 @@ const translations = {
         },
         {
           id: "zoo",
-          name: "Mvog-betsi Zoo",
+          name: "Parc Zoo-Botanique de Mvog-Betsi",
           description:
-            "Porte d’entrée aérienne internationale de Yaoundé avec service dédié de navette VIP et chauffeur privé Madadjeu disponible.",
-          distance: "24 km",
-          driveTime: "30 min",
-          walkTime: "N/A",
+            "Le plus grand parc zoologique du Cameroun, abritant une diversité d’espèces animales et végétales, idéal pour les familles et les passionnés de nature.",
+          distance: "950 m",
+          driveTime: "3 min",
+          walkTime: "14 min",
           imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
+            "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/64/1a/42/caption.jpg?w=1200&h=1200&s=1",
         },
         {
           id: "palais",
@@ -180,8 +180,8 @@ const translations = {
           name: "Centre Administratif & Boulevard du 20 Mai",
           description:
             "Le cœur décisionnel de la capitale : ministères, banques centrales, sièges d’entreprises et grandes galeries commerciales.",
-          distance: "5.5 km",
-          driveTime: "12 min",
+          distance: "4.9 km",
+          driveTime: "9 min",
           walkTime: "45 min",
           imageUrl:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMUcwix3wbLQpUwzHRRtVmLuTqTzsA1nP5p5o09apKONbOmYvA9cApO0Z4&s=10",
@@ -540,7 +540,7 @@ const translations = {
             "Louez une voiture avec ou sans chauffeur privé pour des visites personnalisées de la ville et des déplacements pratiques.",
           ctaText: "Réserver un véhicule",
           ctaLink:
-            "https://wa.me/237699000000?text=Bonjour,%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule%20avec%20ou%20sans%20chauffeur%20Madadjeu.",
+            "https://wa.me/237691890963?text=Bonjour,%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule%20avec%20ou%20sans%20chauffeur%20Madadjeu.",
         },
         {
           id: "event-halls",
@@ -1445,7 +1445,7 @@ const translations = {
             "Rent a car with or without a private driver for personalized city tours and convenient travel around town.",
           ctaText: "Book a Car",
           ctaLink:
-            "https://wa.me/237699000000?text=Hello,%20I%20would%20like%20to%20inquire%20about%20car%20rental%20with%20or%20without%20driver%20at%20Madadjeu.",
+            "https://wa.me/237691890963?text=Hello,%20I%20would%20like%20to%20inquire%20about%20car%20rental%20with%20or%20without%20driver%20at%20Madadjeu.",
         },
         {
           id: "event-halls",

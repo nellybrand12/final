@@ -89,7 +89,7 @@
           </p>
           <div class="pt-2">
             <a
-              href="https://wa.me/237699000000?text=Bonjour,%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule%20avec%20chauffeur%20Madadjeu%20%C3%A0%20Yaound%C3%A9."
+              href="https://wa.me/237691890963?text=Bonjour,%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule%20avec%20chauffeur%20Madadjeu%20%C3%A0%20Yaound%C3%A9."
               target="_blank"
               rel="noopener noreferrer"
               class="btn-luxury-primary text-xs py-3 w-full text-center"
@@ -149,7 +149,7 @@
             </strong>
           </div>
           <a
-            href="tel:+237699000000"
+            href="tel:+237691890963"
             class="btn-luxury-outline text-[11px] py-2 px-4 shrink-0"
           >
             <span class="material-symbols-outlined text-sm">call</span>

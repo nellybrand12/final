@@ -49,7 +49,7 @@
           {#if settings.contact_phone}
             <a href="tel:{settings.contact_phone.replace(/\s+/g, '')}" class="hover:text-muted-gold transition-colors">Tél: {settings.contact_phone}</a>
           {:else}
-            <a href="tel:+237699000000" class="hover:text-muted-gold transition-colors">Tél: +237 6 99 00 00 00</a>
+            <a href="tel:+237691890963" class="hover:text-muted-gold transition-colors">Tél: +237 6 99 00 00 00</a>
           {/if}
           
           {#if settings.contact_email}

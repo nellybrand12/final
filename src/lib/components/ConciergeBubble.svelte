@@ -37,7 +37,7 @@
 
       <div class="flex flex-col gap-2">
         <a
-          href="https://wa.me/237699000000?text=Bonjour%20Madadjeu,%20je%20souhaite%20une%20information."
+          href="https://wa.me/237691890963?text=Bonjour%20Madadjeu,%20je%20souhaite%20une%20information."
           target="_blank"
           rel="noopener noreferrer"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container hover:bg-muted-gold/10 transition-colors border border-outline-variant/30 text-xs font-medium text-deep-charcoal group"
@@ -47,7 +47,7 @@
         </a>
 
         <a
-          href="tel:+237699000000"
+          href="tel:+237691890963"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container hover:bg-muted-gold/10 transition-colors border border-outline-variant/30 text-xs font-medium text-deep-charcoal group"
         >
           <span class="material-symbols-outlined text-muted-gold group-hover:scale-110 transition-transform">call</span>

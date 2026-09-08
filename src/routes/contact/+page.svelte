@@ -156,10 +156,10 @@
             {i18n.t.contact.directPhoneDesc}
           </p>
           <div class="space-y-1">
-            <a href="tel:+237699000000" class="font-headline text-base font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
+            <a href="tel:+237691890963" class="font-headline text-base font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
               +237 6 99 00 00 00
             </a>
-            <a href="https://wa.me/237699000000" target="_blank" rel="noopener noreferrer" class="text-xs text-green-600 font-medium flex items-center gap-1 hover:underline">
+            <a href="https://wa.me/237691890963" target="_blank" rel="noopener noreferrer" class="text-xs text-green-600 font-medium flex items-center gap-1 hover:underline">
               <span>{i18n.t.contact.chatWhatsapp}</span>
               <span class="material-symbols-outlined text-xs">arrow_forward</span>
             </a>
