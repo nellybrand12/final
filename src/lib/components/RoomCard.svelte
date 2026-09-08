@@ -34,11 +34,17 @@
     />
     <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
 
-    <!-- Strictly ONLY the "number of guests" capacity indicator badge is kept -->
+    <!-- Capacity indicator badge -->
     <div class="absolute bottom-3.5 left-3.5 flex items-center text-soft-cream font-label-caps text-[11px] sm:text-xs bg-neutral-950/80 backdrop-blur-sm px-3 py-1.5 border border-white/15 shadow-md">
       <span class="flex items-center gap-1.5">
-        <span class="material-symbols-outlined text-sm text-muted-gold">group</span>
-        <span>{i18n.t.showcase.upTo} {room.maxGuests} {i18n.t.showcase.guests}</span>
+        <span class="material-symbols-outlined text-sm text-muted-gold">{room.type === 'hall' ? 'celebration' : 'group'}</span>
+        <span>
+          {#if room.type === 'hall'}
+            {i18n.locale === 'fr' ? `Jusqu'à ${room.maxGuests} convives` : `Up to ${room.maxGuests} attendees`}
+          {:else}
+            {i18n.t.showcase.upTo} {room.maxGuests} {i18n.t.showcase.guests}
+          {/if}
+        </span>
       </span>
     </div>
   </div>
@@ -46,6 +52,16 @@
   <!-- Room Content -->
   <div class="p-5 sm:p-6 lg:p-7 flex flex-col flex-grow justify-between gap-4 w-full">
     <div>
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <span class="text-[10px] font-label-caps text-muted-gold uppercase tracking-wider font-semibold">
+          {room.category}
+        </span>
+        {#if room.type === 'hall'}
+          <span class="text-[9px] font-label-caps px-2 py-0.5 bg-muted-gold/15 text-muted-gold border border-muted-gold/30 rounded-full font-bold">
+            {i18n.locale === 'fr' ? 'Salle Événementielle' : 'Event Venue'}
+          </span>
+        {/if}
+      </div>
       <h3 class="font-headline text-lg sm:text-xl text-deep-charcoal group-hover:text-muted-gold transition-colors mb-1.5 font-semibold leading-snug">
         {i18n.locale === 'fr' ? (room.nameFr || room.name) : (room.nameEn || room.name)}
       </h3>
@@ -79,7 +95,9 @@
             <span class="font-headline text-lg sm:text-xl font-bold text-deep-charcoal">
               {formatPrice(room.pricePerNight)}
             </span>
-            <span class="text-[10px] font-label-caps text-muted-gold">{i18n.t.showcase.perNight}</span>
+            <span class="text-[10px] font-label-caps text-muted-gold">
+              {room.type === 'hall' ? (i18n.locale === 'fr' ? '/ événement' : '/ event') : i18n.t.showcase.perNight}
+            </span>
           </div>
         </div>
       {/if}

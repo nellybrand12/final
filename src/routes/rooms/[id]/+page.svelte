@@ -33,7 +33,8 @@
 
   const totalPrice = $derived.by(() => {
     const base = parseFloat(data.room.pricePerNight);
-    return base * nights * roomsCount;
+    const count = data.room.type === 'hall' ? 1 : roomsCount;
+    return base * nights * count;
   });
 </script>
 
@@ -75,7 +76,9 @@
           <span class="font-headline text-2xl sm:text-3xl font-bold text-deep-charcoal">
             {formatPrice(data.room.pricePerNight)}
           </span>
-          <span class="text-xs font-label-caps text-muted-gold">FCFA</span>
+          <span class="text-xs font-label-caps text-muted-gold">
+            {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'FCFA / événement' : 'FCFA / event') : 'FCFA'}
+          </span>
         </div>
         <span class="text-[10px] text-on-surface-variant">{i18n.t.roomDetails.servicesTax} {i18n.t.reserve.includedLabel.toLowerCase()}</span>
       </div>
@@ -121,19 +124,27 @@
             <span class="text-[9px] font-label-caps text-on-surface-variant">{i18n.t.roomDetails.area}</span>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-muted-gold text-lg">bed</span>
-            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">{data.room.bedType}</span>
-            <span class="text-[9px] font-label-caps text-on-surface-variant">{i18n.t.roomDetails.bed}</span>
+            <span class="material-symbols-outlined text-muted-gold text-lg">{data.room.type === 'hall' ? 'event_seat' : 'bed'}</span>
+            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">{data.room.bedType || (data.room.type === 'hall' ? 'Modulable' : 'Standard')}</span>
+            <span class="text-[9px] font-label-caps text-on-surface-variant">{data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Configuration' : 'Layout') : i18n.t.roomDetails.bed}</span>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-muted-gold text-lg">group</span>
-            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">{data.room.maxGuests} {i18n.t.showcase.guests}</span>
+            <span class="material-symbols-outlined text-muted-gold text-lg">{data.room.type === 'hall' ? 'celebration' : 'group'}</span>
+            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">
+              {data.room.maxGuests} {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'convives' : 'attendees') : i18n.t.showcase.guests}
+            </span>
             <span class="text-[9px] font-label-caps text-on-surface-variant">{i18n.t.roomDetails.capacity}</span>
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="material-symbols-outlined text-muted-gold text-lg">visibility</span>
-            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">{i18n.locale === 'fr' ? 'Panoramique' : 'Panoramic'}</span>
-            <span class="text-[9px] font-label-caps text-on-surface-variant">{i18n.t.roomDetails.view}</span>
+            <span class="material-symbols-outlined text-muted-gold text-lg">{data.room.type === 'hall' ? 'mic' : 'visibility'}</span>
+            <span class="font-headline text-sm sm:text-base text-deep-charcoal font-bold">
+              {#if data.room.type === 'hall'}
+                {i18n.locale === 'fr' ? 'Régie & Son' : 'AV & Sound'}
+              {:else}
+                {i18n.locale === 'fr' ? 'Panoramique' : 'Panoramic'}
+              {/if}
+            </span>
+            <span class="text-[9px] font-label-caps text-on-surface-variant">{data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Équipement' : 'Equipments') : i18n.t.roomDetails.view}</span>
           </div>
         </div>
 
@@ -169,22 +180,41 @@
         <div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30 space-y-3">
           <h4 class="font-label-caps text-[11px] text-muted-gold tracking-widest uppercase">{i18n.locale === 'fr' ? 'Informations Pratiques' : 'Practical Information'}</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-on-surface-variant">
-            <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckIn}</strong>
-              {i18n.locale === 'fr' ? 'À partir de 14h00 (Arrivée anticipée sur demande)' : 'From 2:00 PM (Early check-in upon request)'}
-            </div>
-            <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckOut}</strong>
-              {i18n.locale === 'fr' ? 'Jusqu’à 12h00 (Départ tardif selon disponibilité)' : 'Until 12:00 PM (Late check-out subject to availability)'}
-            </div>
-            <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Petit-déjeuner :' : 'Breakfast:'}</strong>
-              {i18n.locale === 'fr' ? 'Servi de 06h30 à 10h30 au restaurant ou en appartement' : 'Served from 6:30 AM to 10:30 AM in restaurant or room'}
-            </div>
-            <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Annulation :' : 'Cancellation:'}</strong>
-              {i18n.locale === 'fr' ? 'Gratuite jusqu’à 48h avant la date d’arrivée' : 'Free up to 48 hours before arrival date'}
-            </div>
+            {#if data.room.type === 'hall'}
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Horaires d’accès :' : 'Access Hours:'}</strong>
+                {i18n.locale === 'fr' ? 'De 08h00 à 23h00 (Créneaux personnalisables)' : 'From 8:00 AM to 11:00 PM (Custom slots available)'}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Logistique & Traiteur :' : 'Logistics & Catering:'}</strong>
+                {i18n.locale === 'fr' ? 'Cuisine relais traiteur & régie technique dédiées' : 'Dedicated catering kitchen & AV technical control'}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Capacité d’accueil :' : 'Capacity:'}</strong>
+                {i18n.locale === 'fr' ? `Jusqu'à ${data.room.maxGuests} personnes (Banquet ou Conférence)` : `Up to ${data.room.maxGuests} guests (Banquet or Conference)`}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Annulation & Remboursement :' : 'Cancellation & Refund:'}</strong>
+                <span class="text-emerald-700 font-semibold">{i18n.locale === 'fr' ? 'Remboursement de 95% jusqu’à 36h avant l’événement' : '95% refund up to 36 hours before the event'}</span>
+              </div>
+            {:else}
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckIn}</strong>
+                {i18n.locale === 'fr' ? 'À partir de 14h00 (Arrivée anticipée sur demande)' : 'From 2:00 PM (Early check-in upon request)'}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckOut}</strong>
+                {i18n.locale === 'fr' ? 'Jusqu’à 12h00 (Départ tardif selon disponibilité)' : 'Until 12:00 PM (Late check-out subject to availability)'}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Petit-déjeuner :' : 'Breakfast:'}</strong>
+                {i18n.locale === 'fr' ? 'Servi de 06h30 à 10h30 au restaurant ou en appartement' : 'Served from 6:30 AM to 10:30 AM in restaurant or room'}
+              </div>
+              <div>
+                <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Annulation & Remboursement :' : 'Cancellation & Refund:'}</strong>
+                <span class="text-emerald-700 font-semibold">{i18n.locale === 'fr' ? 'Remboursement de 95% jusqu’à 20h avant l’arrivée' : '95% refund up to 20 hours before arrival date'}</span>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
@@ -205,7 +235,7 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label for="checkIn" class="block font-label-caps text-[10px] text-on-surface-variant mb-1.5">
-                  {i18n.t.roomDetails.checkIn}
+                  {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de début' : 'Start Date') : i18n.t.roomDetails.checkIn}
                 </label>
                 <input
                   id="checkIn"
@@ -218,7 +248,7 @@
               </div>
               <div>
                 <label for="checkOut" class="block font-label-caps text-[10px] text-on-surface-variant mb-1.5">
-                  {i18n.t.roomDetails.checkOut}
+                  {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de fin' : 'End Date') : i18n.t.roomDetails.checkOut}
                 </label>
                 <input
                   id="checkOut"
@@ -231,28 +261,40 @@
               </div>
             </div>
 
-            <!-- Number of Rooms Selector -->
-            <div>
-              <label for="roomsCount" class="block font-label-caps text-[10px] text-on-surface-variant mb-1.5">
-                {i18n.t.roomDetails.roomsCount}
-              </label>
-              <select
-                id="roomsCount"
-                name="rooms"
-                bind:value={roomsCount}
-                class="w-full bg-surface-container border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-deep-charcoal focus:outline-none focus:border-muted-gold font-body-md"
-              >
-                <option value={1}>1 {i18n.t.reserve.roomOptionSingle}</option>
-                <option value={2}>2 {i18n.t.reserve.roomOptionPlural}</option>
-                <option value={3}>3 {i18n.t.reserve.roomOptionPlural}</option>
-                <option value={4}>4+ {i18n.t.reserve.roomOptionPlural}</option>
-              </select>
-            </div>
+            <!-- Number of Rooms Selector (Hidden for Halls) -->
+            {#if data.room.type !== 'hall'}
+              <div>
+                <label for="roomsCount" class="block font-label-caps text-[10px] text-on-surface-variant mb-1.5">
+                  {i18n.t.roomDetails.roomsCount}
+                </label>
+                <select
+                  id="roomsCount"
+                  name="rooms"
+                  bind:value={roomsCount}
+                  class="w-full bg-surface-container border border-outline-variant/50 rounded-xl px-3 py-2.5 text-xs text-deep-charcoal focus:outline-none focus:border-muted-gold font-body-md"
+                >
+                  <option value={1}>1 {i18n.t.reserve.roomOptionSingle}</option>
+                  <option value={2}>2 {i18n.t.reserve.roomOptionPlural}</option>
+                  <option value={3}>3 {i18n.t.reserve.roomOptionPlural}</option>
+                  <option value={4}>4+ {i18n.t.reserve.roomOptionPlural}</option>
+                </select>
+              </div>
+            {:else}
+              <input type="hidden" name="rooms" value="1" />
+              <div class="p-3 bg-surface-container rounded-xl border border-outline-variant/30 text-xs text-on-surface-variant flex items-center gap-2">
+                <span class="material-symbols-outlined text-muted-gold text-base">celebration</span>
+                <span>{i18n.locale === 'fr' ? 'Réservation exclusive de la salle avec régie technique' : 'Exclusive venue rental with technical AV'}</span>
+              </div>
+            {/if}
 
             <!-- Pricing Calculation Breakdown -->
             <div class="bg-surface-container p-4 rounded-xl space-y-2 text-xs text-on-surface-variant mt-2">
               <div class="flex justify-between">
-                <span>{formatPrice(data.room.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
+                {#if data.room.type === 'hall'}
+                  <span>{formatPrice(data.room.pricePerNight)} FCFA × {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}</span>
+                {:else}
+                  <span>{formatPrice(data.room.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
+                {/if}
                 <span class="font-medium text-deep-charcoal">{formatPrice(totalPrice)} FCFA</span>
               </div>
               <div class="flex justify-between">

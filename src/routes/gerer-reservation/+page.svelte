@@ -137,20 +137,26 @@
             <h4 class="font-label-caps text-xs text-muted-gold tracking-widest uppercase font-semibold">{i18n.t.manageBooking.stayInfoTitle}</h4>
             <div class="space-y-2 text-sm text-on-surface-variant">
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
-                <span>{i18n.t.manageBooking.roomLabel}</span>
+                <span>{room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Salle / Espace :' : 'Venue / Hall:') : i18n.t.manageBooking.roomLabel}</span>
                 <strong class="text-deep-charcoal">{room?.name || 'Suite Royale'}</strong>
               </div>
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
-                <span>{i18n.t.manageBooking.checkInLabel}</span>
+                <span>{room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Début événement :' : 'Event Start:') : i18n.t.manageBooking.checkInLabel}</span>
                 <strong class="text-deep-charcoal">{booking.checkInDate}</strong>
               </div>
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
-                <span>{i18n.t.manageBooking.checkOutLabel}</span>
+                <span>{room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Fin événement :' : 'Event End:') : i18n.t.manageBooking.checkOutLabel}</span>
                 <strong class="text-deep-charcoal">{booking.checkOutDate}</strong>
               </div>
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
-                <span>{i18n.t.manageBooking.roomsCountLabel}</span>
-                <strong class="text-deep-charcoal">{booking.guestsCount} {booking.guestsCount > 1 ? i18n.t.reserve.roomOptionPlural : i18n.t.reserve.roomOptionSingle}</strong>
+                <span>{room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Type / Configuration :' : 'Event Type / Setup:') : i18n.t.manageBooking.roomsCountLabel}</span>
+                <strong class="text-deep-charcoal">
+                  {#if room?.type === 'hall'}
+                    1 salle • {booking.eventType || 'Événement'}
+                  {:else}
+                    {booking.guestsCount} {booking.guestsCount > 1 ? i18n.t.reserve.roomOptionPlural : i18n.t.reserve.roomOptionSingle}
+                  {/if}
+                </strong>
               </div>
             </div>
           </div>
@@ -195,7 +201,16 @@
               {i18n.t.manageBooking.modifyRequestBtn}
             </a>
 
-            <form method="POST" action="?/cancel" onsubmit={(e) => { if (!confirm(i18n.t.manageBooking.cancelConfirmPrompt)) e.preventDefault(); }}>
+            <form method="POST" action="?/cancel" onsubmit={(e) => { 
+              const promptMsg = i18n.locale === 'fr' 
+                ? (room?.type === 'hall' 
+                    ? 'Êtes-vous certain de vouloir annuler cette réservation de salle ? (Remboursement garanti de 95% si annulé au moins 36h avant l’événement).' 
+                    : 'Êtes-vous certain de vouloir annuler cette réservation ? (Remboursement garanti de 95% si annulé au moins 20h avant l’arrivée).')
+                : (room?.type === 'hall'
+                    ? 'Are you sure you want to cancel this hall reservation? (95% refund if cancelled at least 36h before event).'
+                    : 'Are you sure you want to cancel this booking? (95% refund if cancelled at least 20h before arrival).');
+              if (!confirm(promptMsg)) e.preventDefault(); 
+            }}>
               <input type="hidden" name="reference" value={booking.bookingReference} />
               <input type="hidden" name="email" value={booking.guestEmail} />
               <button

@@ -786,8 +786,26 @@
               </div>
 
               <!-- Cancellation & Terms Notice -->
-              <div class="p-4 bg-surface-container text-xs text-on-surface-variant leading-relaxed">
-                {i18n.t.reserve.termsNotice}
+              <div class="p-4 bg-surface-container text-xs text-on-surface-variant leading-relaxed border-l-2 border-muted-gold">
+                {#if selectedRoom?.type === 'hall'}
+                  <p class="font-medium text-deep-charcoal mb-1">
+                    {i18n.locale === 'fr' ? 'Conditions d’annulation de la salle :' : 'Event Hall Cancellation Policy:'}
+                  </p>
+                  <p>
+                    {i18n.locale === 'fr'
+                      ? 'En confirmant cette réservation, vous acceptez nos conditions générales. Les annulations effectuées au moins 36 heures avant l’événement bénéficient d’un remboursement garanti de 95%.'
+                      : 'By confirming this booking, you accept our general terms. Cancellations made at least 36 hours before the event receive a guaranteed 95% refund.'}
+                  </p>
+                {:else}
+                  <p class="font-medium text-deep-charcoal mb-1">
+                    {i18n.locale === 'fr' ? 'Conditions d’annulation de l’hébergement :' : 'Accommodation Cancellation Policy:'}
+                  </p>
+                  <p>
+                    {i18n.locale === 'fr'
+                      ? 'En confirmant cette réservation, vous acceptez nos conditions générales. Les annulations effectuées au moins 20 heures avant l’arrivée (check-in) bénéficient d’un remboursement garanti de 95%.'
+                      : 'By confirming this booking, you accept our general terms. Cancellations made at least 20 hours before arrival (check-in) receive a guaranteed 95% refund.'}
+                  </p>
+                {/if}
               </div>
 
               <!-- Action Buttons -->
@@ -838,34 +856,53 @@
             <div>
               <span class="text-[10px] font-label-caps text-muted-gold block font-semibold">{selectedRoom.category}</span>
               <h3 class="font-headline text-xl text-deep-charcoal font-bold">{selectedRoom.name}</h3>
-              <span class="text-xs text-on-surface-variant">{selectedRoom.sizeSqM} m² • {selectedRoom.bedType}</span>
+              <span class="text-xs text-on-surface-variant">
+                {selectedRoom.sizeSqM} m² • {selectedRoom.type === 'hall' ? (selectedRoom.bedType || 'Modulable') : selectedRoom.bedType}
+              </span>
             </div>
           </div>
 
           <!-- Summary Items -->
           <div class="space-y-3 text-xs text-on-surface-variant">
             <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryCheckIn}</span>
+              <span class="font-medium text-deep-charcoal">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Début événement' : 'Event Start') : i18n.t.reserve.summaryCheckIn}</span>
               <span>{checkIn || i18n.t.reserve.summaryUndefined}</span>
             </div>
             <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryCheckOut}</span>
+              <span class="font-medium text-deep-charcoal">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Fin événement' : 'Event End') : i18n.t.reserve.summaryCheckOut}</span>
               <span>{checkOut || i18n.t.reserve.summaryUndefined}</span>
             </div>
             <div class="flex justify-between">
               <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryDuration}</span>
-              <span>{nights} {i18n.locale === 'fr' ? (nights > 1 ? 'nuits' : 'nuit') : (nights > 1 ? 'nights' : 'night')}</span>
+              <span>
+                {#if selectedRoom.type === 'hall'}
+                  {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}
+                {:else}
+                  {nights} {i18n.locale === 'fr' ? (nights > 1 ? 'nuits' : 'nuit') : (nights > 1 ? 'nights' : 'night')}
+                {/if}
+              </span>
             </div>
-            <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryRooms}</span>
-              <span>{roomsCount} {roomsCount > 1 ? i18n.t.reserve.roomOptionPlural : i18n.t.reserve.roomOptionSingle}</span>
-            </div>
+            {#if selectedRoom.type === 'hall'}
+              <div class="flex justify-between">
+                <span class="font-medium text-deep-charcoal">{i18n.locale === 'fr' ? 'Type d’événement' : 'Event Type'}</span>
+                <span>{eventType || (i18n.locale === 'fr' ? 'Non spécifié' : 'Not specified')}</span>
+              </div>
+            {:else}
+              <div class="flex justify-between">
+                <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryRooms}</span>
+                <span>{roomsCount} {roomsCount > 1 ? i18n.t.reserve.roomOptionPlural : i18n.t.reserve.roomOptionSingle}</span>
+              </div>
+            {/if}
           </div>
 
           <!-- Pricing Breakdown -->
           <div class="border-t border-outline-variant/30 pt-4 space-y-2 text-xs">
             <div class="flex justify-between text-on-surface-variant">
-              <span>{formatPrice(selectedRoom.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
+              {#if selectedRoom.type === 'hall'}
+                <span>{formatPrice(selectedRoom.pricePerNight)} FCFA × {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}</span>
+              {:else}
+                <span>{formatPrice(selectedRoom.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
+              {/if}
               <span class="font-medium text-deep-charcoal">{formatPrice(totalPrice)} FCFA</span>
             </div>
             <div class="flex justify-between text-on-surface-variant">

@@ -63,9 +63,9 @@ export const actions: Actions = {
       return fail(400, { error: 'Données manquantes.' });
     }
 
-    const success = await cancelBooking(reference, email);
-    if (!success) {
-      return fail(400, { error: 'Impossible d’annuler cette réservation.' });
+    const result = await cancelBooking(reference, email);
+    if (!result.success) {
+      return fail(400, { error: result.message || 'Impossible d’annuler cette réservation.' });
     }
 
     const booking = await getBookingByReference(reference, email);
@@ -73,7 +73,8 @@ export const actions: Actions = {
 
     return {
       cancelled: true,
-      message: 'Votre réservation a été annulée avec succès sans aucun frais.',
+      message: result.message,
+      refundPercentage: result.refundPercentage,
       booking,
       room
     };

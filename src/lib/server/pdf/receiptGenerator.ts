@@ -251,20 +251,22 @@ export async function generateBookingReceiptPdf(data: ReceiptData): Promise<Uint
   const roomsCount = booking.guestsCount || 1;
 
   let stayY = boxY + boxHeight - 38;
-  page.drawText(cleanPdfText('Hebergement :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
-  page.drawText(cleanPdfText(room?.name || 'Appartement Superieur'), { x: rightBoxX + 85, y: stayY, size: 8, font: fontBold, color: colorCharcoal });
+  const isHall = room?.type === 'hall';
+  page.drawText(cleanPdfText(isHall ? 'Salle / Espace :' : 'Hebergement :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
+  page.drawText(cleanPdfText(room?.name || (isHall ? 'Salle de Reception' : 'Appartement Superieur')), { x: rightBoxX + 85, y: stayY, size: 8, font: fontBold, color: colorCharcoal });
 
   stayY -= 16;
-  page.drawText(cleanPdfText('Arrivee :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
-  page.drawText(cleanPdfText(`${booking.checkInDate} (des 14h00)`), { x: rightBoxX + 85, y: stayY, size: 8, font: fontRegular, color: colorCharcoal });
+  page.drawText(cleanPdfText(isHall ? 'Debut evenement :' : 'Arrivee :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
+  page.drawText(cleanPdfText(`${booking.checkInDate} ${isHall ? '(des 08h00)' : '(des 14h00)'}`), { x: rightBoxX + 85, y: stayY, size: 8, font: fontRegular, color: colorCharcoal });
 
   stayY -= 16;
-  page.drawText(cleanPdfText('Depart :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
-  page.drawText(cleanPdfText(`${booking.checkOutDate} (jusqu'a 12h00)`), { x: rightBoxX + 85, y: stayY, size: 8, font: fontRegular, color: colorCharcoal });
+  page.drawText(cleanPdfText(isHall ? 'Fin evenement :' : 'Depart :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
+  page.drawText(cleanPdfText(`${booking.checkOutDate} ${isHall ? '(jusqu\'a 23h00)' : '(jusqu\'a 12h00)'}`), { x: rightBoxX + 85, y: stayY, size: 8, font: fontRegular, color: colorCharcoal });
 
   stayY -= 16;
   page.drawText(cleanPdfText('Duree & Qte :'), { x: rightBoxX + 10, y: stayY, size: 8, font: fontRegular, color: colorMuted });
-  page.drawText(cleanPdfText(`${nights} nuit(s) - ${roomsCount} chambre(s)`), { x: rightBoxX + 85, y: stayY, size: 8, font: fontBold, color: colorCharcoal });
+  const durationText = isHall ? `${nights} jour(s) - 1 salle` : `${nights} nuit(s) - ${roomsCount} chambre(s)`;
+  page.drawText(cleanPdfText(durationText), { x: rightBoxX + 85, y: stayY, size: 8, font: fontBold, color: colorCharcoal });
 
   y = boxY - 25;
 
@@ -449,7 +451,10 @@ export async function generateBookingReceiptPdf(data: ReceiptData): Promise<Uint
   });
 
   y -= 11;
-  page.drawText(cleanPdfText("- Annulation & Modification : Annulation sans frais jusqu'a 48 heures avant la date d'arrivee prevue."), {
+  const cancellationPolicyPdfText = room?.type === 'hall'
+    ? "- Annulation & Modification : Remboursement de 95% garanti pour toute annulation effectuee au moins 36 heures avant l'evenement."
+    : "- Annulation & Modification : Remboursement de 95% garanti pour toute annulation effectuee au moins 20 heures avant le check-in.";
+  page.drawText(cleanPdfText(cancellationPolicyPdfText), {
     x: 45,
     y,
     size: 7.5,

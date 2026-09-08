@@ -12,7 +12,8 @@
     data.rooms.filter(room => {
       const matchCat = selectedCategory === 'all' || 
         (selectedCategory === 'appartement' && room.category.toLowerCase().includes('appartement')) ||
-        (selectedCategory === 'chambre' && room.category.toLowerCase().includes('chambre'));
+        (selectedCategory === 'chambre' && room.category.toLowerCase().includes('chambre')) ||
+        (selectedCategory === 'hall' && (room.type === 'hall' || room.category.toLowerCase().includes('salle') || room.category.toLowerCase().includes('salon')));
       
       const matchGuests = selectedGuests === 'all' || 
         room.maxGuests >= parseInt(selectedGuests);
@@ -85,6 +86,12 @@
         >
           {i18n.t.rooms.roomsCat}
         </button>
+        <button
+          onclick={() => (selectedCategory = 'hall')}
+          class="px-3.5 py-1.5 font-label-caps text-[10px] sm:text-[11px] transition-all cursor-pointer {selectedCategory === 'hall' ? 'bg-deep-charcoal text-soft-cream shadow-sm font-bold' : 'bg-surface-container-lowest text-on-surface hover:bg-surface-variant'}"
+        >
+          {i18n.locale === 'fr' ? "Salles d'Événements" : 'Event Halls'}
+        </button>
       </div>
 
       <!-- Capacity Filter -->
@@ -98,6 +105,8 @@
           <option value="2">{i18n.t.rooms.twoPlusGuests}</option>
           <option value="3">{i18n.t.rooms.threePlusGuests}</option>
           <option value="4">{i18n.t.rooms.fourPlusGuests}</option>
+          <option value="20">20+ {i18n.locale === 'fr' ? 'pers. (Salles)' : 'pers. (Halls)'}</option>
+          <option value="50">50+ {i18n.locale === 'fr' ? 'pers. (Grandes salles)' : 'pers. (Grand halls)'}</option>
         </select>
       </div>
     </div>

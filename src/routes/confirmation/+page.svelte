@@ -165,15 +165,23 @@
             </div>
 
             <div>
-              <span class="text-on-surface-variant block text-[11px]">{i18n.t.confirmation.lodging}</span>
+              <span class="text-on-surface-variant block text-[11px]">{data.room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Salle réservée' : 'Reserved Venue') : i18n.t.confirmation.lodging}</span>
               <strong class="text-deep-charcoal text-sm">{data.room?.name || 'Appartement Supérieur'}</strong>
-              <span class="text-[11px] text-on-surface-variant block">{data.booking.guestsCount || 1} chambre(s)</span>
+              <span class="text-[11px] text-on-surface-variant block">
+                {#if data.room?.type === 'hall'}
+                  1 salle • {data.booking.eventType || 'Événement'}
+                {:else}
+                  {data.booking.guestsCount || 1} chambre(s)
+                {/if}
+              </span>
             </div>
 
             <div>
-              <span class="text-on-surface-variant block text-[11px]">{i18n.t.confirmation.stayDates}</span>
+              <span class="text-on-surface-variant block text-[11px]">{data.room?.type === 'hall' ? (i18n.locale === 'fr' ? 'Dates événement' : 'Event Dates') : i18n.t.confirmation.stayDates}</span>
               <strong class="text-deep-charcoal text-sm">{data.booking.checkInDate} → {data.booking.checkOutDate}</strong>
-              <span class="text-[11px] text-on-surface-variant block">Arrivée 14h00 • Départ 12h00</span>
+              <span class="text-[11px] text-on-surface-variant block">
+                {data.room?.type === 'hall' ? 'Accès 08h00 • Clôture 23h00' : 'Arrivée 14h00 • Départ 12h00'}
+              </span>
             </div>
 
             <div>

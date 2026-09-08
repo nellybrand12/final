@@ -26,7 +26,8 @@ if (isConfiguredDatabaseUrl && connectionString) {
     client = postgres(connectionString, {
       max: 10,
       idle_timeout: 20,
-      connect_timeout: 5,
+      connect_timeout: 20,
+      prepare: false, // Essential for Supabase PgBouncer (Transaction mode port 6543)
       onnotice: () => {},
       ssl: connectionString.includes('sslmode=require') || connectionString.includes('supabase.co') || connectionString.includes('pooler.supabase.com') ? 'require' : undefined
     });
@@ -42,10 +43,7 @@ export const db = dbInstance;
 export { dbInstance, isDbHealthy };
 
 function handleDbError(operation: string, err: any) {
-  if (isDbHealthy) {
-    console.warn(`[Database] PostgreSQL query failed during ${operation}. Switched to in-memory store:`, err?.message || err);
-    isDbHealthy = false;
-  }
+  console.warn(`[Database] PostgreSQL query failed during ${operation}:`, err?.cause || err?.message || err);
 }
 
 // Seed / Initial data for Madadjeu Hotel
@@ -160,6 +158,81 @@ export const INITIAL_ROOMS: schema.Room[] = [
     amenities: ['Lit Double Confort', 'Salle de bain avec douche', 'Espace bureau', 'Wi-Fi haut débit', 'Smart TV'],
     status: 'available',
     createdAt: new Date()
+  },
+  {
+    id: 5,
+    slug: 'salle-de-reception-balafon',
+    name: 'Palais des Congrès & Banquets "Le Balafon"',
+    nameFr: 'Palais des Congrès & Banquets "Le Balafon"',
+    nameEn: 'Grand Banquet & Congress Hall "Le Balafon"',
+    type: 'hall',
+    taglineFr: 'Un espace majestueux pour mariages d’exception, galas et conférences de prestige',
+    taglineEn: 'A majestic venue for grand weddings, galas, and prestigious conferences',
+    descriptionFr: 'Vaste salle polyvalente climatisée de 350m² dotée d’une scène d’honneur, régie audiovisuelle complète, sonorisation surround, éclairage scénique modulable et cuisine relais traiteur dédiée. Idéale pour célébrations privées, banquets et séminaires d’envergure.',
+    descriptionEn: 'Spacious 350sqm air-conditioned multipurpose hall featuring a stage of honor, complete AV control booth, surround sound system, modular stage lighting, and a dedicated catering staging kitchen. Ideal for private celebrations, banquets, and major corporate seminars.',
+    category: 'Salle de Réception',
+    pricePerNight: '350000.00',
+    maxGuests: 250,
+    sizeSqM: 350,
+    bedType: 'Configuration Modulable',
+    totalRooms: 1,
+    availableRooms: 1,
+    inUseRooms: 0,
+    imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80'
+    ],
+    amenities: [
+      'Scène d’honneur & pupitre',
+      'Écran de projection géant HD',
+      'Système audio & micros sans fil',
+      'Éclairage d’ambiance LED modulable',
+      'Espace traiteur & cuisine relais',
+      'Climatisation haute puissance',
+      'Parking VIP sécurisé',
+      'Wi-Fi fibre très haut débit'
+    ],
+    status: 'available',
+    createdAt: new Date()
+  },
+  {
+    id: 6,
+    slug: 'salon-vip-etoile',
+    name: 'Salon VIP Diplomatique & Conférences "L\'Étoile"',
+    nameFr: 'Salon VIP Diplomatique & Conférences "L\'Étoile"',
+    nameEn: 'VIP Diplomatic & Executive Lounge "The Star"',
+    type: 'hall',
+    taglineFr: 'Standing présidentiel pour réunions stratégiques, conseils et cocktails d\'affaires',
+    taglineEn: 'Presidential standing for executive board meetings, strategy sessions and business cocktails',
+    descriptionFr: 'Salon exécutif insonorisé de 100m² avec vue panoramique, écran interactif 4K 85", équipement de visioconférence professionnel, table de conférence en marbre noble et acajou, salon lounge privatif et service pause-café haut de gamme.',
+    descriptionEn: 'A soundproofed 100sqm executive lounge with panoramic views, 85" 4K interactive screen, professional video conferencing setup, noble marble and mahogany boardroom table, private lounge area, and tailored catering service.',
+    category: 'Salon de Conférence',
+    pricePerNight: '180000.00',
+    maxGuests: 50,
+    sizeSqM: 100,
+    bedType: 'Configuration Conférence & Lounge',
+    totalRooms: 1,
+    availableRooms: 1,
+    inUseRooms: 0,
+    imageUrl: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80'
+    ],
+    amenities: [
+      'Écran interactif 4K 85"',
+      'Système visioconférence hybride',
+      'Insonorisation acoustique premium',
+      'Table de conférence connectée',
+      'Espace lounge privatif',
+      'Machine à café Nespresso & rafraîchissements',
+      'Assistance technique dédiée'
+    ],
+    status: 'available',
+    createdAt: new Date()
   }
 ];
 
@@ -231,25 +304,33 @@ const inMemoryBookings: schema.Booking[] = [
 const inMemoryMessages: schema.ContactMessage[] = [];
 
 // Service helper methods
-export async function getAllRooms(): Promise<schema.Room[]> {
+export async function getAllRooms(options?: { includeArchived?: boolean }): Promise<schema.Room[]> {
   if (dbInstance && isDbHealthy) {
     try {
       const result = await dbInstance.select().from(schema.rooms);
-      if (result.length > 0) return result;
+      if (result.length > 0) {
+        if (!options?.includeArchived) {
+          return result.filter(r => r.status !== 'archived' && r.status !== 'inactive');
+        }
+        return result;
+      }
     } catch (e) {
       handleDbError('getAllRooms', e);
     }
+  }
+  if (!options?.includeArchived) {
+    return INITIAL_ROOMS.filter(r => r.status !== 'archived' && r.status !== 'inactive');
   }
   return INITIAL_ROOMS;
 }
 
 export async function getRoomBySlug(slug: string): Promise<schema.Room | null> {
-  const allRooms = await getAllRooms();
-  return allRooms.find(r => r.slug === slug || (slug === 'suite-royale' && r.id === 1)) || allRooms[0] || null;
+  const allRooms = await getAllRooms({ includeArchived: true });
+  return allRooms.find(r => r.slug === slug || (slug === 'suite-royale' && r.id === 1)) || null;
 }
 
 export async function getRoomById(id: number): Promise<schema.Room | null> {
-  const allRooms = await getAllRooms();
+  const allRooms = await getAllRooms({ includeArchived: true });
   return allRooms.find(r => r.id === id) || null;
 }
 
@@ -415,7 +496,44 @@ export async function getBookingByReference(reference: string, email: string): P
   ) || null;
 }
 
-export async function cancelBooking(reference: string, email: string): Promise<boolean> {
+export interface CancelBookingResult {
+  success: boolean;
+  message: string;
+  refundPercentage?: number;
+  minHoursRequired?: number;
+  hoursRemaining?: number;
+  isEligibleForRefund?: boolean;
+}
+
+export function evaluateCancellationPolicy(checkInDateStr: string, roomType: string | null | undefined): {
+  hoursRemaining: number;
+  minHoursRequired: number;
+  isEligibleForRefund: boolean;
+  refundPercentage: number;
+  isPast: boolean;
+} {
+  // Check-in date format YYYY-MM-DD, check-in starts at 14:00
+  const [y, m, d] = checkInDateStr.split('-').map(Number);
+  const checkInTime = new Date(y, m - 1, d, 14, 0, 0);
+  const now = new Date();
+  const hoursRemaining = (checkInTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+  const isHall = roomType === 'hall';
+  const minHoursRequired = isHall ? 36 : 20;
+  const isPast = hoursRemaining < 0;
+  const isEligibleForRefund = !isPast && hoursRemaining >= minHoursRequired;
+  const refundPercentage = isEligibleForRefund ? 95 : 0;
+
+  return {
+    hoursRemaining,
+    minHoursRequired,
+    isEligibleForRefund,
+    refundPercentage,
+    isPast
+  };
+}
+
+export async function cancelBooking(reference: string, email: string): Promise<CancelBookingResult> {
   const cleanedRef = reference.trim().toUpperCase();
   const cleanedEmail = email.trim().toLowerCase();
 
@@ -430,8 +548,16 @@ export async function cancelBooking(reference: string, email: string): Promise<b
           )
           .for('update');
         
-        if (!booking || booking.status === 'cancelled' || booking.status === 'completed') {
-          return false;
+        if (!booking) {
+          return { success: false, message: 'Aucune réservation trouvée pour ces identifiants.' };
+        }
+
+        if (booking.status === 'cancelled') {
+          return { success: false, message: 'Cette réservation a déjà été annulée.' };
+        }
+
+        if (booking.status === 'completed') {
+          return { success: false, message: 'Ce séjour est déjà terminé et ne peut plus être annulé.' };
         }
 
         // 2. Fetch room with lock
@@ -440,14 +566,21 @@ export async function cancelBooking(reference: string, email: string): Promise<b
           .where(sql`${schema.rooms.id} = ${booking.roomId}`)
           .for('update');
           
+        const policy = evaluateCancellationPolicy(booking.checkInDate, room?.type);
+        if (policy.isPast) {
+          return {
+            success: false,
+            message: 'La date prévue est déjà passée. L’annulation en ligne n’est plus possible.',
+            hoursRemaining: policy.hoursRemaining,
+            minHoursRequired: policy.minHoursRequired
+          };
+        }
+
         if (room) {
           // 3. Restore inventory
           const restoreCount = room.type === 'hall' ? 1 : booking.guestsCount; 
-          // Note: In createBooking, guestsCount actually stores the roomsCount (if not hall) based on earlier mapping.
-          // Wait, let's just use booking.guestsCount for now, but really we should use the same logic as createBooking.
-          // Since createBooking used data.guestsCount, we will add that back.
           await tx.update(schema.rooms)
-            .set({ availableRooms: sql`${schema.rooms.availableRooms} + ${booking.guestsCount}` })
+            .set({ availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}` })
             .where(sql`${schema.rooms.id} = ${room.id}`);
         }
 
@@ -456,11 +589,23 @@ export async function cancelBooking(reference: string, email: string): Promise<b
           .set({ status: 'cancelled' })
           .where(sql`${schema.bookings.id} = ${booking.id}`);
           
-        return true;
+        const isHall = room?.type === 'hall';
+        const message = policy.isEligibleForRefund
+          ? `Votre réservation a été annulée avec succès. Conformément à notre politique (${isHall ? '≥ 36h pour les salles' : '≥ 20h pour les chambres'}), un remboursement de 95% est accordé.`
+          : `Votre réservation a été annulée. Toutefois, l’annulation intervenant à moins de ${policy.minHoursRequired}h avant ${isHall ? 'l’événement' : 'le séjour'}, aucun remboursement n’est applicable selon nos conditions générales.`;
+
+        return {
+          success: true,
+          message,
+          refundPercentage: policy.refundPercentage,
+          minHoursRequired: policy.minHoursRequired,
+          hoursRemaining: policy.hoursRemaining,
+          isEligibleForRefund: policy.isEligibleForRefund
+        };
       });
     } catch (e) {
       handleDbError('cancelBooking', e);
-      return false;
+      return { success: false, message: 'Une erreur est survenue lors de l’annulation de votre réservation.' };
     }
   }
 
@@ -469,9 +614,30 @@ export async function cancelBooking(reference: string, email: string): Promise<b
     b.bookingReference.toUpperCase() === cleanedRef && 
     b.guestEmail.toLowerCase() === cleanedEmail
   );
-  if (!booking || booking.status === 'cancelled' || booking.status === 'completed') return false;
+  if (!booking) return { success: false, message: 'Aucune réservation trouvée.' };
+  if (booking.status === 'cancelled') return { success: false, message: 'Cette réservation a déjà été annulée.' };
+  if (booking.status === 'completed') return { success: false, message: 'Ce séjour est déjà terminé.' };
+
+  const room = INITIAL_ROOMS.find(r => r.id === booking.roomId);
+  const policy = evaluateCancellationPolicy(booking.checkInDate, room?.type);
+  if (policy.isPast) {
+    return { success: false, message: 'La date prévue est déjà passée.' };
+  }
+
   booking.status = 'cancelled';
-  return true;
+  const isHall = room?.type === 'hall';
+  const message = policy.isEligibleForRefund
+    ? `Votre réservation a été annulée avec succès. Conformément à notre politique (${isHall ? '≥ 36h pour les salles' : '≥ 20h pour les chambres'}), un remboursement de 95% est accordé.`
+    : `Votre réservation a été annulée. Délai inférieur à ${policy.minHoursRequired}h, aucun remboursement applicable.`;
+
+  return {
+    success: true,
+    message,
+    refundPercentage: policy.refundPercentage,
+    minHoursRequired: policy.minHoursRequired,
+    hoursRemaining: policy.hoursRemaining,
+    isEligibleForRefund: policy.isEligibleForRefund
+  };
 }
 
 export async function createContactMessage(data: Omit<schema.ContactMessage, 'id' | 'createdAt'>): Promise<schema.ContactMessage> {

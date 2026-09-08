@@ -130,18 +130,15 @@ export async function seedDatabase() {
       console.log('[Seed] Admin user already exists.');
     }
 
-    // Seed Rooms
+    // Seed Rooms & Event Halls
     const existingRooms = await dbInstance.select().from(schema.rooms);
-    if (existingRooms.length === 0) {
-      await dbInstance.insert(schema.rooms).values(
-        INITIAL_ROOMS.map(r => {
-          const { id, createdAt, ...rest } = r;
-          return rest;
-        })
-      );
-      console.log('[Seed] Rooms seeded.');
-    } else {
-      console.log('[Seed] Rooms already exist.');
+    for (const r of INITIAL_ROOMS) {
+      const exists = existingRooms.some(er => er.slug === r.slug);
+      if (!exists) {
+        const { id, createdAt, ...rest } = r;
+        await dbInstance.insert(schema.rooms).values(rest);
+        console.log(`[Seed] Seeded room/hall: ${r.name}`);
+      }
     }
 
     // Seed FAQs
