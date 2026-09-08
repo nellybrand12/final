@@ -32,7 +32,7 @@
   <div class="max-w-4xl mx-auto px-4 md:px-8">
     <!-- Header Hero Intro -->
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-2 block uppercase font-semibold">
         {i18n.t.faq.badge}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-4">

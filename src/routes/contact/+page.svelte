@@ -20,7 +20,7 @@
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Hero Intro -->
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-3 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-3 block uppercase font-semibold">
         {i18n.t.contact.badge}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-6">
@@ -189,7 +189,7 @@
           <p class="text-xs text-on-surface-variant leading-relaxed">
             {i18n.t.contact.addressText}
           </p>
-          <a href="/location" class="font-label-caps text-[10px] text-muted-gold hover:text-deep-charcoal transition-colors block font-semibold">
+          <a href="/location" class="font-label-caps text-[10px] text-warm-taupe hover:text-deep-charcoal transition-colors block font-semibold">
             {i18n.t.contact.viewMapLink} →
           </a>
         </div>

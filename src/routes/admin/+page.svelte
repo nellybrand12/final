@@ -17,7 +17,7 @@
         {
           label: 'Revenue (FCFA)',
           data: chartData.map(d => d.revenue),
-          backgroundColor: '#1E293B', // deep-charcoal
+          backgroundColor: '#14110F', // deep-charcoal
           borderRadius: 4,
         }
       ]

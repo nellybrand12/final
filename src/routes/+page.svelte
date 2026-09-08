@@ -124,11 +124,11 @@
     <!-- Cinematic Background with Luxury Vignette -->
     <div class="absolute inset-0 z-0 bg-deep-charcoal">
       <div
-        class="absolute inset-0 bg-cover bg-center opacity-65 mix-blend-luminosity scale-105 transform origin-center transition-transform duration-[20s] ease-out hover:scale-100"
-        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-')"
+        class="absolute inset-0 bg-cover bg-center opacity-100 scale-105 transform origin-center transition-transform duration-[20s] ease-out hover:scale-100"
+        style="background-image: url('/images/Hero-Image.jpg')"
       ></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal via-deep-charcoal/55 to-deep-charcoal/35"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(26,26,26,0.85)_100%)]"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/75 via-deep-charcoal/25 to-deep-charcoal/10"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(26,26,26,0.18)_100%)]"></div>
     </div>
 
     <!-- ================= ANIMATED HERO-TO-NAVBAR DOCKING LOGO ================= -->
@@ -163,18 +163,18 @@
         : 'opacity-0 -translate-y-12 scale-95 pointer-events-none'}"
     >
       <div class="inline-flex items-center gap-3 mb-3">
-        <span class="w-8 sm:w-10 h-[1px] bg-muted-gold/70"></span>
-        <span class="font-label-caps text-muted-gold tracking-[0.28em] text-[10px] sm:text-[11px]">
+        <span class="w-8 sm:w-10 h-[1px] bg-deep-maroon/70"></span>
+        <span class="font-label-caps text-warm-taupe tracking-[0.28em] text-[10px] sm:text-[11px]">
           {i18n.t.hero.locationTag}
         </span>
-        <span class="w-8 sm:w-10 h-[1px] bg-muted-gold/70"></span>
+        <span class="w-8 sm:w-10 h-[1px] bg-deep-maroon/70"></span>
       </div>
 
       <h1 class="font-display-lg text-soft-cream uppercase mb-3 max-w-4xl mx-auto leading-[1.15] tracking-wider drop-shadow-2xl text-xl sm:text-2xl md:text-3xl">
         {i18n.t.hero.initialTitle}
       </h1>
 
-      <p class="font-label-caps text-[9px] sm:text-[10px] text-muted-gold/90 max-w-2xl mx-auto tracking-[0.24em] uppercase font-medium">
+      <p class="font-label-caps text-[9px] sm:text-[10px] text-warm-taupe/90 max-w-2xl mx-auto tracking-[0.24em] uppercase font-medium">
         {i18n.t.hero.initialSubtitle}
       </p>
     </div>
@@ -186,7 +186,7 @@
         : 'opacity-0 translate-y-16 scale-95 pointer-events-none'}"
     >
       <!-- Top Tagline -->
-      <span class="inline-block font-label-caps text-muted-gold tracking-[0.25em] text-[10px] sm:text-[11px] mb-3 sm:mb-4 uppercase">
+      <span class="inline-block font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] mb-3 sm:mb-4 uppercase">
         {i18n.t.hero.welcomeTag}
       </span>
 
@@ -232,7 +232,7 @@
         <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col items-start gap-4 sm:gap-6">
           <div class="flex items-center gap-3">
             <span class="w-8 h-[1.5px] bg-muted-gold"></span>
-            <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
+            <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
               {i18n.t.invitation.badge}
             </span>
           </div>
@@ -265,7 +265,7 @@
             <!-- Main Portrait Feature Image -->
             <div class="relative z-10 aspect-[4/5] overflow-hidden shadow-2xl bg-deep-charcoal border border-outline-variant/30 group">
               <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBGPsJh3GmBgTdqbmMJ1RSGU5jUS2thrqklnqctH-6CwyCH4jIzUqhfMNCF1mPbVKuyE4x8pL5R5L13_0pmWa34qfz-85J_Srsv_tUq6zURhhsvNZhPbaayWF0WesF2JUReQJdrYZ0xRoyNGCHGY_6MSjBaKxHrqyWcZYxnF2ESOsWAOkmXLH61Y2tGynskpfCMXITsgKYWaFAyIxUfJ0XfQPf0RADhrseRt9ebBeEy4M-MxZL_TM1"
+                src="/images/room-picture.png"
                 alt={i18n.t.invitation.imageAlt}
                 class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
@@ -322,10 +322,10 @@
   </section>
 
   <!-- ================= 4. FULL-WIDTH CAROUSEL: "WHAT SETS US APART" (100vw) ================= -->
-  <section class="relative w-screen left-1/2 -translate-x-1/2 bg-neutral-950 text-soft-cream py-16 md:py-24 overflow-hidden">
+  <section class="relative w-screen left-1/2 -translate-x-1/2 bg-deep-charcoal text-soft-cream py-16 md:py-24 overflow-hidden">
     <!-- Header Title Overlay -->
     <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16 text-center mb-10 relative z-20">
-      <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] uppercase block mb-2">
+      <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] uppercase block mb-2">
         {i18n.t.distinction.badge}
       </span>
       <h2 class="font-display-lg text-soft-cream mb-3">
@@ -350,7 +350,7 @@
           class="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-105"
           style="background-image: url('{slide.imageUrl}')"
         ></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/40"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal via-deep-charcoal/70 to-deep-charcoal/40"></div>
         <div class="absolute inset-0 bg-black/40"></div>
 
         <!-- Centered Overlay Editorial Content -->
@@ -434,7 +434,7 @@
         <div class="max-w-2xl">
           <div class="flex items-center gap-3 mb-2">
             <span class="w-6 h-[1.5px] bg-muted-gold"></span>
-            <span class="font-label-caps text-muted-gold tracking-widest text-[10px] uppercase font-semibold">{i18n.t.showcase.badge}</span>
+            <span class="font-label-caps text-warm-taupe tracking-widest text-[10px] uppercase font-semibold">{i18n.t.showcase.badge}</span>
           </div>
           <h2 class="font-display-lg text-deep-charcoal leading-tight">
             {i18n.t.showcase.heading}
@@ -463,10 +463,10 @@
   </section>
 
   <!-- ================= 6. PRIME GEOGRAPHICAL LOCATION — WALLACE-STYLE PEEKING CAROUSEL ================= -->
-  <section class="relative w-full bg-neutral-950 text-soft-cream py-16 md:py-24 overflow-hidden border-t border-outline-variant/30">
+  <section class="relative w-full bg-deep-charcoal text-soft-cream py-16 md:py-24 overflow-hidden border-t border-outline-variant/30">
     <!-- Header Title Overlay -->
     <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 md:mb-12 relative z-20">
-      <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] uppercase block mb-2 font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] uppercase block mb-2 font-semibold">
         {i18n.t.neighborhoods.badge}
       </span>
       <h2 class="font-display-lg text-soft-cream mb-3">
@@ -507,7 +507,7 @@
               class="w-full h-full object-cover object-center scale-105 group-hover:scale-110 transition-transform duration-700"
               loading="lazy"
             />
-            <div class="absolute inset-0 bg-neutral-950/40 group-hover:bg-neutral-950/15 transition-colors"></div>
+            <div class="absolute inset-0 bg-deep-charcoal/40 group-hover:bg-deep-charcoal/15 transition-colors"></div>
           </button>
 
           <!-- PLAIN LEFT CHEVRON ICON (< in gap, Desktop only, hidden on mobile) -->
@@ -525,7 +525,7 @@
             class="relative overflow-hidden shrink-0 z-20 transition-all duration-500 ease-out
                    w-full md:w-[60vw] lg:w-[56vw] max-w-[960px]
                    h-[420px] sm:h-[480px] md:h-[540px] lg:h-[590px]
-                   shadow-2xl bg-neutral-900 border border-white/10"
+                   shadow-2xl bg-deep-charcoal border border-white/10"
           >
             <img
               src={activeSlide.imageUrl}
@@ -542,7 +542,7 @@
                        text-center animate-slide-up-box z-30 pointer-events-auto"
               >
                 <!-- Badge / Category Label -->
-                <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[9px] sm:text-[10px] uppercase font-bold block mb-1.5">
+                <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[9px] sm:text-[10px] uppercase font-bold block mb-1.5">
                   {i18n.t.neighborhoods.badge}
                 </span>
 
@@ -600,7 +600,7 @@
               class="w-full h-full object-cover object-center scale-105 group-hover:scale-110 transition-transform duration-700"
               loading="lazy"
             />
-            <div class="absolute inset-0 bg-neutral-950/40 group-hover:bg-neutral-950/15 transition-colors"></div>
+            <div class="absolute inset-0 bg-deep-charcoal/40 group-hover:bg-deep-charcoal/15 transition-colors"></div>
           </button>
 
         </div>
@@ -639,7 +639,7 @@
       <div class="mb-10 md:mb-14">
         <div class="flex items-center gap-3 mb-2">
           <span class="w-8 h-[1.5px] bg-muted-gold"></span>
-          <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
+          <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
             {i18n.t.testimonials.badge}
           </span>
         </div>

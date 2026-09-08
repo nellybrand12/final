@@ -77,7 +77,7 @@
 
       <!-- Title & Headline -->
       <div>
-        <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+        <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-2 block uppercase font-semibold">
           {i18n.t.confirmation.badge}
         </span>
         <h1 class="font-display-lg text-deep-charcoal mb-3">

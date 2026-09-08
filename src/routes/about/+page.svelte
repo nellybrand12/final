@@ -11,7 +11,7 @@
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Hero Intro -->
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-3 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-3 block uppercase font-semibold">
         {i18n.t.about.badge}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-6">
@@ -33,7 +33,7 @@
       </div>
 
       <div class="lg:col-span-6 space-y-4">
-        <span class="font-label-caps text-muted-gold tracking-widest text-[10px] sm:text-[11px] block uppercase font-semibold">{i18n.t.about.signatureBadge}</span>
+        <span class="font-label-caps text-warm-taupe tracking-widest text-[10px] sm:text-[11px] block uppercase font-semibold">{i18n.t.about.signatureBadge}</span>
         <h2 class="font-display-lg text-deep-charcoal text-xl sm:text-2xl md:text-3xl">
           {i18n.t.about.signatureTitle}
         </h2>

@@ -22,7 +22,7 @@
     
     <!-- Highlight Tag -->
     {#if highlight}
-      <span class="font-label-caps text-[10px] text-muted-gold tracking-widest uppercase font-semibold block mb-1.5">
+      <span class="font-label-caps text-[10px] text-warm-taupe tracking-widest uppercase font-semibold block mb-1.5">
         {highlight}
       </span>
     {/if}

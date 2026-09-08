@@ -31,7 +31,7 @@
   <div class="max-w-4xl mx-auto px-4 md:px-8">
     <!-- Header Title -->
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-2 block uppercase font-semibold">
         {i18n.t.manageBooking.badge}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-3">
@@ -134,7 +134,7 @@
         <!-- Details Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="space-y-4">
-            <h4 class="font-label-caps text-xs text-muted-gold tracking-widest uppercase font-semibold">{i18n.t.manageBooking.stayInfoTitle}</h4>
+            <h4 class="font-label-caps text-xs text-warm-taupe tracking-widest uppercase font-semibold">{i18n.t.manageBooking.stayInfoTitle}</h4>
             <div class="space-y-2 text-sm text-on-surface-variant">
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
                 <span>{i18n.t.manageBooking.roomLabel}</span>
@@ -156,7 +156,7 @@
           </div>
 
           <div class="space-y-4">
-            <h4 class="font-label-caps text-xs text-muted-gold tracking-widest uppercase font-semibold">{i18n.t.manageBooking.guestInfoTitle}</h4>
+            <h4 class="font-label-caps text-xs text-warm-taupe tracking-widest uppercase font-semibold">{i18n.t.manageBooking.guestInfoTitle}</h4>
             <div class="space-y-2 text-sm text-on-surface-variant">
               <div class="flex justify-between border-b border-outline-variant/20 py-2">
                 <span>{i18n.t.manageBooking.nameLabel}</span>

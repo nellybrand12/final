@@ -322,7 +322,7 @@
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Title -->
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-2 block uppercase font-semibold">
         {i18n.t.reserve.tag}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-3">
@@ -427,7 +427,7 @@
                       </div>
                       <div class="text-right">
                         <span class="font-headline text-base sm:text-lg font-bold text-deep-charcoal">{formatPrice(room.pricePerNight)}</span>
-                        <span class="text-[10px] font-label-caps text-muted-gold block">{i18n.t.reserve.perNight}</span>
+                        <span class="text-[10px] font-label-caps text-warm-taupe block">{i18n.t.reserve.perNight}</span>
                       </div>
                     </button>
                   {/each}
@@ -836,7 +836,7 @@
           <div class="flex items-center gap-4 border-b border-outline-variant/30 pb-4">
             <img src={selectedRoom.imageUrl} alt={selectedRoom.name} class="w-20 h-16 object-cover" />
             <div>
-              <span class="text-[10px] font-label-caps text-muted-gold block font-semibold">{selectedRoom.category}</span>
+              <span class="text-[10px] font-label-caps text-warm-taupe block font-semibold">{selectedRoom.category}</span>
               <h3 class="font-headline text-xl text-deep-charcoal font-bold">{selectedRoom.name}</h3>
               <span class="text-xs text-on-surface-variant">{selectedRoom.sizeSqM} m² • {selectedRoom.bedType}</span>
             </div>

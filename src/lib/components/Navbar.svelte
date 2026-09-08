@@ -38,7 +38,7 @@
 <header
   class="fixed top-0 left-0 w-full z-40 transition-all duration-500 ease-in-out {isScrolled ||
   !isHomePage
-    ? 'bg-[#111111] border-b border-white/10 shadow-2xl py-0'
+    ? 'bg-deep-charcoal/92 backdrop-blur-[10px] sm:backdrop-blur-[16px] border-b border-muted-gold/25 shadow-2xl py-0'
     : 'bg-transparent border-b border-transparent py-2 sm:py-3 shadow-none'}"
 >
   <div
@@ -49,24 +49,24 @@
       <button
         onclick={() => (isDrawerOpen = true)}
         type="button"
-        class="group flex items-center gap-3 py-2 px-1 text-soft-cream hover:text-muted-gold transition-all duration-300 cursor-pointer focus:outline-none"
+        class="group flex items-center gap-3 py-2 px-1 text-warm-taupe hover:text-muted-gold transition-all duration-300 cursor-pointer focus:outline-none"
         aria-label={i18n.t.nav.menu}
       >
         <!-- Sandwich Icon -->
         <div class="flex flex-col justify-center gap-1.5 w-6 h-5">
           <span
-            class="w-full h-[2px] bg-muted-gold transition-all duration-300 group-hover:w-4 group-hover:bg-soft-cream"
+            class="w-full h-[2px] bg-current transition-all duration-300 group-hover:w-4"
           ></span>
           <span
-            class="w-full h-[2px] bg-soft-cream transition-all duration-300 group-hover:bg-muted-gold"
+            class="w-full h-[2px] bg-current transition-all duration-300"
           ></span>
           <span
-            class="w-3/4 h-[2px] bg-muted-gold transition-all duration-300 group-hover:w-full group-hover:bg-soft-cream"
+            class="w-3/4 h-[2px] bg-current transition-all duration-300 group-hover:w-full"
           ></span>
         </div>
         <!-- Menu Text -->
         <span
-          class="font-label-caps text-xs tracking-[0.25em] font-semibold text-soft-cream group-hover:text-muted-gold transition-colors hidden sm:inline-block"
+          class="font-label-caps text-xs tracking-[0.25em] font-semibold text-current transition-colors hidden sm:inline-block"
         >
           {i18n.t.nav.menu}
         </span>
@@ -152,7 +152,7 @@
 
 <!-- ================= FLOATING LANGUAGE TOGGLE (Bottom-Left Corner - Mobile View Only) ================= -->
 <div
-  class="fixed bottom-6 left-5 z-40 sm:hidden flex items-center bg-neutral-950/90 backdrop-blur-md p-1 border border-white/20 shadow-2xl"
+  class="fixed bottom-6 left-5 z-40 sm:hidden flex items-center bg-deep-charcoal/90 backdrop-blur-md p-1 border border-white/20 shadow-2xl"
   role="region"
   aria-label="Sélection de la langue / Language selector"
 >
@@ -193,7 +193,7 @@
 
   <!-- Slide-out Drawer Panel -->
   <div
-    class="fixed top-0 left-0 bottom-0 w-full sm:w-[420px] md:w-[460px] z-50 bg-neutral-950/98 backdrop-blur-2xl border-r border-white/10 shadow-2xl flex flex-col justify-between p-6 sm:p-8 overflow-y-auto transition-transform duration-500 ease-out transform translate-x-0"
+    class="fixed top-0 left-0 bottom-0 w-full sm:w-[420px] md:w-[460px] z-50 bg-deep-charcoal/98 backdrop-blur-2xl border-r border-white/10 shadow-2xl flex flex-col justify-between p-6 sm:p-8 overflow-y-auto transition-transform duration-500 ease-out transform translate-x-0"
     role="dialog"
     aria-modal="true"
     aria-label="Navigation Menu"
@@ -310,7 +310,7 @@
         class="text-xs text-soft-cream/60 flex flex-col gap-1.5 leading-relaxed"
       >
         <span
-          class="font-label-caps text-[10px] text-muted-gold tracking-widest uppercase"
+          class="font-label-caps text-[10px] text-warm-taupe tracking-widest uppercase"
         >
           {i18n.t.nav.addressTitle}
         </span>

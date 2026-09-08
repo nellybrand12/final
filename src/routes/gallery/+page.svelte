@@ -43,7 +43,7 @@
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Hero Intro -->
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-2 block uppercase font-semibold">
         {i18n.t.gallery.badge}
       </span>
       <h1 class="font-display-lg text-deep-charcoal mb-4">
@@ -99,7 +99,7 @@
           <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/90 via-deep-charcoal/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
           
           <div class="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end text-soft-cream">
-            <span class="font-label-caps text-[10px] text-muted-gold tracking-widest uppercase mb-1">
+            <span class="font-label-caps text-[10px] text-warm-taupe tracking-widest uppercase mb-1">
               {item.category}
             </span>
             <h3 class="font-headline text-lg sm:text-xl text-soft-cream group-hover:text-muted-gold transition-colors font-bold mb-1">
@@ -159,7 +159,7 @@
       <div class="text-soft-cream space-y-1">
         <h3 class="font-headline text-xl sm:text-2xl text-soft-cream font-bold">{currentItem.title}</h3>
         <p class="font-body-md text-xs sm:text-sm text-soft-cream/70 max-w-xl">{currentItem.description}</p>
-        <span class="font-label-caps text-xs text-muted-gold tracking-widest block pt-1">
+        <span class="font-label-caps text-xs text-warm-taupe tracking-widest block pt-1">
           {lightboxIndex + 1} {i18n.t.gallery.ofCount} {filteredItems.length}
         </span>
       </div>

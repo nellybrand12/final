@@ -75,7 +75,7 @@
           <span class="font-headline text-2xl sm:text-3xl font-bold text-deep-charcoal">
             {formatPrice(data.room.pricePerNight)}
           </span>
-          <span class="text-xs font-label-caps text-muted-gold">FCFA</span>
+          <span class="text-xs font-label-caps text-warm-taupe">FCFA</span>
         </div>
         <span class="text-[10px] text-on-surface-variant">{i18n.t.roomDetails.servicesTax} {i18n.t.reserve.includedLabel.toLowerCase()}</span>
       </div>
@@ -167,7 +167,7 @@
 
         <!-- Policies -->
         <div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30 space-y-3">
-          <h4 class="font-label-caps text-[11px] text-muted-gold tracking-widest uppercase">{i18n.locale === 'fr' ? 'Informations Pratiques' : 'Practical Information'}</h4>
+          <h4 class="font-label-caps text-[11px] text-warm-taupe tracking-widest uppercase">{i18n.locale === 'fr' ? 'Informations Pratiques' : 'Practical Information'}</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-on-surface-variant">
             <div>
               <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckIn}</strong>
@@ -193,7 +193,7 @@
       <div class="lg:col-span-5">
         <div class="sticky top-28 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-xl p-6 md:p-8">
           <div class="border-b border-outline-variant/30 pb-6 mb-6">
-            <span class="text-xs font-label-caps text-muted-gold block mb-1 font-semibold">{i18n.t.reserve.tag}</span>
+            <span class="text-xs font-label-caps text-warm-taupe block mb-1 font-semibold">{i18n.t.reserve.tag}</span>
             <h3 class="font-headline text-2xl text-deep-charcoal font-bold">{i18n.t.roomDetails.bookingWidgetTitle}</h3>
             <p class="text-xs text-on-surface-variant mt-1">{i18n.t.reserve.subheading}</p>
           </div>

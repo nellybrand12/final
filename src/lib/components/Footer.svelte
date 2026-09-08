@@ -35,7 +35,7 @@
 
       <!-- Address & Info -->
       <div class="flex flex-col gap-3">
-        <h4 class="font-label-caps text-muted-gold tracking-widest text-[11px] uppercase">{i18n.t.footer.addressTitle}</h4>
+        <h4 class="font-label-caps text-warm-taupe tracking-widest text-[11px] uppercase">{i18n.t.footer.addressTitle}</h4>
         <p class="font-body-md text-xs sm:text-[13px] text-soft-cream/80 leading-relaxed whitespace-pre-line">
           {#if settings.contact_address}
             {settings.contact_address}
@@ -62,7 +62,7 @@
 
       <!-- Quick Links & Social -->
       <div class="flex flex-col gap-3">
-        <h4 class="hidden md:block font-label-caps text-muted-gold tracking-widest text-[11px] uppercase">{i18n.t.footer.navigation}</h4>
+        <h4 class="hidden md:block font-label-caps text-warm-taupe tracking-widest text-[11px] uppercase">{i18n.t.footer.navigation}</h4>
         <ul class="hidden md:flex flex-col gap-1.5 text-xs sm:text-[13px] text-soft-cream/75">
           <li><a href="/" class="hover:text-muted-gold transition-colors">{i18n.t.nav.home}</a></li>
           <li><a href="/rooms" class="hover:text-muted-gold transition-colors">{i18n.t.nav.rooms}</a></li>

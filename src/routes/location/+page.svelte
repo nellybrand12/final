@@ -15,11 +15,11 @@
     <!-- ================= HEADER HERO INTRO ================= -->
     <div class="text-center max-w-3xl mx-auto mb-16 md:mb-20">
       <div class="inline-flex items-center gap-3 mb-4">
-        <span class="w-8 h-[1px] bg-muted-gold"></span>
-        <span class="font-label-caps text-muted-gold tracking-[0.25em] text-xs uppercase">
+        <span class="w-8 h-[1px] bg-deep-maroon"></span>
+        <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-xs uppercase">
           {i18n.t.location.badge}
         </span>
-        <span class="w-8 h-[1px] bg-muted-gold"></span>
+        <span class="w-8 h-[1px] bg-deep-maroon"></span>
       </div>
 
       <h1 class="font-display-lg text-deep-charcoal mb-6 leading-tight">
@@ -41,7 +41,7 @@
             <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal font-bold">
               {i18n.t.location.transitTitle}
             </h2>
-            <span class="text-[10px] font-label-caps text-muted-gold tracking-widest mt-1 block">
+            <span class="text-[10px] font-label-caps text-warm-taupe tracking-widest mt-1 block">
               Yaoundé • Secteur Etoug-Ebe
             </span>
           </div>
@@ -117,7 +117,7 @@
           ></iframe>
 
           <!-- Map Coordinates & Details Overlay -->
-          <div class="absolute bottom-4 left-4 right-4 bg-neutral-950/95 backdrop-blur-md p-4 border border-white/15 text-soft-cream flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xl">
+          <div class="absolute bottom-4 left-4 right-4 bg-deep-charcoal/95 backdrop-blur-md p-4 border border-white/15 text-soft-cream flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xl">
             <div>
               <strong class="text-xs font-headline font-bold text-soft-cream block">
                 Face Garde Présidentielle
@@ -141,7 +141,7 @@
         <!-- Address Card Details -->
         <div class="bg-surface-container-lowest border border-outline-variant/35 p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="space-y-1">
-            <span class="font-label-caps text-[10px] text-muted-gold tracking-widest uppercase block">
+            <span class="font-label-caps text-[10px] text-warm-taupe tracking-widest uppercase block">
               {i18n.t.location.addressTitle}
             </span>
             <strong class="font-body-md text-xs sm:text-sm text-deep-charcoal block">

@@ -46,11 +46,11 @@
     <!-- ================= 1. HERO HEADER INTRO ================= -->
     <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24">
       <div class="inline-flex items-center gap-3 mb-4">
-        <span class="w-8 h-[1px] bg-muted-gold"></span>
-        <span class="font-label-caps text-muted-gold tracking-[0.25em] text-xs uppercase">
+        <span class="w-8 h-[1px] bg-deep-maroon"></span>
+        <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-xs uppercase">
           {i18n.t.tour.badge}
         </span>
-        <span class="w-8 h-[1px] bg-muted-gold"></span>
+        <span class="w-8 h-[1px] bg-deep-maroon"></span>
       </div>
 
       <h1 class="font-display-lg text-deep-charcoal mb-6 leading-tight">
@@ -104,7 +104,7 @@
             <!-- Category Tag -->
             <div class="flex items-center gap-2">
               <span class="w-4 h-[1.5px] bg-muted-gold"></span>
-              <span class="font-label-caps text-muted-gold text-[10px] sm:text-[11px] tracking-widest uppercase font-semibold">
+              <span class="font-label-caps text-warm-taupe text-[10px] sm:text-[11px] tracking-widest uppercase font-semibold">
                 {location.tag}
               </span>
             </div>
@@ -149,7 +149,7 @@
       <div class="absolute -right-16 -bottom-16 w-80 h-80 bg-muted-gold/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
         <div class="max-w-2xl space-y-2.5">
-          <span class="font-label-caps text-muted-gold tracking-widest text-[10px] uppercase">
+          <span class="font-label-caps text-warm-taupe tracking-widest text-[10px] uppercase">
             Hôtel Résidence Madadjeu • Yaoundé
           </span>
           <h3 class="font-headline text-xl sm:text-2xl md:text-3xl text-soft-cream font-normal">
@@ -228,7 +228,7 @@
         class="max-h-[68vh] w-auto max-w-full object-contain rounded-xl shadow-2xl border border-white/10"
       />
       <div class="text-soft-cream space-y-1.5 px-4">
-        <span class="font-label-caps text-xs text-muted-gold tracking-widest uppercase block">
+        <span class="font-label-caps text-xs text-warm-taupe tracking-widest uppercase block">
           {current.tag} • {lightboxIndex + 1} {i18n.t.tour.photoOf} {locations.length}
         </span>
         <h3 class="font-headline text-xl sm:text-2xl text-soft-cream font-medium">
