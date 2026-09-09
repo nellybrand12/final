@@ -4,8 +4,13 @@ import {
   verifyCinetPayHmac,
   checkCinetPayTransaction,
   confirmCinetPayBooking,
-  failCinetPayBooking
+  failCinetPayBooking,
+  confirmCinetPayExtension,
+  failCinetPayExtension
 } from '$lib/server/payments/cinetpay';
+import { db, isDbHealthy } from '$lib/server/db';
+import * as schema from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
@@ -53,6 +58,26 @@ export const POST: RequestHandler = async ({ request }) => {
     );
 
     if (verification.status === 'ACCEPTED') {
+      // Check if this transaction belongs to a booking extension first
+      let isExtension = false;
+      if (db && isDbHealthy) {
+        const [ext] = await db.select({ id: schema.bookingExtensions.id })
+          .from(schema.bookingExtensions)
+          .where(eq(schema.bookingExtensions.paymentTransactionId, transactionId))
+          .limit(1);
+        isExtension = Boolean(ext);
+      }
+
+      if (isExtension) {
+        const result = await confirmCinetPayExtension(transactionId);
+        if (!result.success) {
+          console.error(`[CinetPay Webhook] Failed to confirm extension: ${result.error}`);
+          return json({ success: false, error: result.error }, { status: 500 });
+        }
+        console.log(`[CinetPay Webhook] Extension successfully confirmed for transaction ${transactionId}`);
+        return json({ success: true, message: 'Extension confirmed' });
+      }
+
       const result = await confirmCinetPayBooking(transactionId, {
         paymentMethod: verification.paymentMethod || 'cinetpay',
         operatorId: verification.operatorId
@@ -66,13 +91,16 @@ export const POST: RequestHandler = async ({ request }) => {
       console.log(`[CinetPay Webhook] Reservation successfully confirmed for transaction ${transactionId}`);
       return json({ success: true, message: 'Reservation confirmed' });
     } else if (verification.status === 'WAITING_FOR_CUSTOMER') {
-      // Leave reservation as pending_payment (do NOT fail it)
+      // Leave reservation as pending (do NOT fail it)
       console.log(`[CinetPay Webhook] Transaction ${transactionId} is waiting for customer validation`);
       return json({ success: true, message: 'Transaction pending customer validation' });
     } else if (verification.status === 'REFUSED') {
-      // Transaction definitively refused or failed
-      await failCinetPayBooking(transactionId);
-      console.log(`[CinetPay Webhook] Transaction ${transactionId} was refused/failed. Marked reservation as failed.`);
+      // Try to fail an extension first; if that finds nothing, fail the booking
+      const extFailed = await failCinetPayExtension(transactionId);
+      if (!extFailed) {
+        await failCinetPayBooking(transactionId);
+      }
+      console.log(`[CinetPay Webhook] Transaction ${transactionId} was refused/failed.`);
       return json({ success: true, message: 'Transaction marked as failed' });
     } else {
       console.warn(`[CinetPay Webhook] Unrecognized transaction status: ${verification.status}`);

@@ -4,16 +4,91 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  let reference = $state('');
-  let email = $state('');
+  let name = $state('');
+  let phone = $state('');
 
   $effect(() => {
-    if (data.searchedRef) reference = data.searchedRef;
-    if (data.searchedEmail) email = data.searchedEmail;
+    if (data.searchedName) name = data.searchedName;
+    if (data.searchedPhone) phone = data.searchedPhone;
   });
 
-  const booking = $derived(form?.booking || data.booking);
-  const room = $derived(form?.room || data.room);
+  const bookings = $derived(form?.bookings || data.bookings || []);
+  const roomsMap = $derived((form?.roomsMap || data.roomsMap || {}) as Record<number, any>);
+
+  // Extend-stay state
+  let extendModalBooking = $state<any>(null);
+  let extendNewCheckOut = $state('');
+  let extendState = $state<'idle' | 'submitting' | 'paying' | 'success' | 'failed'>('idle');
+  let extendError = $state<string | null>(null);
+
+  $effect(() => {
+    const f = form as any;
+    if (f?.extendInitiated && f?.extension) {
+      initiateExtensionPayment(f.extension);
+    }
+    if (f?.extendError) {
+      extendError = f.extendError;
+      extendState = 'idle';
+    }
+  });
+
+  async function initiateExtensionPayment(extension: any) {
+    extendState = 'paying';
+    extendError = null;
+    try {
+      const res = await fetch('/api/payments/cinetpay/initialize-extension', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          extensionId: extension.id,
+          guestName: extension.guestName,
+          guestEmail: extension.guestEmail,
+          guestPhone: extension.guestPhone
+        })
+      });
+      const initData = await res.json();
+      if (!res.ok || !initData.success) throw new Error(initData.error || 'Erreur initialisation paiement.');
+
+      // Launch CinetPay SDK
+      (window as any).CinetPay?.setConfig({
+        apikey: initData.apiKey,
+        site_id: initData.siteId,
+        notify_url: initData.notifyUrl,
+        mode: initData.mode
+      });
+      (window as any).CinetPay?.getCheckout({
+        transaction_id: initData.transactionId,
+        amount: initData.amount,
+        currency: initData.currency,
+        channels: 'ALL',
+        description: initData.description,
+        customer_name: initData.customer.name,
+        customer_surname: initData.customer.surname,
+        customer_email: initData.customer.email,
+        customer_phone_number: initData.customer.phoneNumber,
+        customer_address: initData.customer.address,
+        customer_city: initData.customer.city,
+        customer_country: initData.customer.country,
+        customer_state: initData.customer.state,
+        customer_zip_code: initData.customer.zipCode,
+        onClose: () => {
+          extendState = 'idle';
+          extendError = i18n.locale === 'fr' ? 'Paiement annulé.' : 'Payment cancelled.';
+        },
+        onSuccess: () => {
+          extendState = 'success';
+          extendModalBooking = null;
+        },
+        onError: (err: any) => {
+          extendState = 'failed';
+          extendError = err?.message || 'Échec du paiement.';
+        }
+      });
+    } catch (err: any) {
+      extendState = 'failed';
+      extendError = err.message || 'Erreur lors du paiement.';
+    }
+  }
 
   function formatPrice(amount: string | number | undefined) {
     if (!amount) return '0';
@@ -47,30 +122,30 @@
       <form method="POST" action="?/lookup" class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="refInput" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
-              {i18n.t.manageBooking.refInputLabel}
+            <label for="nameInput" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+              Nom Complet / Full Name
             </label>
             <input
-              id="refInput"
+              id="nameInput"
               type="text"
-              name="reference"
-              placeholder="MDJ-XXXXX"
-              bind:value={reference}
-              class="w-full bg-surface-container border border-outline-variant/50 px-4 py-3 text-sm text-deep-charcoal font-headline font-bold focus:outline-none focus:border-muted-gold uppercase"
+              name="name"
+              placeholder="Ex: Jean Dupont"
+              bind:value={name}
+              class="w-full bg-surface-container border border-outline-variant/50 px-4 py-3 text-sm text-deep-charcoal font-headline font-bold focus:outline-none focus:border-muted-gold"
               required
             />
           </div>
 
           <div>
-            <label for="emailInput" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
-              {i18n.t.manageBooking.emailInputLabel}
+            <label for="phoneInput" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+              Téléphone / Phone Number
             </label>
             <input
-              id="emailInput"
-              type="email"
-              name="email"
-              placeholder="votre.email@example.com"
-              bind:value={email}
+              id="phoneInput"
+              type="text"
+              name="phone"
+              placeholder="Ex: +237 6 XX XX XX XX"
+              bind:value={phone}
               class="w-full bg-surface-container border border-outline-variant/50 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
               required
             />
@@ -96,7 +171,9 @@
     </div>
 
     <!-- Booking Details Result Card -->
-    {#if booking}
+    {#if bookings.length > 0}
+      {#each bookings as booking}
+        {@const room = roomsMap[booking.roomId]}
       <div class="bg-surface-container-lowest border border-outline-variant/40 p-6 md:p-10 shadow-lg space-y-8 animate-fade-up">
         <!-- Status Header -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-outline-variant/30 pb-6">
@@ -124,7 +201,7 @@
           </div>
         </div>
 
-        {#if form?.message}
+        {#if form?.message && form?.cancelled && booking.status === 'cancelled'}
           <div class="p-4 bg-green-50 text-green-800 text-xs font-medium border border-green-200 flex items-center gap-3">
             <span class="material-symbols-outlined">check_circle</span>
             <span>{form.message}</span>
@@ -201,28 +278,130 @@
               {i18n.t.manageBooking.modifyRequestBtn}
             </a>
 
-            <form method="POST" action="?/cancel" onsubmit={(e) => { 
-              const promptMsg = i18n.locale === 'fr' 
-                ? (room?.type === 'hall' 
-                    ? 'Êtes-vous certain de vouloir annuler cette réservation de salle ? (Remboursement garanti de 95% si annulé au moins 36h avant l’événement).' 
-                    : 'Êtes-vous certain de vouloir annuler cette réservation ? (Remboursement garanti de 95% si annulé au moins 20h avant l’arrivée).')
-                : (room?.type === 'hall'
-                    ? 'Are you sure you want to cancel this hall reservation? (95% refund if cancelled at least 36h before event).'
-                    : 'Are you sure you want to cancel this booking? (95% refund if cancelled at least 20h before arrival).');
-              if (!confirm(promptMsg)) e.preventDefault(); 
-            }}>
-              <input type="hidden" name="reference" value={booking.bookingReference} />
-              <input type="hidden" name="email" value={booking.guestEmail} />
-              <button
-                type="submit"
-                class="btn-luxury-dark text-xs py-2.5 px-6"
-              >
-                {i18n.t.manageBooking.cancelBookingBtn}
-              </button>
-            </form>
+            <div class="flex items-center gap-3">
+              {#if booking.status === 'confirmed' && room?.type !== 'hall'}
+                <button
+                  type="button"
+                  class="btn-luxury-primary text-xs py-2.5 px-6"
+                  onclick={() => { extendModalBooking = booking; extendNewCheckOut = ''; extendState = 'idle'; extendError = null; }}
+                >
+                  {i18n.locale === 'fr' ? '📅 Prolonger le séjour' : '📅 Extend Stay'}
+                </button>
+              {/if}
+
+              <form method="POST" action="?/cancel" onsubmit={(e) => { 
+                const promptMsg = i18n.locale === 'fr' 
+                  ? (room?.type === 'hall' 
+                      ? 'Êtes-vous certain de vouloir annuler cette réservation de salle ? (Remboursement garanti de 95% si annulé au moins 36h avant l’événement).' 
+                      : 'Êtes-vous certain de vouloir annuler cette réservation ? (Remboursement garanti de 95% si annulé au moins 20h avant l’arrivée).')
+                  : (room?.type === 'hall'
+                      ? 'Are you sure you want to cancel this hall reservation? (95% refund if cancelled at least 36h before event).'
+                      : 'Are you sure you want to cancel this booking? (95% refund if cancelled at least 20h before arrival).');
+                if (!confirm(promptMsg)) e.preventDefault(); 
+              }}>
+                <input type="hidden" name="reference" value={booking.bookingReference} />
+                <input type="hidden" name="email" value={booking.guestEmail} />
+                <input type="hidden" name="name" value={name} />
+                <input type="hidden" name="phone" value={phone} />
+                <button
+                  type="submit"
+                  class="btn-luxury-dark text-xs py-2.5 px-6"
+                >
+                  {i18n.t.manageBooking.cancelBookingBtn}
+                </button>
+              </form>
+            </div>
           </div>
         {/if}
       </div>
+      {/each}
     {/if}
   </div>
 </div>
+
+<!-- Extend Stay Modal -->
+{#if extendModalBooking}
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div class="bg-surface w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6 animate-fade-up">
+      <div class="flex items-center justify-between">
+        <h2 class="font-headline text-xl font-bold text-deep-charcoal">
+          {i18n.locale === 'fr' ? 'Prolonger le Séjour' : 'Extend Your Stay'}
+        </h2>
+        <button type="button" onclick={() => extendModalBooking = null} class="text-on-surface-variant hover:text-deep-charcoal transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="text-sm text-on-surface-variant space-y-1">
+        <p>
+          <span class="font-semibold text-deep-charcoal">{i18n.locale === 'fr' ? 'Départ actuel :' : 'Current checkout:'}</span>
+          {extendModalBooking.checkOutDate}
+        </p>
+        <p class="text-xs">
+          {i18n.locale === 'fr'
+            ? 'Choisissez une nouvelle date de départ. Le surcoût sera calculé au tarif nuitée habituel.'
+            : 'Choose a new checkout date. The extra charge will be calculated at the standard nightly rate.'}
+        </p>
+      </div>
+
+      {#if extendError}
+        <div class="p-3 bg-error-container text-error text-xs font-medium rounded-lg flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">error</span>
+          {extendError}
+        </div>
+      {/if}
+
+      {#if extendState === 'success'}
+        <div class="p-4 bg-green-50 text-green-800 text-sm font-medium rounded-lg flex items-center gap-2">
+          <span class="material-symbols-outlined">check_circle</span>
+          {i18n.locale === 'fr' ? 'Prolongation confirmée avec succès !' : 'Stay extension confirmed successfully!'}
+        </div>
+        <button type="button" onclick={() => extendModalBooking = null} class="btn-luxury-primary w-full text-xs py-3">
+          {i18n.locale === 'fr' ? 'Fermer' : 'Close'}
+        </button>
+      {:else}
+        <form method="POST" action="?/extendStay" onsubmit={() => extendState = 'submitting'} class="space-y-4">
+          <input type="hidden" name="reference" value={extendModalBooking.bookingReference} />
+          <input type="hidden" name="name" value={name} />
+          <input type="hidden" name="phone" value={phone} />
+
+          <div>
+            <label for="newCheckOut" class="block font-label-caps text-xs text-on-surface-variant mb-1.5 uppercase">
+              {i18n.locale === 'fr' ? 'Nouvelle date de départ' : 'New Checkout Date'}
+            </label>
+            <input
+              id="newCheckOut"
+              type="date"
+              name="newCheckOut"
+              bind:value={extendNewCheckOut}
+              min={extendModalBooking.checkOutDate}
+              required
+              class="w-full bg-surface-container border border-outline-variant/50 px-4 py-3 text-sm text-deep-charcoal font-headline font-bold focus:outline-none focus:border-muted-gold"
+            />
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button
+              type="button"
+              onclick={() => extendModalBooking = null}
+              class="btn-luxury-outline flex-1 text-xs py-3"
+              disabled={extendState === 'submitting' || extendState === 'paying'}
+            >
+              {i18n.locale === 'fr' ? 'Annuler' : 'Cancel'}
+            </button>
+            <button
+              type="submit"
+              class="btn-luxury-primary flex-1 text-xs py-3"
+              disabled={!extendNewCheckOut || extendState === 'submitting' || extendState === 'paying'}
+            >
+              {#if extendState === 'submitting' || extendState === 'paying'}
+                <span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+              {/if}
+              {i18n.locale === 'fr' ? 'Procéder au paiement' : 'Proceed to Payment'}
+            </button>
+          </div>
+        </form>
+      {/if}
+    </div>
+  </div>
+{/if}

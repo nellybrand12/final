@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import postgres from 'postgres';
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
@@ -67,6 +67,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 5,
     availableRooms: 5,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBGPsJh3GmBgTdqbmMJ1RSGU5jUS2thrqklnqctH-6CwyCH4jIzUqhfMNCF1mPbVKuyE4x8pL5R5L13_0pmWa34qfz-85J_Srsv_tUq6zURhhsvNZhPbaayWF0WesF2JUReQJdrYZ0xRoyNGCHGY_6MSjBaKxHrqyWcZYxnF2ESOsWAOkmXLH61Y2tGynskpfCMXITsgKYWaFAyIxUfJ0XfQPf0RADhrseRt9ebBeEy4M-MxZL_TM1',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBBGPsJh3GmBgTdqbmMJ1RSGU5jUS2thrqklnqctH-6CwyCH4jIzUqhfMNCF1mPbVKuyE4x8pL5R5L13_0pmWa34qfz-85J_Srsv_tUq6zURhhsvNZhPbaayWF0WesF2JUReQJdrYZ0xRoyNGCHGY_6MSjBaKxHrqyWcZYxnF2ESOsWAOkmXLH61Y2tGynskpfCMXITsgKYWaFAyIxUfJ0XfQPf0RADhrseRt9ebBeEy4M-MxZL_TM1',
@@ -96,6 +98,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 8,
     availableRooms: 8,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-',
@@ -124,6 +128,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 10,
     availableRooms: 10,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2wAnr00WSMLfS4u4kwD_Z_X_uI1TMmL8C99ulDfVWorQ3wZ8Jtx038hBtlJZFMCH52zAxeHuJGHeZXYirO7WqpxkYWsyvL-gd4ZtA1fvGUnNERVv--ziiHJ1croF5YKCIRh5OozEQYWxm_XmiIJMnKPz0jdVrN2AtTv4B9xzi0yB2N-r4FP-38NnlnBi6HTsz3eHCT_SblG_ROAwtcgBaDwD6D9_o5I1XUo3_23B6Z2m5PqdM6tsL',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuD2wAnr00WSMLfS4u4kwD_Z_X_uI1TMmL8C99ulDfVWorQ3wZ8Jtx038hBtlJZFMCH52zAxeHuJGHeZXYirO7WqpxkYWsyvL-gd4ZtA1fvGUnNERVv--ziiHJ1croF5YKCIRh5OozEQYWxm_XmiIJMnKPz0jdVrN2AtTv4B9xzi0yB2N-r4FP-38NnlnBi6HTsz3eHCT_SblG_ROAwtcgBaDwD6D9_o5I1XUo3_23B6Z2m5PqdM6tsL'
@@ -151,6 +157,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 12,
     availableRooms: 12,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQx0rucw-5rD5ahDanu8_rCNpsT4Z9TLxBXsaY2FhDyETMHnedd5ErFBXSOQj6UQhHrGFPJqWq4zxwga7i-QKAfyDL94xYc65Cs-W7yb90JWj7Df20w9k5_Nnkkvo5JxmokKG4uWLQRtIvMou-udEkJOHsI8w8xIrVpRg_aIQ1NK4SOAmnfUyRmllfHw-EO5oDmii-VFT8rP0NzwpfkQ3uA5YYx3UMNkv9R7X8M904grCbOYGgtHsw',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDQx0rucw-5rD5ahDanu8_rCNpsT4Z9TLxBXsaY2FhDyETMHnedd5ErFBXSOQj6UQhHrGFPJqWq4zxwga7i-QKAfyDL94xYc65Cs-W7yb90JWj7Df20w9k5_Nnkkvo5JxmokKG4uWLQRtIvMou-udEkJOHsI8w8xIrVpRg_aIQ1NK4SOAmnfUyRmllfHw-EO5oDmii-VFT8rP0NzwpfkQ3uA5YYx3UMNkv9R7X8M904grCbOYGgtHsw'
@@ -178,6 +186,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 1,
     availableRooms: 1,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80',
@@ -216,6 +226,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     totalRooms: 1,
     availableRooms: 1,
     inUseRooms: 0,
+    onHoldRooms: 0,
+    forceAvailable: false,
     imageUrl: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=1200&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=1200&q=80',
@@ -358,6 +370,114 @@ export async function getAllServices(): Promise<schema.Service[]> {
   return [];
 }
 
+export function getBookingInterval(checkInStr: string, checkOutStr: string, roomType: string) {
+  const [inY, inM, inD] = checkInStr.split('-').map(Number);
+  const checkInTime = new Date(inY, inM - 1, inD, 14, 0, 0); // 14:00 check-in
+  
+  const [outY, outM, outD] = checkOutStr.split('-').map(Number);
+  const checkOutTime = new Date(outY, outM - 1, outD, 12, 0, 0); // 12:00 check-out
+  
+  const isHall = roomType === 'hall';
+  const beforeBufferHours = isHall ? 48 : 24;
+  const afterBufferHours = isHall ? 24 : 12;
+  
+  const startWithBuffer = new Date(checkInTime.getTime() - beforeBufferHours * 60 * 60 * 1000);
+  const endWithBuffer = new Date(checkOutTime.getTime() + afterBufferHours * 60 * 60 * 1000);
+  
+  return { start: startWithBuffer, end: endWithBuffer };
+}
+
+export async function checkAvailability(roomId: number, checkInDate: string, checkOutDate: string): Promise<number> {
+  const room = await getRoomById(roomId);
+  if (!room) return 0;
+  
+  if (room.forceAvailable) {
+    return room.totalRooms;
+  }
+  
+  const requestedInterval = getBookingInterval(checkInDate, checkOutDate, room.type);
+  
+  let activeBookings: schema.Booking[] = [];
+  let pendingExtensions: schema.BookingExtension[] = [];
+  
+  if (dbInstance && isDbHealthy) {
+    try {
+      activeBookings = await dbInstance.select()
+        .from(schema.bookings)
+        .where(
+          sql`${schema.bookings.roomId} = ${roomId} AND ${schema.bookings.status} IN ('pending', 'confirmed')`
+        );
+
+      if (activeBookings.length > 0) {
+        const bookingIds = activeBookings.map(b => b.id);
+        pendingExtensions = await dbInstance.select()
+          .from(schema.bookingExtensions)
+          .where(
+            sql`${schema.bookingExtensions.status} = 'pending' AND ${inArray(schema.bookingExtensions.bookingId, bookingIds)}`
+          );
+      }
+    } catch (e) {
+      handleDbError('checkAvailability', e);
+    }
+  } else {
+    activeBookings = inMemoryBookings.filter(b => b.roomId === roomId && (b.status === 'pending' || b.status === 'confirmed'));
+  }
+
+  let maxConcurrent = 0;
+  type Event = { time: number; type: 'start' | 'end'; count: number };
+  const events: Event[] = [];
+  
+  for (const booking of activeBookings) {
+    const extension = pendingExtensions.find(e => e.bookingId === booking.id);
+    const effectiveCheckOut = extension ? extension.requestedCheckoutDate : booking.checkOutDate;
+    const interval = getBookingInterval(booking.checkInDate, effectiveCheckOut, room.type);
+    
+    if (interval.start.getTime() < requestedInterval.end.getTime() && interval.end.getTime() > requestedInterval.start.getTime()) {
+      events.push({ time: interval.start.getTime(), type: 'start', count: booking.guestsCount });
+      events.push({ time: interval.end.getTime(), type: 'end', count: booking.guestsCount });
+    }
+  }
+  
+  events.push({ time: requestedInterval.start.getTime(), type: 'start', count: 0 }); 
+  
+  events.sort((a, b) => {
+    if (a.time === b.time) {
+      return a.type === 'end' ? -1 : 1;
+    }
+    return a.time - b.time;
+  });
+  
+  let currentConcurrent = 0;
+  for (const event of events) {
+    if (event.type === 'start') {
+      currentConcurrent += event.count;
+      if (event.time >= requestedInterval.start.getTime() && event.time < requestedInterval.end.getTime()) {
+        if (currentConcurrent > maxConcurrent) {
+          maxConcurrent = currentConcurrent;
+        }
+      }
+    } else {
+      currentConcurrent -= event.count;
+    }
+  }
+
+  let concurrentAtStart = 0;
+  for (const booking of activeBookings) {
+    const extension = pendingExtensions.find(e => e.bookingId === booking.id);
+    const effectiveCheckOut = extension ? extension.requestedCheckoutDate : booking.checkOutDate;
+    const interval = getBookingInterval(booking.checkInDate, effectiveCheckOut, room.type);
+    
+    if (interval.start.getTime() <= requestedInterval.start.getTime() && interval.end.getTime() > requestedInterval.start.getTime()) {
+      concurrentAtStart += booking.guestsCount;
+    }
+  }
+  if (concurrentAtStart > maxConcurrent) {
+    maxConcurrent = concurrentAtStart;
+  }
+
+  return Math.max(0, room.totalRooms - maxConcurrent);
+}
+
 export async function createBooking(data: Omit<schema.Booking, 'id' | 'createdAt'>): Promise<schema.Booking> {
   const newBooking: schema.Booking = {
     id: inMemoryBookings.length + 1,
@@ -380,15 +500,26 @@ export async function createBooking(data: Omit<schema.Booking, 'id' | 'createdAt
 
         const requestedCount = data.guestsCount || 1; // Assuming guestsCount stores the number of rooms requested for now
         
-        // 2. Check availability
-        if (room.availableRooms < requestedCount) {
-          throw new Error('Not enough rooms available');
+        // 2. Check dynamic availability (with buffers)
+        const currentAvail = await checkAvailability(data.roomId, data.checkInDate, data.checkOutDate);
+        if (currentAvail < requestedCount) {
+          throw new Error('Not enough rooms available for these dates');
         }
 
-        // 3. Decrement available inventory only if immediately confirmed (e.g. hotel pay-on-arrival)
+        // 3. Decrement available inventory and increase onHold or inUse
         if (data.status === 'confirmed') {
           await tx.update(schema.rooms)
-            .set({ availableRooms: sql`${schema.rooms.availableRooms} - ${requestedCount}` })
+            .set({ 
+              availableRooms: sql`${schema.rooms.availableRooms} - ${requestedCount}`,
+              inUseRooms: sql`${schema.rooms.inUseRooms} + ${requestedCount}`
+            })
+            .where(sql`${schema.rooms.id} = ${data.roomId}`);
+        } else {
+          await tx.update(schema.rooms)
+            .set({ 
+              availableRooms: sql`${schema.rooms.availableRooms} - ${requestedCount}`,
+              onHoldRooms: sql`${schema.rooms.onHoldRooms} + ${requestedCount}`
+            })
             .where(sql`${schema.rooms.id} = ${data.roomId}`);
         }
 
@@ -425,7 +556,7 @@ export async function getBookingByReferenceOnly(reference: string): Promise<sche
 
 export async function updateBookingStatus(
   reference: string,
-  status: 'pending_payment' | 'confirmed' | 'failed' | 'cancelled',
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed',
   transactionId?: string,
   paymentMethod?: string
 ): Promise<schema.Booking | null> {
@@ -438,14 +569,41 @@ export async function updateBookingStatus(
         .from(schema.bookings)
         .where(eq(schema.bookings.bookingReference, cleanedRef));
 
-      if (existing && existing.status !== 'confirmed' && status === 'confirmed') {
+      if (existing) {
         const requestedRooms = existing.guestsCount || 1;
-        await dbInstance
-          .update(schema.rooms)
-          .set({
-            availableRooms: sql`GREATEST(${schema.rooms.availableRooms} - ${requestedRooms}, 0)`
-          })
-          .where(eq(schema.rooms.id, existing.roomId));
+        if (existing.status === 'pending' && status === 'confirmed') {
+          await dbInstance
+            .update(schema.rooms)
+            .set({
+              onHoldRooms: sql`GREATEST(${schema.rooms.onHoldRooms} - ${requestedRooms}, 0)`,
+              inUseRooms: sql`${schema.rooms.inUseRooms} + ${requestedRooms}`
+            })
+            .where(eq(schema.rooms.id, existing.roomId));
+        } else if (existing.status === 'confirmed' && status === 'completed') {
+          await dbInstance
+            .update(schema.rooms)
+            .set({
+              inUseRooms: sql`GREATEST(${schema.rooms.inUseRooms} - ${requestedRooms}, 0)`,
+              availableRooms: sql`${schema.rooms.availableRooms} + ${requestedRooms}`
+            })
+            .where(eq(schema.rooms.id, existing.roomId));
+        } else if (existing.status === 'pending' && status === 'cancelled') {
+          await dbInstance
+            .update(schema.rooms)
+            .set({
+              onHoldRooms: sql`GREATEST(${schema.rooms.onHoldRooms} - ${requestedRooms}, 0)`,
+              availableRooms: sql`${schema.rooms.availableRooms} + ${requestedRooms}`
+            })
+            .where(eq(schema.rooms.id, existing.roomId));
+        } else if (existing.status === 'confirmed' && status === 'cancelled') {
+          await dbInstance
+            .update(schema.rooms)
+            .set({
+              inUseRooms: sql`GREATEST(${schema.rooms.inUseRooms} - ${requestedRooms}, 0)`,
+              availableRooms: sql`${schema.rooms.availableRooms} + ${requestedRooms}`
+            })
+            .where(eq(schema.rooms.id, existing.roomId));
+        }
       }
 
       const updateData: Partial<typeof schema.bookings.$inferInsert> = { status };
@@ -579,9 +737,21 @@ export async function cancelBooking(reference: string, email: string): Promise<C
         if (room) {
           // 3. Restore inventory
           const restoreCount = room.type === 'hall' ? 1 : booking.guestsCount; 
-          await tx.update(schema.rooms)
-            .set({ availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}` })
-            .where(sql`${schema.rooms.id} = ${room.id}`);
+          if (booking.status === 'pending') {
+            await tx.update(schema.rooms)
+              .set({ 
+                availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}`,
+                onHoldRooms: sql`GREATEST(${schema.rooms.onHoldRooms} - ${restoreCount}, 0)`
+              })
+              .where(sql`${schema.rooms.id} = ${room.id}`);
+          } else if (booking.status === 'confirmed') {
+            await tx.update(schema.rooms)
+              .set({ 
+                availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}`,
+                inUseRooms: sql`GREATEST(${schema.rooms.inUseRooms} - ${restoreCount}, 0)`
+              })
+              .where(sql`${schema.rooms.id} = ${room.id}`);
+          }
         }
 
         // 4. Cancel booking
@@ -691,6 +861,83 @@ export async function updateSettings(settings: Record<string, string>): Promise<
       handleDbError('updateSettings', e);
       return false;
     }
+  }
+  return false;
+}
+
+
+export function normalizePhone(phone: string): string {
+  let p = phone.replace(/[\s\-\(\)]/g, '');
+  if (p.startsWith('+237')) return p;
+  if (p.startsWith('237') && p.length > 9) return '+' + p;
+  if (!p.startsWith('+')) return '+237' + p;
+  return p;
+}
+
+export async function getBookingsByGuest(name: string, phone: string): Promise<schema.Booking[]> {
+  const normalizedPhone = normalizePhone(phone);
+  const searchName = name.trim().toLowerCase();
+
+  if (dbInstance && isDbHealthy) {
+    try {
+      const results = await dbInstance.select().from(schema.bookings);
+      return results.filter(b => 
+        b.guestName.toLowerCase().includes(searchName) && 
+        (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false)
+      );
+    } catch (e) {
+      handleDbError('getBookingsByGuest', e);
+    }
+  }
+
+  return inMemoryBookings.filter(b => 
+    b.guestName.toLowerCase().includes(searchName) && 
+    (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false)
+  );
+}
+
+export async function hardDeleteBooking(id: number): Promise<boolean> {
+  if (dbInstance && isDbHealthy) {
+    try {
+      await dbInstance.transaction(async (tx) => {
+        const [booking] = await tx.select().from(schema.bookings).where(eq(schema.bookings.id, id)).for('update');
+        if (!booking) return;
+
+        if (booking.status === 'pending' || booking.status === 'confirmed') {
+          const [room] = await tx.select().from(schema.rooms).where(eq(schema.rooms.id, booking.roomId)).for('update');
+          if (room) {
+            const restoreCount = room.type === 'hall' ? 1 : booking.guestsCount;
+            if (booking.status === 'pending') {
+              await tx.update(schema.rooms)
+                .set({
+                  availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}`,
+                  onHoldRooms: sql`GREATEST(${schema.rooms.onHoldRooms} - ${restoreCount}, 0)`
+                })
+                .where(eq(schema.rooms.id, room.id));
+            } else if (booking.status === 'confirmed') {
+              await tx.update(schema.rooms)
+                .set({
+                  availableRooms: sql`${schema.rooms.availableRooms} + ${restoreCount}`,
+                  inUseRooms: sql`GREATEST(${schema.rooms.inUseRooms} - ${restoreCount}, 0)`
+                })
+                .where(eq(schema.rooms.id, room.id));
+            }
+          }
+        }
+
+        await tx.delete(schema.bookings).where(eq(schema.bookings.id, id));
+      });
+      return true;
+    } catch (e) {
+      handleDbError('hardDeleteBooking', e);
+      return false;
+    }
+  }
+
+  const idx = inMemoryBookings.findIndex(b => b.id === id);
+  if (idx !== -1) {
+    inMemoryBookings.splice(idx, 1);
+    return true;
   }
   return false;
 }

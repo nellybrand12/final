@@ -22,6 +22,26 @@
     if (data.initialRooms) roomsCount = data.initialRooms;
   });
 
+  let roomAvailability = $state<Record<number, number | null>>({});
+
+  $effect(() => {
+    if (checkIn && checkOut) {
+      data.rooms.forEach(async (room) => {
+        try {
+          const res = await fetch(`/api/availability?roomId=${room.id}&checkInDate=${checkIn}&checkOutDate=${checkOut}`);
+          if (res.ok) {
+            const result = await res.json();
+            roomAvailability[room.id] = result.available;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    } else {
+      roomAvailability = {};
+    }
+  });
+
   // Guest Details
   let guestName = $state('');
   let guestEmail = $state('');
@@ -93,6 +113,13 @@
   function nextStep() {
     if (currentStep === 1) {
       if (!checkIn || !checkOut) return;
+      const selectedAvail = roomAvailability[selectedRoomId];
+      const count = selectedRoom.type === 'hall' ? 1 : roomsCount;
+      if (selectedAvail !== undefined && selectedAvail !== null && selectedAvail < count) {
+        form = { error: i18n.locale === 'fr' ? 'Pas assez de chambres disponibles pour ces dates.' : 'Not enough rooms available for these dates.' } as any;
+        return;
+      }
+      if (form) (form as any).error = null;
       currentStep = 2;
     } else if (currentStep === 2) {
       if (!guestName || !guestEmail) return;
@@ -428,6 +455,17 @@
                       <div class="text-right">
                         <span class="font-headline text-base sm:text-lg font-bold text-deep-charcoal">{formatPrice(room.pricePerNight)}</span>
                         <span class="text-[10px] font-label-caps text-muted-gold block">{i18n.t.reserve.perNight}</span>
+                        {#if checkIn && checkOut}
+                          {#if roomAvailability[room.id] !== undefined && roomAvailability[room.id] !== null}
+                            <span class="text-[10px] font-label-caps block mt-1 {roomAvailability[room.id]! >= 3 ? 'text-green-600' : 'text-error'}">
+                              {roomAvailability[room.id]} {i18n.locale === 'fr' ? 'chambre(s) dispo' : 'rooms avail'}
+                            </span>
+                          {/if}
+                        {:else}
+                          <span class="text-[10px] font-label-caps block mt-1 text-on-surface-variant">
+                            {i18n.locale === 'fr' ? 'Dates requises' : 'Dates required'}
+                          </span>
+                        {/if}
                       </div>
                     </button>
                   {/each}

@@ -43,7 +43,7 @@ export const GET: RequestHandler = async ({ params }) => {
       });
     }
 
-    // 2. If still pending_payment, trigger authoritative check directly with CinetPay
+    // 2. If still pending, trigger authoritative check directly with CinetPay
     const verification = await checkCinetPayTransaction(transactionId);
 
     if (verification.status === 'ACCEPTED') {
@@ -61,7 +61,7 @@ export const GET: RequestHandler = async ({ params }) => {
     } else if (verification.status === 'WAITING_FOR_CUSTOMER') {
       return json({
         success: true,
-        status: 'pending_payment',
+        status: 'pending',
         bookingReference: booking.bookingReference
       });
     } else if (verification.status === 'REFUSED') {

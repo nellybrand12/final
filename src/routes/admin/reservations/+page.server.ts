@@ -1,16 +1,18 @@
 import type { PageServerLoad, Actions } from './$types';
-import { db, isDbHealthy } from '$lib/server/db';
+import { db, isDbHealthy, updateBookingStatus, hardDeleteBooking } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { desc, eq, sql } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
   let reservations: any[] = [];
   let rooms: any[] = [];
+  
+  const statusFilter = url.searchParams.get('status');
 
   if (db && isDbHealthy) {
     try {
-      reservations = await db.select({
+      let query = db.select({
         id: schema.bookings.id,
         bookingReference: schema.bookings.bookingReference,
         guestName: schema.bookings.guestName,
@@ -23,7 +25,13 @@ export const load: PageServerLoad = async () => {
       })
       .from(schema.bookings)
       .leftJoin(schema.rooms, eq(schema.bookings.roomId, schema.rooms.id))
-      .orderBy(desc(schema.bookings.createdAt));
+      .$dynamic();
+
+      if (statusFilter && statusFilter !== 'all') {
+        query = query.where(eq(schema.bookings.status, statusFilter as any));
+      }
+
+      reservations = await query.orderBy(desc(schema.bookings.createdAt));
 
       rooms = await db.select({
         id: schema.rooms.id,
@@ -38,16 +46,12 @@ export const load: PageServerLoad = async () => {
 
   return {
     reservations,
-    rooms
+    rooms,
+    statusFilter: statusFilter || 'all'
   };
 };
 
 export const actions: Actions = {
-  create: async ({ request }) => {
-    const data = await request.formData();
-    // Implementation for manual creation
-    // ...
-  },
   updateStatus: async ({ request }) => {
     const data = await request.formData();
     const idStr = data.get('id')?.toString();
@@ -61,23 +65,9 @@ export const actions: Actions = {
         const [booking] = await db.select().from(schema.bookings).where(eq(schema.bookings.id, id));
         if (!booking) return fail(404, { error: 'Booking not found' });
 
-        const oldStatus = booking.status;
-        
-        await db.update(schema.bookings)
-          .set({ status })
-          .where(eq(schema.bookings.id, id));
-
-        // Inventory adjustment
-        if (oldStatus !== 'cancelled' && oldStatus !== 'failed' && (status === 'cancelled' || status === 'failed')) {
-          // Booking cancelled/failed, return room to inventory
-          await db.update(schema.rooms)
-            .set({ availableRooms: sql`${schema.rooms.availableRooms} + 1` })
-            .where(eq(schema.rooms.id, booking.roomId));
-        } else if ((oldStatus === 'cancelled' || oldStatus === 'failed') && (status === 'confirmed' || status === 'pending_payment')) {
-          // Re-instated booking, decrement inventory
-          await db.update(schema.rooms)
-            .set({ availableRooms: sql`${schema.rooms.availableRooms} - 1` })
-            .where(eq(schema.rooms.id, booking.roomId));
+        // Ensure we pass the status correctly typed.
+        if (['pending', 'confirmed', 'cancelled', 'completed'].includes(status)) {
+           await updateBookingStatus(booking.bookingReference, status as any);
         }
 
       } catch (e) {
@@ -85,5 +75,17 @@ export const actions: Actions = {
         return fail(500, { error: 'Database error' });
       }
     }
+  },
+  delete: async ({ request }) => {
+    const data = await request.formData();
+    const idStr = data.get('id')?.toString();
+    if (!idStr) return fail(400, { error: 'Missing id' });
+    const id = parseInt(idStr);
+    
+    const success = await hardDeleteBooking(id);
+    if (!success) {
+      return fail(500, { error: 'Failed to delete booking' });
+    }
+    return { success: true };
   }
 };

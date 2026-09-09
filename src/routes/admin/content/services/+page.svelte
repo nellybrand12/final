@@ -1,14 +1,19 @@
 <script lang="ts">
-  import { Save, AlertCircle } from 'lucide-svelte';
+  import { Save, AlertCircle, Plus, Trash2 } from 'lucide-svelte';
 
   let { data, form } = $props();
   
   let services = $derived(data.services);
+  let showNewService = $state(false);
 </script>
 
 <div class="space-y-6 max-w-5xl">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Services Management</h1>
+    <button onclick={() => showNewService = !showNewService} class="bg-deep-charcoal text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-black transition-colors flex items-center gap-2">
+      <Plus size={16} />
+      <span>Nouvel Service</span>
+    </button>
   </div>
 
   {#if form?.success}
@@ -26,6 +31,46 @@
         <h3 class="text-sm font-medium text-red-800">{form.error}</h3>
       </div>
     </div>
+  {/if}
+
+  
+  {#if showNewService}
+  <div class="bg-white rounded-xl shadow-md border-2 border-dashed border-gray-300 p-6 mb-6">
+    <h3 class="text-lg font-bold mb-4">Créer un nouveau service</h3>
+    <form method="POST" action="?/createService" class="space-y-4">
+      <div>
+        <label for="new_id" class="block text-sm font-medium text-gray-700">Slug (ID Unique)</label>
+        <input type="text" name="id" id="new_id" placeholder="ex: massage-spa" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="new_nameFr" class="block text-sm font-medium text-gray-700">Nom (Fr)</label>
+          <input type="text" name="nameFr" id="new_nameFr" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required />
+        </div>
+        <div>
+          <label for="new_nameEn" class="block text-sm font-medium text-gray-700">Nom (En)</label>
+          <input type="text" name="nameEn" id="new_nameEn" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required />
+        </div>
+        <div>
+          <label for="new_descFr" class="block text-sm font-medium text-gray-700">Description (Fr)</label>
+          <textarea name="descriptionFr" id="new_descFr" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required></textarea>
+        </div>
+        <div>
+          <label for="new_descEn" class="block text-sm font-medium text-gray-700">Description (En)</label>
+          <textarea name="descriptionEn" id="new_descEn" rows="2" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required></textarea>
+        </div>
+        <div>
+          <label for="new_icon" class="block text-sm font-medium text-gray-700">Icon (Material Symbol)</label>
+          <input type="text" name="icon" id="new_icon" placeholder="ex: spa" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required />
+        </div>
+        <div>
+          <label for="new_ctaLink" class="block text-sm font-medium text-gray-700">CTA Link</label>
+          <input type="text" name="ctaLink" id="new_ctaLink" placeholder="/contact" class="mt-1 block w-full border border-gray-300 rounded-md py-2 px-3" required />
+        </div>
+      </div>
+      <button type="submit" class="bg-deep-charcoal text-white px-4 py-2 rounded-md mt-4 font-medium">Créer</button>
+    </form>
+  </div>
   {/if}
 
   <div class="grid grid-cols-1 gap-6">
@@ -46,6 +91,9 @@
             <button type="submit" class="bg-deep-charcoal text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-black transition-colors flex items-center gap-2">
               <Save size={16} />
               <span>Save</span>
+            </button>
+            <button type="submit" formaction="?/deleteService" onclick={(e) => { if (!confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) e.preventDefault(); }} class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-md border border-red-200">
+              <Trash2 size={16} />
             </button>
           </div>
         </div>

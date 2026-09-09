@@ -151,6 +151,7 @@ export const actions: Actions = {
     const descriptionEn = data.get('descriptionEn')?.toString();
     const imageUrl = data.get('imageUrl')?.toString();
     const amenitiesRaw = data.get('amenities')?.toString();
+    const forceAvailable = data.get('forceAvailable') === 'on' || data.get('forceAvailable') === 'true';
 
     if (totalRooms > 0 && availableRooms + inUseRooms > totalRooms) {
       return fail(400, { error: 'La somme des unités disponibles et occupées ne peut pas dépasser le total.' });
@@ -175,6 +176,7 @@ export const actions: Actions = {
         availableRooms,
         inUseRooms,
         status,
+        forceAvailable,
         descriptionFr,
         descriptionEn,
         imageUrl

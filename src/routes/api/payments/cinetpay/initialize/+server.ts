@@ -52,13 +52,13 @@ export const POST: RequestHandler = async ({ request, url }) => {
           .set({
             paymentTransactionId: transactionId,
             paymentMethod: 'cinetpay',
-            status: 'pending_payment',
+            status: 'pending',
             totalPrice: totalPrice.toString()
           })
           .where(eq(schema.bookings.id, existingBooking.id));
       }
     } else {
-      // Create pending booking (note: inventory is not decremented yet because status is pending_payment)
+      // Create pending booking (note: inventory is not decremented yet because status is pending)
       await createBooking({
         bookingReference,
         guestName: guestName.trim(),
@@ -73,7 +73,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
         totalPrice: totalPrice.toString(),
         paymentMethod: 'cinetpay',
         paymentTransactionId: transactionId,
-        status: 'pending_payment'
+        status: 'pending'
       });
     }
 

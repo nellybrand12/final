@@ -11,7 +11,7 @@
   function getStatusColor(status: string) {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
-      case 'pending_payment': return 'bg-yellow-100 text-yellow-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'failed':
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -75,7 +75,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{formatCurrency(Number(payment.totalPrice))}</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {getStatusColor(payment.status)}">
-                  {payment.status === 'confirmed' ? 'Paid' : payment.status === 'pending_payment' ? 'Pending' : payment.status}
+                  {payment.status === 'confirmed' ? 'Paid' : payment.status === 'pending' ? 'Pending' : payment.status}
                 </span>
               </td>
             </tr>

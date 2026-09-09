@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, integer, decimal, jsonb, date, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, text, serial, timestamp, integer, decimal, jsonb, date, varchar, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -34,6 +34,8 @@ export const rooms = pgTable('rooms', {
   totalRooms: integer('total_rooms').default(5).notNull(),
   availableRooms: integer('available_rooms').default(5).notNull(),
   inUseRooms: integer('in_use_rooms').default(0).notNull(),
+  onHoldRooms: integer('on_hold_rooms').default(0).notNull(),
+  forceAvailable: boolean('force_available').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -52,7 +54,17 @@ export const bookings = pgTable('bookings', {
   totalPrice: decimal('total_price', { precision: 10, scale: 2 }).notNull(),
   paymentMethod: varchar('payment_method', { length: 50 }).default('hotel'), // 'hotel', 'cinetpay'
   paymentTransactionId: varchar('payment_transaction_id', { length: 255 }),
-  status: varchar('status', { length: 50 }).default('pending_payment').notNull(), // 'pending_payment', 'confirmed', 'failed', 'cancelled'
+  status: varchar('status', { length: 50 }).default('pending').notNull(), // 'pending', 'confirmed', 'cancelled', 'completed'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const bookingExtensions = pgTable('booking_extensions', {
+  id: serial('id').primaryKey(),
+  bookingId: integer('booking_id').references(() => bookings.id).notNull(),
+  requestedCheckoutDate: date('requested_checkout_date').notNull(),
+  additionalCharge: decimal('additional_charge', { precision: 10, scale: 2 }).notNull(),
+  paymentTransactionId: varchar('payment_transaction_id', { length: 255 }),
+  status: varchar('status', { length: 50 }).default('pending').notNull(), // 'pending', 'confirmed', 'failed'
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -115,6 +127,7 @@ export const siteSettings = pgTable('site_settings', {
 export type User = typeof users.$inferSelect;
 export type Room = typeof rooms.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
+export type BookingExtension = typeof bookingExtensions.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type Faq = typeof faqs.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;

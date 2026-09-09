@@ -318,7 +318,7 @@
             </div>
 
             <!-- Row 3: Dimensions, Capacity & Inventory -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
               <div>
                 <label for="maxGuests_{room.id}" class="block text-xs font-medium text-gray-600 mb-1">
                   {room.type === 'hall' ? 'Convives max' : 'Hôtes max'}
@@ -373,6 +373,13 @@
                   min="0"
                   class="block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white" 
                 />
+              </div>
+
+              <div class="flex flex-col items-start justify-center">
+                <label for="forceAvailable_{room.id}" class="flex items-center gap-2 cursor-pointer mt-5">
+                  <input type="checkbox" id="forceAvailable_{room.id}" name="forceAvailable" class="w-4 h-4 text-deep-charcoal border-gray-300 rounded focus:ring-deep-charcoal" checked={room.forceAvailable} />
+                  <span class="text-xs font-semibold text-gray-700">Forcer Dispo. (Override)</span>
+                </label>
               </div>
             </div>
 

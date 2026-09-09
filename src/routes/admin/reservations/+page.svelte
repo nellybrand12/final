@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Search, Plus, Filter, MoreVertical, Edit, XCircle } from 'lucide-svelte';
+  import { Search, Plus, Filter, MoreVertical, Edit, XCircle, Trash2 } from 'lucide-svelte';
 
   let { data } = $props();
   let reservations = $derived(data.reservations);
@@ -12,7 +12,7 @@
   function getStatusColor(status: string) {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
-      case 'pending_payment': return 'bg-yellow-100 text-yellow-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'failed':
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -22,7 +22,7 @@
   function getStatusLabel(status: string) {
     switch (status) {
       case 'confirmed': return 'Confirmé';
-      case 'pending_payment': return 'En attente';
+      case 'pending': return 'En attente';
       case 'failed': return 'Échoué';
       case 'cancelled': return 'Annulé';
       default: return status;
@@ -48,10 +48,16 @@
         <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-deep-charcoal focus:border-deep-charcoal" placeholder="Rechercher par nom, référence...">
       </div>
       <div class="flex items-center gap-2">
-        <button class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2">
-          <Filter size={16} />
-          <span>Filtrer</span>
-        </button>
+        <form method="GET" class="flex items-center gap-2">
+          <Filter size={16} class="text-gray-400" />
+          <select name="status" onchange={(e) => e.currentTarget.form?.submit()} class="pl-2 pr-8 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-deep-charcoal focus:border-deep-charcoal bg-white">
+            <option value="all" selected={data.statusFilter === 'all'}>Tous les statuts</option>
+            <option value="pending" selected={data.statusFilter === 'pending'}>En attente</option>
+            <option value="confirmed" selected={data.statusFilter === 'confirmed'}>Confirmé</option>
+            <option value="cancelled" selected={data.statusFilter === 'cancelled'}>Annulé</option>
+            <option value="completed" selected={data.statusFilter === 'completed'}>Terminé</option>
+          </select>
+        </form>
       </div>
     </div>
 
@@ -90,12 +96,15 @@
                     {#if res.status === 'confirmed'}
                       <input type="hidden" name="status" value="cancelled" />
                       <button type="submit" class="text-red-600 hover:text-red-900" title="Cancel Booking"><XCircle size={18} /></button>
-                    {:else if res.status === 'pending_payment' || res.status === 'cancelled'}
+                    {:else if res.status === 'pending' || res.status === 'cancelled'}
                       <input type="hidden" name="status" value="confirmed" />
                       <button type="submit" class="text-green-600 hover:text-green-900" title="Mark as Confirmed">Confirm</button>
                     {/if}
                   </form>
-                  <button class="text-gray-400 hover:text-gray-600"><MoreVertical size={18} /></button>
+                  <form method="POST" action="?/delete" onsubmit={(e) => { if (!confirm('Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT cette réservation ? Cela libérera également l\'inventaire lié.')) e.preventDefault(); }}>
+                    <input type="hidden" name="id" value={res.id} />
+                    <button type="submit" class="text-red-400 hover:text-red-600 ml-2" title="Supprimer définitivement"><Trash2 size={18} /></button>
+                  </form>
                 </div>
               </td>
             </tr>
