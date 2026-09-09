@@ -101,123 +101,6 @@
     }
   }
 
-  // ===== Hero welcome-line entrance: GSAP SplitText masked word-reveal + self-drawing gold rule =====
-  let heroWelcomeSplit: any = null;
-  let heroWelcomeTl: any = null;
-  let heroWelcomePlayed = false;
-  let heroWelcomeLocale = i18n.locale;
-
-  function teardownHeroWelcome() {
-    if (typeof document === 'undefined') return;
-    heroWelcomeTl?.kill();
-    heroWelcomeTl = null;
-    try { heroWelcomeSplit?.revert(); } catch { /* noop */ }
-    heroWelcomeSplit = null;
-    // Drop any inline opacity we set so the line follows the stylesheet again.
-    document.querySelector<HTMLElement>('.hero-welcome-text')?.style.removeProperty('opacity');
-  }
-
-  async function playHeroWelcomeReveal() {
-    if (heroWelcomePlayed || typeof window === 'undefined') return;
-    heroWelcomePlayed = true;
-
-    const textEl = document.querySelector<HTMLElement>('.hero-welcome-text');
-    const ruleEl = document.querySelector<HTMLElement>('.hero-welcome-rule');
-    if (!textEl || !ruleEl) return;
-
-    // Respect the OS setting: no motion — show the final state immediately.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      ruleEl.style.transform = 'scaleX(1)';
-      return;
-    }
-
-    // Hide the line until the words are split + masked, so there's no snap-back flash.
-    textEl.style.opacity = '0';
-
-    // Failsafe: never leave the line hidden if the plugin fails to load or stalls.
-    const failsafe = setTimeout(() => {
-      textEl.style.opacity = '1';
-      ruleEl.style.transform = 'scaleX(1)';
-    }, 3500);
-
-    try {
-      const gsapMod: any = await import('gsap');
-      const splitMod: any = await import('gsap/SplitText');
-      const gsap = gsapMod.gsap ?? gsapMod.default;
-      const SplitText = splitMod.SplitText ?? splitMod.default;
-      gsap.registerPlugin(SplitText);
-
-      // Split only once the webfont is ready, so word metrics / masks are correct.
-      if (document.fonts?.ready) {
-        try { await document.fonts.ready; } catch { /* noop */ }
-      }
-
-      // Bail if the element went away (navigation / locale swap) while awaiting.
-      if (!textEl.isConnected) { clearTimeout(failsafe); return; }
-
-      heroWelcomeSplit = new SplitText(textEl, { type: 'words', mask: 'words' });
-
-      // On a fresh visit the revealed hero block is mid fade/slide-in — let it
-      // settle first; on repeat visits it's already on screen, so start promptly.
-      const parentOpacity = parseFloat(getComputedStyle(textEl.parentElement as HTMLElement).opacity) || 1;
-      const startDelay = parentOpacity < 0.9 ? 1.1 : 0.25;
-
-      heroWelcomeTl = gsap.timeline({
-        defaults: { ease: 'power3.out' },
-        delay: startDelay,
-        onComplete: () => {
-          clearTimeout(failsafe);
-          // Restore the plain text node so Svelte can still swap FR/EN copy later.
-          try { heroWelcomeSplit?.revert(); } catch { /* noop */ }
-          heroWelcomeSplit = null;
-          textEl.style.removeProperty('opacity');
-        },
-      });
-      heroWelcomeTl
-        .from(heroWelcomeSplit.words, {
-          yPercent: 110,
-          opacity: 0,
-          duration: 0.9,
-          stagger: 0.09,
-        })
-        .fromTo(
-          ruleEl,
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.6, transformOrigin: 'left center' },
-          '-=0.3', // draw the rule just before the last word settles
-        );
-
-      // Words are now held hidden by GSAP — safe to reveal the container.
-      textEl.style.opacity = '1';
-    } catch (err) {
-      clearTimeout(failsafe);
-      teardownHeroWelcome();
-      ruleEl.style.transform = 'scaleX(1)';
-      textEl.style.opacity = '1';
-      console.error('[hero welcome reveal]', err);
-    }
-  }
-
-  // Fire once the revealed hero content is actually on screen. `hasPlayedOnce`
-  // distinguishes a real dock (intro sequence finished, or repeat visit forced
-  // docked) from the component's initial default 'docked' state before the
-  // intro sequence has had a chance to start.
-  $effect(() => {
-    if (introManager.state === 'docked' && introManager.hasPlayedOnce) {
-      playHeroWelcomeReveal();
-    }
-  });
-
-  // The welcome <span> is keyed on locale so its FR/EN copy still swaps after
-  // SplitText has rewritten the element's DOM. When that rebuild happens, tear
-  // down any split/animation still bound to the old (now-detached) node.
-  $effect(() => {
-    if (i18n.locale !== heroWelcomeLocale) {
-      heroWelcomeLocale = i18n.locale;
-      teardownHeroWelcome();
-    }
-  });
-
   onMount(() => {
     introManager.init();
     startNeighborhoodAutoplay();
@@ -225,7 +108,6 @@
 
   onDestroy(() => {
     stopNeighborhoodAutoplay();
-    teardownHeroWelcome();
   });
 </script>
 
@@ -297,15 +179,11 @@
         ? 'opacity-100 translate-y-0 scale-100'
         : 'opacity-0 translate-y-16 scale-95 pointer-events-none'}"
     >
-      <!-- Top Tagline. GSAP SplitText masked word-reveal on load, then the
-           self-drawing gold rule beneath. Keyed on locale so the FR/EN copy
-           still swaps correctly after SplitText has rewritten this DOM. -->
-      {#key i18n.locale}
-        <span class="hero-welcome-text">
-          {i18n.t.hero.welcomeTag}
-        </span>
-      {/key}
-      <span class="hero-welcome-rule" aria-hidden="true"></span>
+      <!-- Location Pill: sole kicker element above the headline -->
+      <div class="hero-location-pill">
+        <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+        <span>{i18n.t.hero.locationPill}</span>
+      </div>
 
       <!-- Main Headline -->
       <h1 class="hero-title font-display-lg text-soft-cream mb-3 max-w-4xl mx-auto leading-[1.14] drop-shadow-2xl uppercase">
