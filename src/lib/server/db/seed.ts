@@ -107,8 +107,8 @@ const INITIAL_SETTINGS = [
     key: "contact_info",
     value: {
       address: "Quartier Bastos, Yaoundé, Cameroun",
-      phone: "+237 6 99 00 00 00",
-      email: "contact@madadjeu-hotel.com",
+      phone: "+237 6 91 89 09 63",
+      email: "madadjeuhotel2026@gmail.com",
       whatsapp: "237691890963",
     },
   },

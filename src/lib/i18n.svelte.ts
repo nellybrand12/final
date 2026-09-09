@@ -23,7 +23,7 @@ const translations = {
       language: "Langue",
       addressTitle: "Adresse & Localisation",
       address: "Face Garde Présidentielle, Etoug-Ebe, Yaoundé, Cameroun",
-      phone: "+237 6 99 00 00 00",
+      phone: "+237 6 91 89 09 63",
       conciergeService: "Conciergerie 24/7",
       followUs: "Suivez-nous",
     },
@@ -162,7 +162,7 @@ const translations = {
           driveTime: "3 min",
           walkTime: "14 min",
           imageUrl:
-            "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/64/1a/42/caption.jpg?w=1200&h=1200&s=1",
+            "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-400x400/15/92/fd/fc.jpg",
         },
         {
           id: "palais",
@@ -917,7 +917,7 @@ const translations = {
       prompt:
         "Comment notre équipe peut-elle rendre votre séjour inoubliable à Yaoundé ?",
       whatsapp: "Discuter sur WhatsApp",
-      call: "Appeler la Réception (+237)",
+      call: "Appeler la Réception (+237 691 89 09 63)",
       specialRequest: "Envoyer une demande spéciale",
       faq: "Foire aux Questions",
     },
@@ -942,7 +942,7 @@ const translations = {
       language: "Language",
       addressTitle: "Address & Location",
       address: "Opposite Presidential Guard, Etoug-Ebe, Yaounde, Cameroon",
-      phone: "+237 6 99 00 00 00",
+      phone: "+237 6 91 89 09 63",
       conciergeService: "24/7 Concierge",
       followUs: "Follow Us",
     },
@@ -951,7 +951,7 @@ const translations = {
       locationTag: "YAOUNDE • CAMEROON",
       initialTitle: "MADADJEU HOTEL & RESIDENCE",
       initialSubtitle: "PRESTIGE APARTMENTS & ROOMS • EXCLUSIVE COMFORT",
-      welcomeTag: "Welcome to Madadjeu Hotel & Residence",
+      welcomeTag: "Welcome to Hôtel Résidence Madadjeu",
       showcaseTitle: "Hospitality & Residential Excellence",
       showcaseSubtitle:
         "Your upscale sanctuary of peace opposite the Presidential Guard (Rue Naomi Eto)",

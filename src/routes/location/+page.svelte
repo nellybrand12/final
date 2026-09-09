@@ -153,7 +153,7 @@
             class="btn-luxury-outline text-[11px] py-2 px-4 shrink-0"
           >
             <span class="material-symbols-outlined text-sm">call</span>
-            <span>+237 6 99 00 00 00</span>
+            <span>+237 6 91 89 09 63</span>
           </a>
         </div>
 

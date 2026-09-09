@@ -10,15 +10,14 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
       <!-- Brand & Mission -->
       <div class="col-span-1 md:col-span-2 flex flex-col items-start gap-6">
-        <a href="/" class="flex items-center gap-3">
+        <a href="/" class="inline-block">
           <img
-            alt="Hotel Résidence Madadjeu Logo"
-            class="h-9 w-auto object-contain brightness-0 invert"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
+            src="/images/madadjeu-logo.png"
+            alt="Hôtel Résidence Madadjeu"
+            width="1899"
+            height="412"
+            class="site-logo site-logo--footer"
           />
-          <span class="font-headline text-lg sm:text-xl tracking-[0.25em] uppercase text-soft-cream">
-            Madadjeu
-          </span>
         </a>
         <p class="font-headline-md text-base sm:text-lg text-soft-cream/80 max-w-md font-light italic leading-relaxed">
           {i18n.t.footer.tagline}
@@ -49,13 +48,13 @@
           {#if settings.contact_phone}
             <a href="tel:{settings.contact_phone.replace(/\s+/g, '')}" class="hover:text-muted-gold transition-colors">Tél: {settings.contact_phone}</a>
           {:else}
-            <a href="tel:+237691890963" class="hover:text-muted-gold transition-colors">Tél: +237 6 99 00 00 00</a>
+            <a href="tel:+237691890963" class="hover:text-muted-gold transition-colors">Tél: +237 6 91 89 09 63</a>
           {/if}
           
           {#if settings.contact_email}
             <a href="mailto:{settings.contact_email}" class="hover:text-muted-gold transition-colors">Email: {settings.contact_email}</a>
-          {:else}
-            <a href="mailto:contact@residence-madadjeu.com" class="hover:text-muted-gold transition-colors">Email: contact@residence-madadjeu.com</a>
+                {:else}
+                  <a href="mailto:madadjeuhotel2026@gmail.com" class="hover:text-muted-gold transition-colors">Email: madadjeuhotel2026@gmail.com</a>
           {/if}
         </div>
       </div>

@@ -409,22 +409,53 @@
 
 /* ========================================================
    HERO TEXT HIERARCHY (Home page)
-   Deliberate reversal: the welcome eyebrow reads LARGER than
-   the headline. Declared here (unlayered, after the .font-*
-   classes) so it overrides their font-size. The soft
-   text-shadow is legibility insurance against the bright
-   sky / orange facade areas of the hero photo that show
-   through the overlay gradient.
+   The welcome line uses the same serif system + warm-ivory
+   colour as the headline / subtitle below it (gold is reserved
+   for the rule beneath it and for buttons). Declared here
+   (unlayered, after the .font-* classes) so it overrides them.
+   The fluid size is tuned against the *actual* longest string
+   in both languages ("Bienvenue à l'Hôtel Résidence Madadjeu")
+   so it never exceeds its container at any supported width —
+   white-space:nowrap only prevents wrapping, it does not shrink.
+   The masked word-reveal entrance + self-drawing gold rule live
+   in +page.svelte (GSAP SplitText) and honour prefers-reduced-motion.
    ======================================================== */
-.hero-eyebrow {
-  /* Floor raised above the headline's so the reversal stays obvious on
-     narrow screens, where the serif headline's tall caps compete most. */
-  font-size: clamp(30px, 4vw, 44px);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.15;
+.hero-welcome-text {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.05rem, 2.4vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
+  max-width: 100%;
+  color: #f8f6f2; /* Warm Ivory — matches headline / subtitle (was gold) */
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.hero-welcome-rule {
+  display: block;
+  width: clamp(120px, 22vw, 260px);
+  height: 2px;
+  margin: 0.9rem auto 1.25rem;
+  background: #b99045;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+@media (max-width: 640px) {
+  /* Small phones: let it wrap rather than scale down to an unreadable size. */
+  .hero-welcome-text {
+    white-space: normal;
+    font-size: clamp(1rem, 5vw, 1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No entrance animation — show the rule in its final drawn state. */
+  .hero-welcome-rule {
+    transform: scaleX(1);
+  }
 }
 
 .hero-title {
@@ -435,5 +466,53 @@
 
 .hero-subtitle {
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* ========================================================
+   BRAND LOGO LOCKUP  (header · footer · mobile drawer · hero intro)
+   One wide transparent PNG: H monogram + "MADADJEU" wordmark +
+   "HÔTEL RÉSIDENCE" subtitle, shown in its original colours
+   (deep-maroon monogram/subtitle, gold wordmark). Constrain by
+   HEIGHT only, width scales — never a fixed width or the
+   proportions distort. Modifier heights come after the base so
+   they win (same specificity, unlayered). A soft drop-shadow
+   gives the mark definition on both the dark panels and the
+   bright hero photo.
+   ======================================================== */
+.site-logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+  transition: filter 0.3s ease;
+}
+
+.site-logo--footer {
+  height: 54px;
+}
+
+.site-logo--drawer {
+  height: 40px;
+}
+
+/* Over the hero photo (top-of-page header, intro docking logo) —
+   a stronger shadow for the bright sky areas. */
+.site-logo--float {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55));
+}
+
+@media (max-width: 640px) {
+  /* Header lives between the menu button and the CTA on mobile — keep it
+     compact so it clears both even at ~320px. Footer/drawer have room. */
+  .site-logo {
+    height: 28px;
+  }
+  .site-logo--footer {
+    height: 42px;
+  }
+  .site-logo--drawer {
+    height: 32px;
+  }
 }
 
