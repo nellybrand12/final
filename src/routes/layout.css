@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-surface: #fdf8f8;
   --color-surface-dim: #ddd9d8;
@@ -50,6 +52,13 @@
   --color-surface-variant: #e5e2e1;
   --color-deep-charcoal: #1a1a1a;
   --color-muted-gold: #b7a18b;
+  --color-muted-gold-dark: #d4c2b0;
+  --color-golden-brown: #8c7653;
+  --color-golden-brown-dark: #c5a880;
+  --color-brand-maroon: #6B1D2F;
+  --color-brand-maroon-dark: #B83D52;
+  --color-brand-burgundy: #6B1D2F;
+  --color-brand-burgundy-dark: #B83D52;
   --color-soft-cream: #f9f7f2;
   --color-rich-wood: #4a3728;
   --color-ink-black: #000000;
@@ -76,6 +85,12 @@
     color: #1c1b1b;
     font-family: "Work Sans", sans-serif;
     font-size: 15px;
+  }
+
+  html.dark,
+  html.dark body {
+    background-color: #121111;
+    color: #f7f3f2;
   }
 
   @media (min-width: 1024px) {
@@ -315,6 +330,44 @@
 .btn-ornate:active {
   transform: translateY(0);
   outline-offset: 2px;
+}
+
+/* Dark mode button color-only adaptations */
+.dark .btn-luxury-outline {
+  color: #f9f7f2;
+  border-color: #f9f7f2;
+  outline-color: rgba(249, 247, 242, 0.3);
+}
+
+.dark .btn-luxury-outline:hover {
+  background-color: #f9f7f2;
+  color: #1a1a1a;
+  outline-color: #f9f7f2;
+}
+
+.dark .btn-ornate {
+  background-color: #1c1b1b;
+  color: #f9f7f2;
+  border-color: #b7a18b;
+  outline-color: #b7a18b;
+}
+
+.dark .btn-ornate:hover {
+  background-color: #2a2928;
+  color: #f9f7f2;
+  outline-color: #f9f7f2;
+}
+
+.dark .btn-luxury-dark {
+  background-color: #242424;
+  border-color: #b7a18b;
+  color: #f9f7f2;
+}
+
+.dark .btn-luxury-dark:hover {
+  background-color: #b7a18b;
+  color: #1a1a1a;
+  border-color: #1a1a1a;
 }
 
 @keyframes fadeUp {

@@ -345,17 +345,17 @@
   <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
 </svelte:head>
 
-<div class="w-full bg-surface py-10 md:py-16">
+<div class="w-full bg-surface dark:bg-[#121111] py-10 md:py-16">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Title -->
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-2 block uppercase font-semibold">
+      <span class="font-label-caps text-muted-gold dark:text-muted-gold-dark tracking-widest text-xs mb-2 block uppercase font-semibold">
         {i18n.t.reserve.tag}
       </span>
-      <h1 class="font-display-lg text-deep-charcoal mb-3">
+      <h1 class="font-display-lg text-deep-charcoal dark:text-neutral-100 mb-3">
         {i18n.t.reserve.heading}
       </h1>
-      <p class="font-body-md text-sm text-on-surface-variant">
+      <p class="font-body-md text-sm text-on-surface-variant dark:text-neutral-300">
         {i18n.t.reserve.subheading}
       </p>
     </div>
@@ -363,7 +363,7 @@
     <!-- Stepper Navigation -->
     <div class="max-w-3xl mx-auto mb-12">
       <div class="flex items-center justify-between relative">
-        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-outline-variant/30 z-0"></div>
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-outline-variant/30 dark:bg-neutral-800 z-0"></div>
         
         <!-- Step 1 Indicator -->
         <button
@@ -372,10 +372,10 @@
           onclick={() => (currentStep = 1)}
           class="relative z-10 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none disabled:opacity-50"
         >
-          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 1 ? 'bg-deep-charcoal text-soft-cream shadow-md' : 'bg-surface-container text-on-surface-variant'}">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 1 ? 'bg-deep-charcoal text-soft-cream dark:bg-neutral-100 dark:text-neutral-900 shadow-md' : 'bg-surface-container dark:bg-neutral-800 text-on-surface-variant dark:text-neutral-400'}">
             1
           </div>
-          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 1 ? 'text-deep-charcoal font-bold' : 'text-on-surface-variant'}">
+          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 1 ? 'text-deep-charcoal dark:text-neutral-100 font-bold' : 'text-on-surface-variant dark:text-neutral-400'}">
             {i18n.t.reserve.step1Title}
           </span>
         </button>
@@ -387,10 +387,10 @@
           onclick={() => { if (checkIn && checkOut) currentStep = 2; }}
           class="relative z-10 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none disabled:opacity-50"
         >
-          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 2 ? 'bg-deep-charcoal text-soft-cream shadow-md' : 'bg-surface-container text-on-surface-variant'}">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 2 ? 'bg-deep-charcoal text-soft-cream dark:bg-neutral-100 dark:text-neutral-900 shadow-md' : 'bg-surface-container dark:bg-neutral-800 text-on-surface-variant dark:text-neutral-400'}">
             2
           </div>
-          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 2 ? 'text-deep-charcoal font-bold' : 'text-on-surface-variant'}">
+          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 2 ? 'text-deep-charcoal dark:text-neutral-100 font-bold' : 'text-on-surface-variant dark:text-neutral-400'}">
             {i18n.t.reserve.step2Title}
           </span>
         </button>
@@ -402,10 +402,10 @@
           onclick={() => { if (guestName && guestEmail) currentStep = 3; }}
           class="relative z-10 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none disabled:opacity-50"
         >
-          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 3 ? 'bg-deep-charcoal text-soft-cream shadow-md' : 'bg-surface-container text-on-surface-variant'}">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 3 ? 'bg-deep-charcoal text-soft-cream dark:bg-neutral-100 dark:text-neutral-900 shadow-md' : 'bg-surface-container dark:bg-neutral-800 text-on-surface-variant dark:text-neutral-400'}">
             3
           </div>
-          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 3 ? 'text-deep-charcoal font-bold' : 'text-on-surface-variant'}">
+          <span class="font-label-caps text-[10px] hidden sm:block {currentStep === 3 ? 'text-deep-charcoal dark:text-neutral-100 font-bold' : 'text-on-surface-variant dark:text-neutral-400'}">
             {i18n.t.reserve.step3Title}
           </span>
         </button>
@@ -423,19 +423,19 @@
     <!-- Multi-Step Layout Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-6xl mx-auto">
       <!-- Left Column: Step Content Form -->
-      <div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/30 p-6 md:p-8 shadow-sm">
+      <div class="lg:col-span-7 bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800 p-6 md:p-8 shadow-sm">
         <form onsubmit={handlePaymentSubmit} class="space-y-6">
           
           <!-- STEP 1: Room Selection, Dates & Number of Rooms -->
           {#if currentStep === 1}
             <div class="space-y-6 animate-fade-in">
-              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal font-bold">
+              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 font-bold">
                 {i18n.t.reserve.step1Heading}
               </h2>
 
               <!-- Room Selector -->
               <div>
-                <span class="block font-label-caps text-xs text-on-surface-variant mb-2">
+                <span class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-300 mb-2">
                   {i18n.t.reserve.selectRoomLabel}
                 </span>
                 <div class="grid grid-cols-1 gap-3">
@@ -443,26 +443,26 @@
                     <button
                       type="button"
                       onclick={() => (selectedRoomId = room.id)}
-                      class="flex items-center justify-between p-4 border text-left transition-all cursor-pointer {selectedRoomId === room.id ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant'}"
+                      class="flex items-center justify-between p-4 border text-left transition-all cursor-pointer {selectedRoomId === room.id ? 'border-muted-gold dark:border-muted-gold-dark bg-muted-gold/10 dark:bg-muted-gold-dark/10 outline outline-1 outline-muted-gold dark:outline-muted-gold-dark' : 'border-outline-variant/40 dark:border-neutral-800 bg-surface-container dark:bg-neutral-800/80 hover:bg-surface-variant dark:hover:bg-neutral-700/60'}"
                     >
                       <div class="flex items-center gap-4">
                         <img src={room.imageUrl} alt={room.name} class="w-16 h-12 object-cover" />
                         <div>
-                          <h4 class="font-headline text-base text-deep-charcoal font-bold">{room.name}</h4>
-                          <span class="text-xs text-on-surface-variant">{room.category} • Max {room.maxGuests} pers.</span>
+                          <h4 class="font-headline text-base text-deep-charcoal dark:text-neutral-100 font-bold">{room.name}</h4>
+                          <span class="text-xs text-on-surface-variant dark:text-neutral-400">{room.category} • Max {room.maxGuests} pers.</span>
                         </div>
                       </div>
                       <div class="text-right">
-                        <span class="font-headline text-base sm:text-lg font-bold text-deep-charcoal">{formatPrice(room.pricePerNight)}</span>
-                        <span class="text-[10px] font-label-caps text-muted-gold block">{i18n.t.reserve.perNight}</span>
+                        <span class="font-headline text-base sm:text-lg font-bold text-deep-charcoal dark:text-neutral-100">{formatPrice(room.pricePerNight)}</span>
+                        <span class="text-[10px] font-label-caps text-muted-gold dark:text-muted-gold-dark block">{i18n.t.reserve.perNight}</span>
                         {#if checkIn && checkOut}
                           {#if roomAvailability[room.id] !== undefined && roomAvailability[room.id] !== null}
-                            <span class="text-[10px] font-label-caps block mt-1 {roomAvailability[room.id]! >= 3 ? 'text-green-600' : 'text-error'}">
+                            <span class="text-[10px] font-label-caps block mt-1 {roomAvailability[room.id]! >= 3 ? 'text-green-600 dark:text-emerald-400' : 'text-error dark:text-rose-400'}">
                               {roomAvailability[room.id]} {i18n.locale === 'fr' ? 'chambre(s) dispo' : 'rooms avail'}
                             </span>
                           {/if}
                         {:else}
-                          <span class="text-[10px] font-label-caps block mt-1 text-on-surface-variant">
+                          <span class="text-[10px] font-label-caps block mt-1 text-on-surface-variant dark:text-neutral-400">
                             {i18n.locale === 'fr' ? 'Dates requises' : 'Dates required'}
                           </span>
                         {/if}
@@ -475,26 +475,26 @@
               <!-- Date Picker Row -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label for="step1CheckIn" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="step1CheckIn" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.checkInLabel}
                   </label>
                   <input
                     id="step1CheckIn"
                     type="date"
                     bind:value={checkIn}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                     required
                   />
                 </div>
                 <div>
-                  <label for="step1CheckOut" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="step1CheckOut" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.checkOutLabel}
                   </label>
                   <input
                     id="step1CheckOut"
                     type="date"
                     bind:value={checkOut}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                     required
                   />
                 </div>
@@ -503,13 +503,13 @@
               <!-- Number of Rooms Selector (Hidden for Halls) -->
               {#if selectedRoom?.type !== 'hall'}
                 <div>
-                  <label for="step1RoomsCount" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="step1RoomsCount" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.roomsCountLabel}
                   </label>
                   <select
                     id="step1RoomsCount"
                     bind:value={roomsCount}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                   >
                     <option value={1}>1 {i18n.t.reserve.roomOptionSingle}</option>
                     <option value={2}>2 {i18n.t.reserve.roomOptionPlural}</option>
@@ -520,7 +520,7 @@
               {:else}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label for="eventType" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                    <label for="eventType" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                       Type d'Événement
                     </label>
                     <input
@@ -528,12 +528,12 @@
                       type="text"
                       bind:value={eventType}
                       placeholder="Ex: Mariage, Conférence..."
-                      class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                      class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                       required
                     />
                   </div>
                   <div>
-                    <label for="expectedAttendees" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                    <label for="expectedAttendees" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                       Nombre de Personnes
                     </label>
                     <input
@@ -541,7 +541,7 @@
                       type="number"
                       bind:value={expectedAttendees}
                       min="1"
-                      class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                      class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                       required
                     />
                   </div>
@@ -564,12 +564,12 @@
           <!-- STEP 2: Guest Details -->
           {#if currentStep === 2}
             <div class="space-y-6 animate-fade-in">
-              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal font-bold">
+              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 font-bold">
                 {i18n.t.reserve.step2Heading}
               </h2>
 
               <div>
-                <label for="guestName" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                <label for="guestName" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                   {i18n.t.reserve.fullNameLabel}
                 </label>
                 <input
@@ -577,14 +577,14 @@
                   type="text"
                   placeholder={i18n.t.reserve.fullNamePlaceholder}
                   bind:value={guestName}
-                  class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                  class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                   required
                 />
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="guestEmail" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="guestEmail" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.emailLabel}
                   </label>
                   <input
@@ -592,12 +592,12 @@
                     type="email"
                     placeholder={i18n.t.reserve.emailPlaceholder}
                     bind:value={guestEmail}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                     required
                   />
                 </div>
                 <div>
-                  <label for="guestPhone" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="guestPhone" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.phoneLabel}
                   </label>
                   <input
@@ -605,7 +605,7 @@
                     type="tel"
                     placeholder={i18n.t.reserve.phonePlaceholder}
                     bind:value={guestPhone}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                     required
                   />
                 </div>
@@ -613,7 +613,7 @@
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label for="guestAddress" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="guestAddress" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     Adresse de facturation (Optionnel)
                   </label>
                   <input
@@ -621,11 +621,11 @@
                     type="text"
                     placeholder="Ex: Bastos, Yaoundé"
                     bind:value={guestAddress}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                   />
                 </div>
                 <div>
-                  <label for="guestCity" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                  <label for="guestCity" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     Ville (Optionnel)
                   </label>
                   <input
@@ -633,13 +633,13 @@
                     type="text"
                     placeholder="Ex: Yaoundé"
                     bind:value={guestCity}
-                    class="w-full bg-surface-container border border-outline-variant/40 px-4 py-3 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold"
+                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                   />
                 </div>
               </div>
 
               <div>
-                <label for="specialRequests" class="block font-label-caps text-xs text-on-surface-variant mb-1.5">
+                <label for="specialRequests" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                   {i18n.t.reserve.specialRequestsLabel}
                 </label>
                 <textarea
@@ -647,7 +647,7 @@
                   rows="3"
                   placeholder={i18n.t.reserve.specialRequestsPlaceholder}
                   bind:value={specialRequests}
-                  class="w-full bg-surface-container border border-outline-variant/40 p-4 text-sm text-deep-charcoal focus:outline-none focus:border-muted-gold resize-none"
+                  class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 p-4 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark resize-none"
                 ></textarea>
               </div>
 
@@ -674,19 +674,19 @@
           <!-- STEP 3: Payment Method & Dynamic Panel & Confirmation -->
           {#if currentStep === 3}
             <div class="space-y-6 animate-fade-in">
-              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal font-bold">
+              <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 font-bold">
                 {i18n.t.reserve.step3Heading}
               </h2>
 
               <!-- Payment Method Radio Options -->
               <div class="space-y-3">
-                <span class="block font-label-caps text-xs text-on-surface-variant mb-2">
+                <span class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-2">
                   {i18n.t.reserve.paymentTitle}
                 </span>
 
                 <!-- 1. Online Payment via CinetPay Seamless -->
                 <label
-                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'cinetpay' ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
+                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'cinetpay' ? 'border-muted-gold dark:border-muted-gold-dark bg-muted-gold/10 dark:bg-muted-gold-dark/10 outline outline-1 outline-muted-gold dark:outline-muted-gold-dark' : 'border-outline-variant/40 dark:border-neutral-800 bg-surface-container dark:bg-neutral-800/80 hover:bg-surface-variant/70 dark:hover:bg-neutral-800'}"
                 >
                   <div class="flex items-center gap-4">
                     <input
@@ -696,13 +696,13 @@
                       disabled={isInFlight}
                       checked={paymentMethod === 'cinetpay'}
                       onchange={() => selectPaymentMethod('cinetpay')}
-                      class="accent-muted-gold w-4 h-4 cursor-pointer"
+                      class="accent-muted-gold dark:accent-muted-gold-dark w-4 h-4 cursor-pointer"
                     />
                     <div>
-                      <span class="font-headline text-base font-bold text-deep-charcoal block">
+                      <span class="font-headline text-base font-bold text-deep-charcoal dark:text-neutral-100 block">
                         {i18n.t.reserve.payOnlineTitle}
                       </span>
-                      <span class="text-xs text-on-surface-variant">
+                      <span class="text-xs text-on-surface-variant dark:text-neutral-400">
                         {i18n.t.reserve.payOnlineDesc}
                       </span>
                     </div>
@@ -717,7 +717,7 @@
 
                 <!-- 2. Pay at Hotel -->
                 <label
-                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'hotel' ? 'border-muted-gold bg-muted-gold/10 outline outline-1 outline-muted-gold' : 'border-outline-variant/40 bg-surface-container hover:bg-surface-variant/70'}"
+                  class="flex items-center justify-between p-4 border transition-all cursor-pointer {paymentMethod === 'hotel' ? 'border-muted-gold dark:border-muted-gold-dark bg-muted-gold/10 dark:bg-muted-gold-dark/10 outline outline-1 outline-muted-gold dark:outline-muted-gold-dark' : 'border-outline-variant/40 dark:border-neutral-800 bg-surface-container dark:bg-neutral-800/80 hover:bg-surface-variant/70 dark:hover:bg-neutral-800'}"
                 >
                   <div class="flex items-center gap-4">
                     <input
@@ -727,14 +727,14 @@
                       disabled={isInFlight}
                       checked={paymentMethod === 'hotel'}
                       onchange={() => selectPaymentMethod('hotel')}
-                      class="accent-muted-gold w-4 h-4 cursor-pointer"
+                      class="accent-muted-gold dark:accent-muted-gold-dark w-4 h-4 cursor-pointer"
                     />
                     <div>
-                      <span class="font-headline text-base font-bold text-deep-charcoal block">{i18n.t.reserve.payHotelTitle}</span>
-                      <span class="text-xs text-on-surface-variant">{i18n.t.reserve.payHotelDesc}</span>
+                      <span class="font-headline text-base font-bold text-deep-charcoal dark:text-neutral-100 block">{i18n.t.reserve.payHotelTitle}</span>
+                      <span class="text-xs text-on-surface-variant dark:text-neutral-400">{i18n.t.reserve.payHotelDesc}</span>
                     </div>
                   </div>
-                  <span class="material-symbols-outlined text-muted-gold text-2xl">hotel</span>
+                  <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-2xl">hotel</span>
                 </label>
               </div>
 
@@ -744,50 +744,50 @@
               <div class="transition-all duration-300">
                 <!-- 1. DYNAMIC PANEL: CINETPAY SEAMLESS -->
                 {#if paymentMethod === 'cinetpay'}
-                  <div class="p-6 bg-surface-container border border-muted-gold/40 space-y-4 animate-fade-in">
-                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+                  <div class="p-6 bg-surface-container dark:bg-neutral-800/90 border border-muted-gold/40 dark:border-muted-gold-dark/40 space-y-4 animate-fade-in">
+                    <div class="flex items-center justify-between border-b border-outline-variant/30 dark:border-neutral-700 pb-3">
                       <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-muted-gold">lock</span>
-                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
+                        <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark">lock</span>
+                        <h4 class="font-headline text-sm font-bold text-deep-charcoal dark:text-neutral-100">
                           CinetPay Seamless • {i18n.t.reserve.cinetpaySecurityBadge}
                         </h4>
                       </div>
-                      <span class="font-headline text-sm font-bold text-deep-charcoal">
+                      <span class="font-headline text-sm font-bold text-deep-charcoal dark:text-neutral-100">
                         {formatPrice(totalPrice)} FCFA
                       </span>
                     </div>
 
                     {#if paymentStepState === 'initiating'}
-                      <div class="p-5 bg-muted-gold/10 border border-muted-gold text-center space-y-2 rounded-sm animate-fade-in">
-                        <div class="w-8 h-8 border-2 border-muted-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p class="text-xs text-deep-charcoal font-medium">Préparation du paiement sécurisé CinetPay...</p>
+                      <div class="p-5 bg-muted-gold/10 dark:bg-muted-gold-dark/10 border border-muted-gold dark:border-muted-gold-dark text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-8 h-8 border-2 border-muted-gold dark:border-muted-gold-dark border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p class="text-xs text-deep-charcoal dark:text-neutral-200 font-medium">Préparation du paiement sécurisé CinetPay...</p>
                       </div>
                     {:else if paymentStepState === 'pending_approval'}
-                      <div class="p-5 bg-amber-500/10 border border-amber-400 text-center space-y-2 rounded-sm animate-fade-in">
-                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center mx-auto animate-pulse">
+                      <div class="p-5 bg-amber-500/10 dark:bg-amber-500/20 border border-amber-400 dark:border-amber-500/50 text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto animate-pulse">
                           <span class="material-symbols-outlined text-2xl">open_in_new</span>
                         </div>
-                        <p class="text-xs text-deep-charcoal font-medium">
+                        <p class="text-xs text-deep-charcoal dark:text-neutral-200 font-medium">
                           {i18n.t.reserve.cinetpayModalOpen}
                         </p>
                       </div>
                     {:else if paymentStepState === 'verifying'}
-                      <div class="p-5 bg-muted-gold/10 border border-muted-gold text-center space-y-2 rounded-sm animate-fade-in">
-                        <div class="w-8 h-8 border-2 border-muted-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-                        <p class="text-xs text-deep-charcoal font-medium">
+                      <div class="p-5 bg-muted-gold/10 dark:bg-muted-gold-dark/10 border border-muted-gold dark:border-muted-gold-dark text-center space-y-2 rounded-sm animate-fade-in">
+                        <div class="w-8 h-8 border-2 border-muted-gold dark:border-muted-gold-dark border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        <p class="text-xs text-deep-charcoal dark:text-neutral-200 font-medium">
                           {i18n.t.reserve.cinetpayVerifying}
                         </p>
                       </div>
                     {:else if paymentStepState === 'success'}
-                      <div class="p-5 bg-emerald-500/10 border border-emerald-500 text-center space-y-2 rounded-sm animate-fade-in">
-                        <span class="material-symbols-outlined text-3xl text-emerald-600">check_circle</span>
-                        <h5 class="font-headline text-sm font-bold text-emerald-800">
+                      <div class="p-5 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500 text-center space-y-2 rounded-sm animate-fade-in">
+                        <span class="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">check_circle</span>
+                        <h5 class="font-headline text-sm font-bold text-emerald-800 dark:text-emerald-300">
                           {i18n.t.reserve.paymentSuccess}
                         </h5>
                       </div>
                     {:else if paymentStepState === 'failed'}
-                      <div class="p-4 bg-rose-500/10 border border-rose-400 text-left space-y-3 rounded-sm animate-fade-in">
-                        <div class="flex items-center gap-2 text-rose-700 font-bold text-xs">
+                      <div class="p-4 bg-rose-500/10 dark:bg-rose-500/20 border border-rose-400 dark:border-rose-500/50 text-left space-y-3 rounded-sm animate-fade-in">
+                        <div class="flex items-center gap-2 text-rose-700 dark:text-rose-400 font-bold text-xs">
                           <span class="material-symbols-outlined text-lg">error</span>
                           <span>{paymentErrorMessage || i18n.t.reserve.paymentFailed}</span>
                         </div>
@@ -801,20 +801,20 @@
                         </button>
                       </div>
                     {:else}
-                      <p class="text-xs text-on-surface-variant leading-relaxed">
+                      <p class="text-xs text-on-surface-variant dark:text-neutral-400 leading-relaxed">
                         {i18n.t.reserve.cinetpayPopupNotice}
                       </p>
                     {/if}
                   </div>
                 {:else if paymentMethod === 'hotel'}
-                  <div class="p-5 bg-surface-container border border-muted-gold/40 space-y-3 animate-fade-in">
+                  <div class="p-5 bg-surface-container dark:bg-neutral-800/90 border border-muted-gold/40 dark:border-muted-gold-dark/40 space-y-3 animate-fade-in">
                     <div class="flex items-start gap-3">
-                      <span class="material-symbols-outlined text-muted-gold text-xl mt-0.5">verified_user</span>
+                      <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-xl mt-0.5">verified_user</span>
                       <div class="space-y-1">
-                        <h4 class="font-headline text-sm font-bold text-deep-charcoal">
+                        <h4 class="font-headline text-sm font-bold text-deep-charcoal dark:text-neutral-100">
                           {i18n.t.reserve.payHotelTitle}
                         </h4>
-                        <p class="font-body-md text-xs text-on-surface-variant leading-relaxed">
+                        <p class="font-body-md text-xs text-on-surface-variant dark:text-neutral-400 leading-relaxed">
                           {i18n.t.reserve.payHotelNotice}
                         </p>
                       </div>
@@ -824,9 +824,9 @@
               </div>
 
               <!-- Cancellation & Terms Notice -->
-              <div class="p-4 bg-surface-container text-xs text-on-surface-variant leading-relaxed border-l-2 border-muted-gold">
+              <div class="p-4 bg-surface-container dark:bg-neutral-800/90 text-xs text-on-surface-variant dark:text-neutral-400 leading-relaxed border-l-2 border-muted-gold dark:border-muted-gold-dark">
                 {#if selectedRoom?.type === 'hall'}
-                  <p class="font-medium text-deep-charcoal mb-1">
+                  <p class="font-medium text-deep-charcoal dark:text-neutral-200 mb-1">
                     {i18n.locale === 'fr' ? 'Conditions d’annulation de la salle :' : 'Event Hall Cancellation Policy:'}
                   </p>
                   <p>
@@ -835,7 +835,7 @@
                       : 'By confirming this booking, you accept our general terms. Cancellations made at least 36 hours before the event receive a guaranteed 95% refund.'}
                   </p>
                 {:else}
-                  <p class="font-medium text-deep-charcoal mb-1">
+                  <p class="font-medium text-deep-charcoal dark:text-neutral-200 mb-1">
                     {i18n.locale === 'fr' ? 'Conditions d’annulation de l’hébergement :' : 'Accommodation Cancellation Policy:'}
                   </p>
                   <p>
@@ -888,30 +888,30 @@
 
       <!-- Right Column: Live Booking Summary Sidebar -->
       <div class="lg:col-span-5">
-        <div class="bg-surface-container border border-outline-variant/40 p-6 md:p-8 space-y-6 sticky top-28 shadow-sm">
-          <div class="flex items-center gap-4 border-b border-outline-variant/30 pb-4">
+        <div class="bg-surface-container dark:bg-neutral-900 border border-outline-variant/40 dark:border-neutral-800 p-6 md:p-8 space-y-6 sticky top-28 shadow-sm">
+          <div class="flex items-center gap-4 border-b border-outline-variant/30 dark:border-neutral-800 pb-4">
             <img src={selectedRoom.imageUrl} alt={selectedRoom.name} class="w-20 h-16 object-cover" />
             <div>
-              <span class="text-[10px] font-label-caps text-muted-gold block font-semibold">{selectedRoom.category}</span>
-              <h3 class="font-headline text-xl text-deep-charcoal font-bold">{selectedRoom.name}</h3>
-              <span class="text-xs text-on-surface-variant">
+              <span class="text-[10px] font-label-caps text-muted-gold dark:text-muted-gold-dark block font-semibold">{selectedRoom.category}</span>
+              <h3 class="font-headline text-xl text-deep-charcoal dark:text-neutral-100 font-bold">{selectedRoom.name}</h3>
+              <span class="text-xs text-on-surface-variant dark:text-neutral-400">
                 {selectedRoom.sizeSqM} m² • {selectedRoom.type === 'hall' ? (selectedRoom.bedType || 'Modulable') : selectedRoom.bedType}
               </span>
             </div>
           </div>
 
           <!-- Summary Items -->
-          <div class="space-y-3 text-xs text-on-surface-variant">
+          <div class="space-y-3 text-xs text-on-surface-variant dark:text-neutral-400">
             <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Début événement' : 'Event Start') : i18n.t.reserve.summaryCheckIn}</span>
+              <span class="font-medium text-deep-charcoal dark:text-neutral-200">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Début événement' : 'Event Start') : i18n.t.reserve.summaryCheckIn}</span>
               <span>{checkIn || i18n.t.reserve.summaryUndefined}</span>
             </div>
             <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Fin événement' : 'Event End') : i18n.t.reserve.summaryCheckOut}</span>
+              <span class="font-medium text-deep-charcoal dark:text-neutral-200">{selectedRoom.type === 'hall' ? (i18n.locale === 'fr' ? 'Fin événement' : 'Event End') : i18n.t.reserve.summaryCheckOut}</span>
               <span>{checkOut || i18n.t.reserve.summaryUndefined}</span>
             </div>
             <div class="flex justify-between">
-              <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryDuration}</span>
+              <span class="font-medium text-deep-charcoal dark:text-neutral-200">{i18n.t.reserve.summaryDuration}</span>
               <span>
                 {#if selectedRoom.type === 'hall'}
                   {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}
@@ -922,39 +922,39 @@
             </div>
             {#if selectedRoom.type === 'hall'}
               <div class="flex justify-between">
-                <span class="font-medium text-deep-charcoal">{i18n.locale === 'fr' ? 'Type d’événement' : 'Event Type'}</span>
+                <span class="font-medium text-deep-charcoal dark:text-neutral-200">{i18n.locale === 'fr' ? 'Type d’événement' : 'Event Type'}</span>
                 <span>{eventType || (i18n.locale === 'fr' ? 'Non spécifié' : 'Not specified')}</span>
               </div>
             {:else}
               <div class="flex justify-between">
-                <span class="font-medium text-deep-charcoal">{i18n.t.reserve.summaryRooms}</span>
+                <span class="font-medium text-deep-charcoal dark:text-neutral-200">{i18n.t.reserve.summaryRooms}</span>
                 <span>{roomsCount} {roomsCount > 1 ? i18n.t.reserve.roomOptionPlural : i18n.t.reserve.roomOptionSingle}</span>
               </div>
             {/if}
           </div>
 
           <!-- Pricing Breakdown -->
-          <div class="border-t border-outline-variant/30 pt-4 space-y-2 text-xs">
-            <div class="flex justify-between text-on-surface-variant">
+          <div class="border-t border-outline-variant/30 dark:border-neutral-800 pt-4 space-y-2 text-xs">
+            <div class="flex justify-between text-on-surface-variant dark:text-neutral-400">
               {#if selectedRoom.type === 'hall'}
                 <span>{formatPrice(selectedRoom.pricePerNight)} FCFA × {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}</span>
               {:else}
                 <span>{formatPrice(selectedRoom.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
               {/if}
-              <span class="font-medium text-deep-charcoal">{formatPrice(totalPrice)} FCFA</span>
+              <span class="font-medium text-deep-charcoal dark:text-neutral-200">{formatPrice(totalPrice)} FCFA</span>
             </div>
-            <div class="flex justify-between text-on-surface-variant">
+            <div class="flex justify-between text-on-surface-variant dark:text-neutral-400">
               <span>{i18n.t.reserve.taxesIncluded}</span>
-              <span class="text-green-600 font-medium">{i18n.t.reserve.includedLabel}</span>
+              <span class="text-green-600 dark:text-emerald-400 font-medium">{i18n.t.reserve.includedLabel}</span>
             </div>
-            <div class="border-t border-outline-variant/30 pt-3 flex justify-between font-headline text-lg font-bold text-deep-charcoal">
+            <div class="border-t border-outline-variant/30 dark:border-neutral-800 pt-3 flex justify-between font-headline text-lg font-bold text-deep-charcoal dark:text-neutral-100">
               <span>{i18n.t.reserve.totalAmountLabel}</span>
-              <span class="text-muted-gold">{formatPrice(totalPrice)} FCFA</span>
+              <span class="text-muted-gold dark:text-muted-gold-dark">{formatPrice(totalPrice)} FCFA</span>
             </div>
           </div>
 
-          <div class="pt-2 flex items-center gap-2 text-[10px] font-label-caps text-on-surface-variant/80">
-            <span class="material-symbols-outlined text-sm text-muted-gold">verified</span>
+          <div class="pt-2 flex items-center gap-2 text-[10px] font-label-caps text-on-surface-variant/80 dark:text-neutral-400">
+            <span class="material-symbols-outlined text-sm text-muted-gold dark:text-muted-gold-dark">verified</span>
             <span>{i18n.t.reserve.conciergeShuttleBadge}</span>
           </div>
         </div>

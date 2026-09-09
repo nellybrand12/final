@@ -4,11 +4,16 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import ConciergeBubble from '$lib/components/ConciergeBubble.svelte';
+  import { themeManager } from '$lib/theme.svelte';
 
   let { children } = $props();
+
+  $effect(() => {
+    themeManager.syncRoute($page.url.pathname);
+  });
 </script>
 
-<div class="min-h-screen flex flex-col justify-between bg-surface text-on-surface">
+<div class="min-h-screen flex flex-col justify-between bg-surface dark:bg-neutral-950 text-on-surface dark:text-neutral-100">
   {#if $page.url.pathname.startsWith('/admin')}
     {@render children()}
   {:else}

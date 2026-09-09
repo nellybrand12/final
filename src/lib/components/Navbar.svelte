@@ -2,6 +2,7 @@
   import { page } from "$app/state";
   import { i18n } from "$lib/i18n.svelte";
   import { introManager } from "$lib/introState.svelte";
+  import { themeManager } from "$lib/theme.svelte";
 
   let scrollY = $state(0);
   let isDrawerOpen = $state(false);
@@ -135,6 +136,23 @@
         </button>
       </div>
 
+      <!-- Theme Toggle (Desktop & Tablet) -->
+      <button
+        type="button"
+        onclick={() => themeManager.toggle('public')}
+        class="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-soft-cream hover:text-muted-gold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-muted-gold"
+        role="switch"
+        aria-checked={themeManager.isDark}
+        aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+        title={themeManager.isDark ? (i18n.locale === 'fr' ? 'Thème clair' : 'Light theme') : (i18n.locale === 'fr' ? 'Thème sombre' : 'Dark theme')}
+      >
+        {#if themeManager.isDark}
+          <span class="material-symbols-outlined text-[17px]">light_mode</span>
+        {:else}
+          <span class="material-symbols-outlined text-[17px]">dark_mode</span>
+        {/if}
+      </button>
+
       <!-- Action Button (Réserver / Book Now) (Ultra-compact on mobile) -->
       <a
         href="/reserver"
@@ -178,6 +196,22 @@
     aria-label="Switch to English"
   >
     EN
+  </button>
+  <span class="text-white/30 text-[8px] px-1">•</span>
+  <button
+    type="button"
+    onclick={() => themeManager.toggle('public')}
+    class="px-2 py-1 text-soft-cream hover:text-muted-gold transition-colors flex items-center justify-center cursor-pointer focus:outline-none"
+    role="switch"
+    aria-checked={themeManager.isDark}
+    aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+    title={themeManager.isDark ? (i18n.locale === 'fr' ? 'Thème clair' : 'Light theme') : (i18n.locale === 'fr' ? 'Thème sombre' : 'Dark theme')}
+  >
+    {#if themeManager.isDark}
+      <span class="material-symbols-outlined text-[14px]">light_mode</span>
+    {:else}
+      <span class="material-symbols-outlined text-[14px]">dark_mode</span>
+    {/if}
   </button>
 </div>
 
@@ -259,6 +293,33 @@
           English (EN)
         </button>
       </div>
+    </div>
+
+    <!-- Theme Switcher in Menu -->
+    <div
+      class="py-4 border-b border-white/10 flex items-center justify-between"
+    >
+      <span
+        class="font-label-caps text-[11px] text-soft-cream/60 tracking-widest uppercase"
+      >
+        {i18n.locale === 'fr' ? 'Thème' : 'Theme'} :
+      </span>
+      <button
+        type="button"
+        onclick={() => themeManager.toggle('public')}
+        class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-soft-cream hover:text-muted-gold font-label-caps text-[10px] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-muted-gold"
+        role="switch"
+        aria-checked={themeManager.isDark}
+        aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+      >
+        {#if themeManager.isDark}
+          <span class="material-symbols-outlined text-sm text-muted-gold">light_mode</span>
+          <span>{i18n.locale === 'fr' ? 'Mode Clair' : 'Light Mode'}</span>
+        {:else}
+          <span class="material-symbols-outlined text-sm text-muted-gold">dark_mode</span>
+          <span>{i18n.locale === 'fr' ? 'Mode Sombre' : 'Dark Mode'}</span>
+        {/if}
+      </button>
     </div>
 
     <!-- Navigation Links -->

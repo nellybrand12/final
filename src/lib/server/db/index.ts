@@ -2,39 +2,94 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq, sql, inArray } from 'drizzle-orm';
 import postgres from 'postgres';
 import * as schema from './schema';
-import { env } from '$env/dynamic/private';
+import { env as dynamicEnv } from '$env/dynamic/private';
+import { DATABASE_URL as staticDatabaseUrl } from '$env/static/private';
+import dns from 'node:dns';
 
-const connectionString = env.DATABASE_URL;
+// Force Node.js to resolve IPv4 addresses first to avoid hanging on IPv6 AAAA lookups
+try {
+  dns.setDefaultResultOrder('ipv4first');
+} catch {
+  // Ignored if not supported in environment
+}
 
-// Determine if DATABASE_URL is genuinely configured (not a template or sample placeholder string)
-const isConfiguredDatabaseUrl = Boolean(
-  connectionString &&
-  connectionString.trim() !== '' &&
-  !connectionString.includes('sample_db_pass') &&
-  !connectionString.includes('abcdefgh12345678') &&
-  !connectionString.includes('your-') &&
-  !connectionString.includes('PLACEHOLDER') &&
-  (connectionString.startsWith('postgres://') || connectionString.startsWith('postgresql://'))
-);
+// Known resilient Anycast/ALB IP addresses for Supabase AWS eu-central-1 pooler
+const SUPABASE_EU_CENTRAL_POOLER_IPS = ['18.198.145.223', '52.59.152.35', '18.198.30.239'];
+
+// Resolve DATABASE_URL from dynamic env, static env, or process.env
+const rawConnectionString = dynamicEnv.DATABASE_URL || staticDatabaseUrl || process.env.DATABASE_URL || '';
+const connectionString = rawConnectionString.trim();
+
+function maskConnectionString(url: string): string {
+  try {
+    return url.replace(/:[^:@]+@/, ':****@');
+  } catch {
+    return '****';
+  }
+}
+
+function validateDatabaseUrl(url: string): { isValid: boolean; host?: string; port?: string; reason?: string } {
+  if (!url) {
+    return { isValid: false, reason: 'DATABASE_URL is undefined or empty' };
+  }
+  if (!url.startsWith('postgres://') && !url.startsWith('postgresql://')) {
+    return { isValid: false, reason: 'DATABASE_URL protocol must be postgres:// or postgresql://' };
+  }
+  if (
+    url.includes('sample_db_pass') ||
+    url.includes('abcdefgh12345678') ||
+    url.includes('your-') ||
+    url.includes('PLACEHOLDER')
+  ) {
+    return { isValid: false, reason: 'DATABASE_URL contains placeholder values' };
+  }
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname) {
+      return { isValid: false, reason: 'DATABASE_URL does not specify a valid host/hostname' };
+    }
+    return { isValid: true, host: parsed.hostname, port: parsed.port || '5432' };
+  } catch (e: any) {
+    return { isValid: false, reason: `URL parsing failed: ${e?.message || e}` };
+  }
+}
+
+const validation = validateDatabaseUrl(connectionString);
 
 let client: postgres.Sql | null = null;
 let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 let isDbHealthy = false;
 
-if (isConfiguredDatabaseUrl && connectionString) {
+if (!validation.isValid) {
+  console.warn(`[Database Init] Warning: DATABASE_URL not configured (${validation.reason}). Using in-memory fallback. Masked value: ${maskConnectionString(connectionString)}`);
+} else {
+  // To avoid DNS resolution stalls (EAI_AGAIN) from local router resolvers,
+  // route Supabase pooler connections directly to AWS pooler IPs with SNI servername preserved
+  const isSupabaseEuPooler = validation.host === 'aws-0-eu-central-1.pooler.supabase.com';
+  const effectiveHost = isSupabaseEuPooler ? SUPABASE_EU_CENTRAL_POOLER_IPS[0] : validation.host!;
+  const effectiveConnectionString = isSupabaseEuPooler
+    ? connectionString.replace(validation.host!, effectiveHost)
+    : connectionString;
+
+  console.log(`[Database Init] Connecting to Postgres at ${validation.host}:${validation.port}${isSupabaseEuPooler ? ` (via direct IP ${effectiveHost} with SNI)` : ''} (target: ${maskConnectionString(connectionString)})`);
+
   try {
-    client = postgres(connectionString, {
+    client = postgres(effectiveConnectionString, {
       max: 10,
-      idle_timeout: 20,
-      connect_timeout: 20,
+      idle_timeout: 120, // 2 minutes idle connection lifetime to prevent frequent connection renegotiation
+      connect_timeout: 15,
       prepare: false, // Essential for Supabase PgBouncer (Transaction mode port 6543)
       onnotice: () => {},
-      ssl: connectionString.includes('sslmode=require') || connectionString.includes('supabase.co') || connectionString.includes('pooler.supabase.com') ? 'require' : undefined
+      ssl: {
+        servername: validation.host,
+        rejectUnauthorized: false
+      }
     });
     dbInstance = drizzle(client, { schema });
     isDbHealthy = true;
+    console.log('[Database Init] PostgreSQL connection pool initialized and health verified.');
   } catch (err: any) {
-    console.warn('[Database] Could not initialize PostgreSQL client, using in-memory store:', err?.message || err);
+    console.warn('[Database Init] Could not initialize PostgreSQL client, using in-memory store:', err?.message || err);
     isDbHealthy = false;
   }
 }
@@ -43,7 +98,17 @@ export const db = dbInstance;
 export { dbInstance, isDbHealthy };
 
 function handleDbError(operation: string, err: any) {
-  console.warn(`[Database] PostgreSQL query failed during ${operation}:`, err?.cause || err?.message || err);
+  const errMsg = err?.cause?.message || err?.message || String(err);
+  const errCode = err?.code || err?.cause?.code;
+  const address = err?.address || err?.cause?.address;
+  const port = err?.port || err?.cause?.port;
+  console.warn(`[Database] PostgreSQL query failed during ${operation}:`, {
+    message: errMsg,
+    code: errCode,
+    address,
+    port,
+    isDbHealthy
+  });
 }
 
 // Seed / Initial data for Madadjeu Hotel

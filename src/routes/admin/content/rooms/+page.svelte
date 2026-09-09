@@ -55,11 +55,11 @@
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2.5">
-        <Building2 class="text-brand-burgundy shrink-0" size={26} />
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight flex items-center gap-2.5">
+        <Building2 class="text-brand-burgundy dark:text-brand-burgundy-dark shrink-0" size={26} />
         Gestion des Chambres & Salles Événementielles
       </h1>
-      <p class="text-sm text-gray-500 mt-1">
+      <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1">
         Configurez l'inventaire, ajustez les prix en temps réel, créez de nouvelles salles de réception et gérez les fiches.
       </p>
     </div>
@@ -67,7 +67,7 @@
     <button 
       type="button" 
       onclick={() => isCreateOpen = true}
-      class="bg-deep-charcoal text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black transition-all shadow-sm flex items-center gap-2 shrink-0 self-start sm:self-auto"
+      class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-white transition-all shadow-sm flex items-center gap-2 shrink-0 self-start sm:self-auto"
     >
       <Plus size={18} />
       <span>Ajouter une fiche</span>
@@ -76,8 +76,8 @@
 
   <!-- Status notifications -->
   {#if form?.success && form?.message}
-    <div class="rounded-xl bg-emerald-50 p-4 border border-emerald-200 flex items-start gap-3 text-emerald-900 shadow-sm animate-in fade-in">
-      <CheckCircle2 class="text-emerald-600 shrink-0 mt-0.5" size={18} />
+    <div class="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 p-4 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3 text-emerald-900 dark:text-emerald-200 shadow-sm animate-in fade-in">
+      <CheckCircle2 class="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" size={18} />
       <div>
         <p class="text-sm font-medium">{form.message}</p>
       </div>
@@ -85,8 +85,8 @@
   {/if}
 
   {#if form?.error}
-    <div class="rounded-xl bg-rose-50 p-4 border border-rose-200 flex items-start gap-3 text-rose-900 shadow-sm animate-in fade-in">
-      <AlertCircle class="text-rose-500 shrink-0 mt-0.5" size={18} />
+    <div class="rounded-xl bg-rose-50 dark:bg-rose-950/40 p-4 border border-rose-200 dark:border-rose-800 flex items-start gap-3 text-rose-900 dark:text-rose-200 shadow-sm animate-in fade-in">
+      <AlertCircle class="text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" size={18} />
       <div>
         <p class="text-sm font-medium">{form.error}</p>
       </div>
@@ -94,44 +94,44 @@
   {/if}
 
   <!-- Filter tabs -->
-  <div class="flex items-center gap-2 border-b border-gray-200 pb-1 overflow-x-auto scrollbar-hide">
+  <div class="flex items-center gap-2 border-b border-gray-200 dark:border-neutral-800 pb-1 overflow-x-auto scrollbar-hide">
     <button 
       type="button"
       onclick={() => activeTab = 'all'}
-      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'all' ? 'bg-deep-charcoal text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}"
+      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'all' ? 'bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 shadow-sm' : 'text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 hover:bg-gray-100 dark:hover:bg-neutral-800'}"
     >
       <span>Toutes les fiches actives</span>
-      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'all' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'} font-semibold">{counts.all}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'all' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300'} font-semibold">{counts.all}</span>
     </button>
 
     <button 
       type="button"
       onclick={() => activeTab = 'room'}
-      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'room' ? 'bg-deep-charcoal text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}"
+      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'room' ? 'bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 shadow-sm' : 'text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 hover:bg-gray-100 dark:hover:bg-neutral-800'}"
     >
       <BedDouble size={16} />
       <span>Chambres & Suites</span>
-      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'room' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'} font-semibold">{counts.room}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'room' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300'} font-semibold">{counts.room}</span>
     </button>
 
     <button 
       type="button"
       onclick={() => activeTab = 'hall'}
-      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'hall' ? 'bg-deep-charcoal text-white shadow-sm' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}"
+      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'hall' ? 'bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 shadow-sm' : 'text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 hover:bg-gray-100 dark:hover:bg-neutral-800'}"
     >
       <Building2 size={16} />
       <span>Salles d'Événements</span>
-      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'hall' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-700'} font-semibold">{counts.hall}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'hall' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300'} font-semibold">{counts.hall}</span>
     </button>
 
     <button 
       type="button"
       onclick={() => activeTab = 'archived'}
-      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'archived' ? 'bg-amber-800 text-white shadow-sm' : 'text-amber-800 hover:bg-amber-50'}"
+      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'archived' ? 'bg-amber-800 text-white dark:bg-amber-700 shadow-sm' : 'text-amber-800 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30'}"
     >
       <Archive size={16} />
       <span>Archivées</span>
-      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'archived' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-900'} font-semibold">{counts.archived}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'archived' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-amber-100 dark:bg-neutral-800 text-amber-900 dark:text-amber-300'} font-semibold">{counts.archived}</span>
     </button>
   </div>
 
@@ -141,57 +141,57 @@
       <form 
         method="POST" 
         action="?/updateRoom" 
-        class="bg-white rounded-2xl shadow-sm border {room.status === 'archived' ? 'border-amber-200 bg-amber-50/20' : 'border-gray-200'} overflow-hidden transition-all hover:shadow-md"
+        class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm border {room.status === 'archived' ? 'border-amber-200 dark:border-amber-900/60 bg-amber-50/20 dark:bg-amber-950/10' : 'border-gray-200 dark:border-neutral-800'} overflow-hidden transition-all hover:shadow-md"
       >
         <input type="hidden" name="id" value={room.id} />
         
         <!-- Card Header -->
-        <div class="p-5 sm:px-6 bg-gray-50/75 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="p-5 sm:px-6 bg-gray-50/75 dark:bg-neutral-800/60 border-b border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div class="space-y-1.5">
             <div class="flex items-center flex-wrap gap-2">
               {#if room.type === 'hall'}
-                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-burgundy/10 text-brand-burgundy border border-brand-burgundy/20">
+                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-burgundy/10 text-brand-burgundy dark:text-brand-burgundy-dark border border-brand-burgundy/20 dark:border-brand-burgundy-dark/30">
                   <Building2 size={12} />
                   Salle d'Événements
                 </span>
               {:else}
-                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50">
                   <BedDouble size={12} />
                   Chambre / Suite
                 </span>
               {/if}
 
               {#if room.status === 'archived'}
-                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-900/50">
                   <Archive size={12} />
                   Archivée (Masquée du public)
                 </span>
               {:else if room.status === 'maintenance'}
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-900/50">
                   En maintenance
                 </span>
               {:else}
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
                   Disponible
                 </span>
               {/if}
 
-              <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">
+              <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-neutral-400">
                 <Calendar size={12} />
                 {room.bookingCount} réservation(s)
               </span>
             </div>
 
             <div class="flex items-baseline gap-2">
-              <h3 class="text-lg font-bold text-gray-900">{room.name}</h3>
-              <span class="text-xs text-gray-400 font-mono">#{room.id} ({room.slug})</span>
+              <h3 class="text-lg font-bold text-gray-900 dark:text-neutral-100">{room.name}</h3>
+              <span class="text-xs text-gray-400 dark:text-neutral-500 font-mono">#{room.id} ({room.slug})</span>
             </div>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
             <button 
               type="submit" 
-              class="bg-deep-charcoal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black transition-colors flex items-center gap-2 shadow-sm"
+              class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
             >
               <Save size={16} />
               <span>Enregistrer</span>
@@ -204,11 +204,11 @@
           
           <!-- Image Section (4 cols) -->
           <div class="lg:col-span-4 space-y-4">
-            <div class="aspect-video w-full rounded-xl bg-gray-100 border border-gray-200 overflow-hidden relative shadow-inner">
+            <div class="aspect-video w-full rounded-xl bg-gray-100 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 overflow-hidden relative shadow-inner">
               {#if room.imageUrl}
                 <img src={room.imageUrl} alt={room.name} class="object-cover w-full h-full" />
               {:else}
-                <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm">
+                <div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-neutral-500 text-sm">
                   Aucune photo disponible
                 </div>
               {/if}
@@ -225,14 +225,14 @@
             />
 
             <!-- Room Meta pills -->
-            <div class="grid grid-cols-2 gap-2 text-xs bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-600">
+            <div class="grid grid-cols-2 gap-2 text-xs bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-lg border border-gray-100 dark:border-neutral-800 text-gray-600 dark:text-neutral-400">
               <div class="flex items-center gap-1.5">
-                <Users size={14} class="text-gray-400" />
-                <span>Max: <strong>{room.maxGuests} {room.type === 'hall' ? 'convives' : 'pers.'}</strong></span>
+                <Users size={14} class="text-gray-400 dark:text-neutral-500" />
+                <span>Max: <strong class="text-gray-900 dark:text-neutral-200">{room.maxGuests} {room.type === 'hall' ? 'convives' : 'pers.'}</strong></span>
               </div>
               <div class="flex items-center gap-1.5">
-                <Maximize2 size={14} class="text-gray-400" />
-                <span>Surface: <strong>{room.sizeSqM} m²</strong></span>
+                <Maximize2 size={14} class="text-gray-400 dark:text-neutral-500" />
+                <span>Surface: <strong class="text-gray-900 dark:text-neutral-200">{room.sizeSqM} m²</strong></span>
               </div>
             </div>
           </div>
@@ -242,7 +242,7 @@
             <!-- Row 1: Titles & Type -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div class="sm:col-span-2">
-                <label for="name_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="name_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Nom de la fiche
                 </label>
                 <input 
@@ -251,18 +251,18 @@
                   id="name_{room.id}" 
                   value={room.name} 
                   required
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
                 />
               </div>
 
               <div>
-                <label for="type_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="type_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Type d'espace
                 </label>
                 <select 
                   name="type" 
                   id="type_{room.id}" 
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal bg-white font-medium"
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 font-medium"
                 >
                   <option value="room" selected={room.type === 'room'}>Chambre / Suite</option>
                   <option value="hall" selected={room.type === 'hall'}>Salle d'Événements</option>
@@ -273,7 +273,7 @@
             <!-- Row 2: Category & Pricing & Capacity -->
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div class="sm:col-span-2">
-                <label for="category_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="category_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Catégorie
                 </label>
                 <input 
@@ -282,12 +282,12 @@
                   id="category_{room.id}" 
                   value={room.category} 
                   placeholder="Ex: Suite Présidentielle / Salle de Banquet"
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
                 />
               </div>
 
               <div>
-                <label for="pricePerNight_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="pricePerNight_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   {room.type === 'hall' ? 'Tarif par Événement' : 'Tarif par Nuit'} (FCFA)
                 </label>
                 <input 
@@ -297,18 +297,18 @@
                   value={room.pricePerNight} 
                   step="1000"
                   required
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold text-deep-charcoal focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
                 />
               </div>
 
               <div>
-                <label for="status_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="status_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Statut
                 </label>
                 <select 
                   name="status" 
                   id="status_{room.id}" 
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal bg-white"
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100"
                 >
                   <option value="available" selected={room.status === 'available'}>Disponible</option>
                   <option value="maintenance" selected={room.status === 'maintenance'}>Maintenance</option>
@@ -318,9 +318,9 @@
             </div>
 
             <!-- Row 3: Dimensions, Capacity & Inventory -->
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-3 bg-gray-50 dark:bg-neutral-800/40 rounded-xl border border-gray-200 dark:border-neutral-800">
               <div>
-                <label for="maxGuests_{room.id}" class="block text-xs font-medium text-gray-600 mb-1">
+                <label for="maxGuests_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
                   {room.type === 'hall' ? 'Convives max' : 'Hôtes max'}
                 </label>
                 <input 
@@ -329,12 +329,12 @@
                   id="maxGuests_{room.id}" 
                   value={room.maxGuests} 
                   min="1"
-                  class="block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
                 />
               </div>
 
               <div>
-                <label for="sizeSqM_{room.id}" class="block text-xs font-medium text-gray-600 mb-1">
+                <label for="sizeSqM_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
                   Superficie (m²)
                 </label>
                 <input 
@@ -343,12 +343,12 @@
                   id="sizeSqM_{room.id}" 
                   value={room.sizeSqM} 
                   min="10"
-                  class="block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
                 />
               </div>
 
               <div>
-                <label for="totalRooms_{room.id}" class="block text-xs font-medium text-gray-600 mb-1">
+                <label for="totalRooms_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
                   Unités Totales
                 </label>
                 <input 
@@ -357,12 +357,12 @@
                   id="totalRooms_{room.id}" 
                   value={room.totalRooms} 
                   min="0"
-                  class="block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
                 />
               </div>
 
               <div>
-                <label for="availableRooms_{room.id}" class="block text-xs font-medium text-gray-600 mb-1">
+                <label for="availableRooms_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
                   Disponibles
                 </label>
                 <input 
@@ -371,21 +371,21 @@
                   id="availableRooms_{room.id}" 
                   value={room.availableRooms} 
                   min="0"
-                  class="block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white" 
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
                 />
               </div>
 
               <div class="flex flex-col items-start justify-center">
                 <label for="forceAvailable_{room.id}" class="flex items-center gap-2 cursor-pointer mt-5">
-                  <input type="checkbox" id="forceAvailable_{room.id}" name="forceAvailable" class="w-4 h-4 text-deep-charcoal border-gray-300 rounded focus:ring-deep-charcoal" checked={room.forceAvailable} />
-                  <span class="text-xs font-semibold text-gray-700">Forcer Dispo. (Override)</span>
+                  <input type="checkbox" id="forceAvailable_{room.id}" name="forceAvailable" class="w-4 h-4 text-deep-charcoal dark:text-brand-burgundy-dark border-gray-300 dark:border-neutral-700 rounded focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark bg-white dark:bg-neutral-800" checked={room.forceAvailable} />
+                  <span class="text-xs font-semibold text-gray-700 dark:text-neutral-300">Forcer Dispo. (Override)</span>
                 </label>
               </div>
             </div>
 
             <!-- Row 4: Bed Type / Configuration -->
             <div>
-              <label for="bedType_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+              <label for="bedType_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                 {room.type === 'hall' ? 'Configuration & Disposition' : 'Type de Literie'}
               </label>
               <input 
@@ -394,57 +394,57 @@
                 id="bedType_{room.id}" 
                 value={room.bedType} 
                 placeholder={room.type === 'hall' ? 'Ex: Modulable / Banquet, Théâtre & U' : 'Ex: Lit King Size Grand Confort'}
-                class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
               />
             </div>
 
             <!-- Row 5: Descriptions -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="descriptionFr_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="descriptionFr_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Description (Français)
                 </label>
                 <textarea 
                   name="descriptionFr" 
                   id="descriptionFr_{room.id}" 
                   rows="3" 
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
                 >{room.descriptionFr}</textarea>
               </div>
 
               <div>
-                <label for="descriptionEn_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                <label for="descriptionEn_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   Description (English)
                 </label>
                 <textarea 
                   name="descriptionEn" 
                   id="descriptionEn_{room.id}" 
                   rows="3" 
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
                 >{room.descriptionEn}</textarea>
               </div>
             </div>
 
             <!-- Row 6: Amenities (Equipment / Services) -->
             <div>
-              <label for="amenities_{room.id}" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+              <label for="amenities_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                 Équipements & Services (Un élément par ligne)
               </label>
               <textarea 
                 name="amenities" 
                 id="amenities_{room.id}" 
                 rows="3" 
-                class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs font-mono focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs font-mono bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
               >{Array.isArray(room.amenities) ? room.amenities.join('\n') : ''}</textarea>
             </div>
           </div>
         </div>
 
         <!-- Footer with Safe Delete or Restore action -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="text-xs text-gray-500">
+        <div class="px-6 py-4 bg-gray-50 dark:bg-neutral-800/60 border-t border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-gray-500 dark:text-neutral-400">
             {#if room.bookingCount > 0}
-              <span class="text-blue-700 font-medium">ℹ️ {room.bookingCount} réservation(s) liée(s). La suppression archivera automatiquement la fiche sans altérer les factures.</span>
+              <span class="text-blue-700 dark:text-blue-400 font-medium">ℹ️ {room.bookingCount} réservation(s) liée(s). La suppression archivera automatiquement la fiche sans altérer les factures.</span>
             {:else}
               <span>Fiche sans réservation active. Suppression directe autorisée.</span>
             {/if}
@@ -455,7 +455,7 @@
               <button 
                 type="submit" 
                 formaction="?/restoreRoom" 
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition-colors"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 dark:hover:bg-emerald-950 rounded-lg transition-colors"
               >
                 <RotateCcw size={14} />
                 <span>Restaurer la fiche</span>
@@ -475,7 +475,7 @@
                     }
                   }
                 }}
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-200"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-950/80 rounded-lg transition-colors border border-rose-200 dark:border-rose-900/50"
               >
                 {#if room.bookingCount > 0}
                   <Archive size={14} />
@@ -490,10 +490,10 @@
         </div>
       </form>
     {:else}
-      <div class="bg-white p-12 text-center rounded-2xl shadow-sm border border-gray-200 text-gray-500 space-y-3">
-        <Building2 size={36} class="mx-auto text-gray-300" />
-        <p class="text-base font-medium text-gray-800">Aucune fiche ne correspond à ce filtre.</p>
-        <p class="text-sm text-gray-400">Cliquez sur « Ajouter une fiche » pour créer une nouvelle chambre ou salle de réception.</p>
+      <div class="bg-white dark:bg-neutral-900 p-12 text-center rounded-2xl shadow-sm border border-gray-200 dark:border-neutral-800 text-gray-500 dark:text-neutral-400 space-y-3">
+        <Building2 size={36} class="mx-auto text-gray-300 dark:text-neutral-600" />
+        <p class="text-base font-medium text-gray-800 dark:text-neutral-200">Aucune fiche ne correspond à ce filtre.</p>
+        <p class="text-sm text-gray-400 dark:text-neutral-500">Cliquez sur « Ajouter une fiche » pour créer une nouvelle chambre ou salle de réception.</p>
       </div>
     {/each}
   </div>
@@ -502,21 +502,21 @@
 <!-- Creation Modal -->
 {#if isCreateOpen}
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+    <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-neutral-800">
       
       <!-- Modal Header -->
-      <div class="p-6 border-b border-gray-200 flex items-center justify-between bg-gray-50/75 sticky top-0 z-10">
+      <div class="p-6 border-b border-gray-200 dark:border-neutral-800 flex items-center justify-between bg-gray-50/75 dark:bg-neutral-800/80 sticky top-0 z-10">
         <div>
-          <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Sparkles size={18} class="text-brand-burgundy" />
+          <h2 class="text-lg font-bold text-gray-900 dark:text-neutral-100 flex items-center gap-2">
+            <Sparkles size={18} class="text-brand-burgundy dark:text-brand-burgundy-dark" />
             Nouvelle Fiche d'Hébergement ou d'Événement
           </h2>
-          <p class="text-xs text-gray-500 mt-0.5">Renseignez les détails pour publier une nouvelle offre sur le site.</p>
+          <p class="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">Renseignez les détails pour publier une nouvelle offre sur le site.</p>
         </div>
         <button 
           type="button" 
           onclick={() => isCreateOpen = false} 
-          class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          class="p-1.5 text-gray-400 dark:text-neutral-500 hover:text-gray-700 dark:hover:text-neutral-200 rounded-lg hover:bg-gray-200 dark:hover:bg-neutral-700 transition-colors"
         >
           <X size={20} />
         </button>
@@ -527,14 +527,14 @@
         
         <!-- Type Selection Toggle -->
         <div>
-          <span class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+          <span class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
             Type d'espace
           </span>
           <div class="grid grid-cols-2 gap-3">
             <button 
               type="button" 
               onclick={() => newType = 'hall'}
-              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'hall' ? 'border-brand-burgundy bg-brand-burgundy/5 text-brand-burgundy ring-2 ring-brand-burgundy/20' : 'border-gray-200 hover:border-gray-300 text-gray-600'}"
+              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'hall' ? 'border-brand-burgundy dark:border-brand-burgundy-dark bg-brand-burgundy/5 dark:bg-brand-burgundy-dark/10 text-brand-burgundy dark:text-brand-burgundy-dark ring-2 ring-brand-burgundy/20 dark:ring-brand-burgundy-dark/30' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
             >
               <Building2 size={18} />
               <span>Salle d'Événements & Banquets</span>
@@ -543,7 +543,7 @@
             <button 
               type="button" 
               onclick={() => newType = 'room'}
-              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'room' ? 'border-deep-charcoal bg-deep-charcoal/5 text-deep-charcoal ring-2 ring-deep-charcoal/20' : 'border-gray-200 hover:border-gray-300 text-gray-600'}"
+              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'room' ? 'border-deep-charcoal dark:border-neutral-400 bg-deep-charcoal/5 dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 ring-2 ring-deep-charcoal/20' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
             >
               <BedDouble size={18} />
               <span>Chambre d'Hôtel ou Suite</span>
@@ -555,7 +555,7 @@
         <!-- Name & Category -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="create_name" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_name" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Nom de la salle ou chambre *
             </label>
             <input 
@@ -564,12 +564,12 @@
               id="create_name" 
               required 
               placeholder={newType === 'hall' ? 'Ex: Grand Salon Majestueux' : 'Ex: Suite Royale Panoramique'}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
 
           <div>
-            <label for="create_category" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_category" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Catégorie *
             </label>
             <input 
@@ -579,7 +579,7 @@
               required 
               placeholder={newType === 'hall' ? 'Ex: Salle de Réception & Banquet' : 'Ex: Suite Exécutive'}
               value={newType === 'hall' ? 'Salle de Réception' : 'Suite Luxe'}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
         </div>
@@ -587,7 +587,7 @@
         <!-- Pricing & Capacity -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label for="create_price" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_price" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               {newType === 'hall' ? 'Tarif par Événement' : 'Tarif par Nuit'} (FCFA) *
             </label>
             <input 
@@ -597,12 +597,12 @@
               required 
               step="1000"
               placeholder={newType === 'hall' ? '250000' : '85000'}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
 
           <div>
-            <label for="create_guests" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_guests" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Capacité max ({newType === 'hall' ? 'convives' : 'hôtes'})
             </label>
             <input 
@@ -611,12 +611,12 @@
               id="create_guests" 
               min="1"
               value={newType === 'hall' ? 150 : 2}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
 
           <div>
-            <label for="create_size" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_size" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Superficie (m²)
             </label>
             <input 
@@ -625,7 +625,7 @@
               id="create_size" 
               min="10"
               value={newType === 'hall' ? 200 : 55}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
         </div>
@@ -633,7 +633,7 @@
         <!-- Disposition / Bedding & Inventory -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="create_bed" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_bed" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               {newType === 'hall' ? 'Disposition / Configuration' : 'Type de Literie'}
             </label>
             <input 
@@ -641,12 +641,12 @@
               name="bedType" 
               id="create_bed" 
               value={newType === 'hall' ? 'Modulable / Banquet, U & Conférence' : 'Lit King Size Haute Couture'}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
 
           <div>
-            <label for="create_total" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_total" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Nombre d'unités disponibles
             </label>
             <input 
@@ -655,13 +655,13 @@
               id="create_total" 
               min="1"
               value={newType === 'hall' ? 1 : 5}
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
         </div>
 
         <!-- Image Upload/URL -->
-        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+        <div class="p-4 bg-gray-50 dark:bg-neutral-800/40 rounded-xl border border-gray-200 dark:border-neutral-800">
           <ImageField 
             id="create_image" 
             name="imageUrl" 
@@ -672,7 +672,7 @@
 
         <!-- Tagline & Descriptions -->
         <div>
-          <label for="create_tagline" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          <label for="create_tagline" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
             Accroche / Slogan (Français)
           </label>
           <input 
@@ -680,13 +680,13 @@
             name="taglineFr" 
             id="create_tagline" 
             placeholder="Ex: L'écrin parfait pour vos réceptions d'exception"
-            class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal" 
+            class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
           />
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="create_desc_fr" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_desc_fr" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Description (Français) *
             </label>
             <textarea 
@@ -695,12 +695,12 @@
               rows="3" 
               required
               placeholder="Présentation détaillée de l'espace, ambiance, services..."
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
             ></textarea>
           </div>
 
           <div>
-            <label for="create_desc_en" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label for="create_desc_en" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
               Description (English)
             </label>
             <textarea 
@@ -708,38 +708,38 @@
               id="create_desc_en" 
               rows="3" 
               placeholder="English description (optional, falls back to French)..."
-              class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs leading-relaxed bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
             ></textarea>
           </div>
         </div>
 
         <!-- Amenities -->
         <div>
-          <label for="create_amenities" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          <label for="create_amenities" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
             Équipements & Prestations (un par ligne)
           </label>
           <textarea 
             name="amenities" 
             id="create_amenities" 
             rows="3" 
-            class="block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 text-xs font-mono focus:ring-2 focus:ring-deep-charcoal focus:border-deep-charcoal"
+            class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-xs font-mono bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark"
           >{newType === 'hall' 
             ? "Régie son & micros sans fil\nVidéoprojecteur haute définition 4K\nClimatisation ultra-puissante\nAccès cuisine & office traiteur\nSalon VIP d'attente privé" 
             : "Lit King Size Haute Literie\nWi-Fi fibre ultra-rapide\nSmart TV 65\" 4K\nSalle de bain privative avec douche italienne\nClimatisation silencieuse"}</textarea>
         </div>
 
         <!-- Actions -->
-        <div class="pt-4 border-t border-gray-200 flex items-center justify-end gap-3">
+        <div class="pt-4 border-t border-gray-200 dark:border-neutral-800 flex items-center justify-end gap-3">
           <button 
             type="button" 
             onclick={() => isCreateOpen = false} 
-            class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-colors"
+            class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
           >
             Annuler
           </button>
           <button 
             type="submit" 
-            class="bg-deep-charcoal text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-black transition-all shadow-md flex items-center gap-2"
+            class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-white transition-all shadow-md flex items-center gap-2"
           >
             <Plus size={16} />
             <span>Créer la fiche</span>
