@@ -1,9 +1,22 @@
 import type { PageServerLoad } from './$types';
-import { getAllFaqs } from '$lib/server/db';
+import { getAllFaqs, getAllRooms } from '$lib/server/db';
 
-export const load: PageServerLoad = async () => {
-  const faqs = await getAllFaqs();
+export const prerender = false;
+
+export const load: PageServerLoad = async ({ setHeaders, depends }) => {
+  depends('app:rooms');
+  setHeaders({
+    'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+    'Pragma': 'no-cache'
+  });
+
+  const [faqs, rooms] = await Promise.all([
+    getAllFaqs(),
+    getAllRooms()
+  ]);
+
   return {
-    faqs
+    faqs,
+    rooms
   };
 };

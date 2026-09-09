@@ -2,14 +2,37 @@
   import type { PageData } from './$types';
   import FaqAccordion from '$lib/components/FaqAccordion.svelte';
   import { i18n } from '$lib/i18n.svelte';
+  import { formatLiveRoomPricing, formatLiveHallPricing } from '$lib/data/bookingKnowledgeBase';
 
   let { data }: { data: PageData } = $props();
 
   let selectedCategory = $state('all');
 
-  const faqsList = $derived(
-    i18n.t.faq.items && i18n.t.faq.items.length > 0 ? i18n.t.faq.items : data.faqs
-  );
+  const faqsList = $derived.by(() => {
+    const rawItems = (i18n.t.faq.items && i18n.t.faq.items.length > 0)
+      ? i18n.t.faq.items
+      : data.faqs;
+
+    return rawItems.map(item => {
+      // Room pricing & capacity question (category Chambres & Tarifs / Rooms & Rates or item 2)
+      const isRoomPricing = item.category === 'Chambres & Tarifs' || item.category === 'Rooms & Rates' || item.id === 2;
+      if (isRoomPricing) {
+        const liveAnswer = data.rooms && data.rooms.length > 0
+          ? formatLiveRoomPricing(data.rooms, i18n.locale)
+          : item.answer;
+        return { ...item, answer: liveAnswer };
+      }
+      // Event halls pricing & capacity question (category Salles d’Événements / Event Halls or item 3)
+      const isHallPricing = item.category === 'Salles d’Événements' || item.category === 'Event Halls' || item.id === 3;
+      if (isHallPricing) {
+        const liveAnswer = data.rooms && data.rooms.length > 0
+          ? formatLiveHallPricing(data.rooms, i18n.locale)
+          : item.answer;
+        return { ...item, answer: liveAnswer };
+      }
+      return item;
+    });
+  });
 
   const categories = $derived.by(() => {
     const set = new Set(faqsList.map(f => f.category));
@@ -59,7 +82,7 @@
 
     <!-- FAQ Accordion List -->
     <div class="bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800 p-6 md:p-10 shadow-sm mb-16">
-      {#each filteredFaqs as faq, index}
+      {#each filteredFaqs as faq, index (faq.id || faq.question)}
         <FaqAccordion {faq} isOpenDefault={index === 0} />
       {/each}
     </div>

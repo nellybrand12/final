@@ -112,9 +112,9 @@
     <div class="mt-16 pt-8 border-t border-soft-cream/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] uppercase tracking-widest text-soft-cream/50">
       <span>{i18n.t.footer.copyright}</span>
       <div class="flex gap-6">
-        <a href="/about" class="hover:text-soft-cream transition-colors">{i18n.t.footer.privacyPolicy}</a>
+        <a href="/politique-de-confidentialite" class="hover:text-soft-cream transition-colors">{i18n.t.footer.privacyPolicy}</a>
         <span>•</span>
-        <a href="/faq" class="hover:text-soft-cream transition-colors">{i18n.t.footer.termsOfService}</a>
+        <a href="/conditions-generales" class="hover:text-soft-cream transition-colors">{i18n.t.footer.termsOfService}</a>
       </div>
     </div>
   </div>

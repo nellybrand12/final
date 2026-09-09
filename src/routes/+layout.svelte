@@ -4,6 +4,7 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import ConciergeBubble from '$lib/components/ConciergeBubble.svelte';
+  import CookieBanner from '$lib/components/CookieBanner.svelte';
   import { themeManager } from '$lib/theme.svelte';
 
   let { children } = $props();
@@ -25,5 +26,6 @@
 
     <Footer />
     <ConciergeBubble />
+    <CookieBanner />
   {/if}
 </div>
