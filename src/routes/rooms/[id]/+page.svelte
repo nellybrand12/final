@@ -11,11 +11,12 @@
   let checkOut = $state('2026-09-12');
   let roomsCount = $state(1);
 
-  const images = $derived(
-    Array.isArray(data.room.galleryImages) && data.room.galleryImages.length > 0
-      ? (data.room.galleryImages as string[])
-      : [data.room.imageUrl]
-  );
+  const images = $derived.by(() => {
+    const additionals = Array.isArray(data.additionalImages) && data.additionalImages.length > 0
+      ? data.additionalImages
+      : (Array.isArray(data.room.galleryImages) ? (data.room.galleryImages as string[]).filter(u => u !== data.room.imageUrl) : []);
+    return [data.room.imageUrl, ...additionals];
+  });
 
   function formatPrice(amount: string | number) {
     const num = typeof amount === 'string' ? parseFloat(amount) : amount;

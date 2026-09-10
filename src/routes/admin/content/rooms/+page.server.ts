@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from './$types';
 import { db, isDbHealthy } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, asc } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 
@@ -41,9 +41,23 @@ export const load: PageServerLoad = async () => {
         }
       }
 
+      const allRoomImages = await db
+        .select()
+        .from(schema.roomImages)
+        .orderBy(asc(schema.roomImages.sortOrder), asc(schema.roomImages.id));
+
+      const roomImagesMap = new Map<number, string[]>();
+      for (const img of allRoomImages) {
+        if (!roomImagesMap.has(img.roomId)) {
+          roomImagesMap.set(img.roomId, []);
+        }
+        roomImagesMap.get(img.roomId)!.push(img.imageUrl);
+      }
+
       rooms = dbRooms.map((room) => ({
         ...room,
-        bookingCount: bookingMap.get(room.id) || 0
+        bookingCount: bookingMap.get(room.id) || 0,
+        additionalImages: roomImagesMap.get(room.id) || []
       }));
     } catch (e) {
       console.error('Error fetching rooms:', e);
@@ -84,6 +98,11 @@ export const actions: Actions = {
           ? ['Scène & Sonorisation pro', 'Vidéoprojecteur 4K', 'Climatisation puissante', 'Espace vestiaires'] 
           : ['Wi-Fi Haut Débit', 'Smart TV', 'Climatisation silencieuse', 'Salle de bain privative']);
 
+    const additionalImagesRaw = data.getAll('additionalImages');
+    const additionalImages = additionalImagesRaw
+      .map((item) => item.toString().trim())
+      .filter((url) => Boolean(url));
+
     let baseSlug = slugify(name);
     if (!baseSlug) baseSlug = type === 'hall' ? 'salle-evenement' : 'chambre-suite';
 
@@ -95,7 +114,7 @@ export const actions: Actions = {
         finalSlug = `${baseSlug}-${Date.now().toString(36)}`;
       }
 
-      await db.insert(schema.rooms).values({
+      const [newRoom] = await db.insert(schema.rooms).values({
         name,
         nameFr: name,
         nameEn: name,
@@ -110,14 +129,24 @@ export const actions: Actions = {
         availableRooms: availableRooms >= 0 ? availableRooms : totalRooms,
         inUseRooms: 0,
         imageUrl,
-        galleryImages: [imageUrl],
+        galleryImages: [imageUrl, ...additionalImages],
         descriptionFr,
         descriptionEn,
         taglineFr,
         taglineEn,
         amenities,
         status: 'available'
-      });
+      }).returning({ id: schema.rooms.id });
+
+      if (newRoom && newRoom.id && additionalImages.length > 0) {
+        for (let i = 0; i < additionalImages.length; i++) {
+          await db.insert(schema.roomImages).values({
+            roomId: newRoom.id,
+            imageUrl: additionalImages[i],
+            sortOrder: i
+          });
+        }
+      }
     } catch (e) {
       console.error('Error creating room or hall:', e);
       return fail(500, { error: 'Erreur lors de la création de la fiche dans la base de données.' });
@@ -153,15 +182,23 @@ export const actions: Actions = {
     const amenitiesRaw = data.get('amenities')?.toString();
     const forceAvailable = data.get('forceAvailable') === 'on' || data.get('forceAvailable') === 'true';
 
+    const hasAdditionalImagesManager = data.get('hasAdditionalImagesManager') === 'true';
+    const additionalImagesRaw = data.getAll('additionalImages');
+    const additionalImages = additionalImagesRaw
+      .map((item) => item.toString().trim())
+      .filter((url) => Boolean(url));
+
     if (totalRooms > 0 && availableRooms + inUseRooms > totalRooms) {
       return fail(400, { error: 'La somme des unités disponibles et occupées ne peut pas dépasser le total.' });
     }
 
     try {
+      let oldRoom: schema.Room | undefined;
       // Check if image is being replaced
-      if (imageUrl) {
-        const [oldRoom] = await db.select().from(schema.rooms).where(eq(schema.rooms.id, id));
-        if (oldRoom && oldRoom.imageUrl && oldRoom.imageUrl !== imageUrl && oldRoom.imageUrl.includes('/storage/v1/object/public/images/')) {
+      if (imageUrl || hasAdditionalImagesManager) {
+        const [foundRoom] = await db.select().from(schema.rooms).where(eq(schema.rooms.id, id));
+        oldRoom = foundRoom;
+        if (imageUrl && oldRoom && oldRoom.imageUrl && oldRoom.imageUrl !== imageUrl && oldRoom.imageUrl.includes('/storage/v1/object/public/images/')) {
           const urlParts = oldRoom.imageUrl.split('/storage/v1/object/public/images/');
           if (urlParts.length > 1) {
             const filePath = urlParts[1];
@@ -197,6 +234,19 @@ export const actions: Actions = {
           .split('\n')
           .map((a) => a.trim())
           .filter(Boolean);
+      }
+
+      if (hasAdditionalImagesManager) {
+        await db.delete(schema.roomImages).where(eq(schema.roomImages.roomId, id));
+        for (let i = 0; i < additionalImages.length; i++) {
+          await db.insert(schema.roomImages).values({
+            roomId: id,
+            imageUrl: additionalImages[i],
+            sortOrder: i
+          });
+        }
+        const effectiveMain = imageUrl || oldRoom?.imageUrl || '';
+        updateData.galleryImages = [effectiveMain, ...additionalImages].filter(Boolean);
       }
 
       await db.update(schema.rooms)

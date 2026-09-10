@@ -37,6 +37,7 @@ export const actions: Actions = {
         highlightFr: data.get('highlightFr')?.toString() || '',
         highlightEn: data.get('highlightEn')?.toString() || '',
         icon: data.get('icon')?.toString() || '',
+        imageUrl: data.get('imageUrl')?.toString() || '',
         ctaTextFr: data.get('ctaTextFr')?.toString() || '',
         ctaTextEn: data.get('ctaTextEn')?.toString() || '',
         ctaLink: data.get('ctaLink')?.toString() || ''
@@ -75,6 +76,7 @@ export const actions: Actions = {
     const highlightFr = data.get('highlightFr')?.toString() || '';
     const highlightEn = data.get('highlightEn')?.toString() || '';
     const icon = data.get('icon')?.toString() || '';
+    const imageUrl = data.get('imageUrl')?.toString() || '';
     const ctaTextFr = data.get('ctaTextFr')?.toString() || '';
     const ctaTextEn = data.get('ctaTextEn')?.toString() || '';
     const ctaLink = data.get('ctaLink')?.toString() || '';
@@ -89,6 +91,7 @@ export const actions: Actions = {
           highlightFr,
           highlightEn,
           icon,
+          imageUrl,
           ctaTextFr,
           ctaTextEn,
           ctaLink

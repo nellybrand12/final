@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq, sql, inArray } from 'drizzle-orm';
+import { eq, sql, inArray, asc } from 'drizzle-orm';
 import postgres from 'postgres';
 import * as schema from './schema';
 import { env as dynamicEnv } from '$env/dynamic/private';
@@ -395,6 +395,22 @@ export async function getRoomBySlug(slug: string): Promise<schema.Room | null> {
 export async function getRoomById(id: number): Promise<schema.Room | null> {
   const allRooms = await getAllRooms({ includeArchived: true });
   return allRooms.find(r => r.id === id) || null;
+}
+
+export async function getRoomImages(roomId: number): Promise<string[]> {
+  if (dbInstance && isDbHealthy) {
+    try {
+      const records = await dbInstance
+        .select({ imageUrl: schema.roomImages.imageUrl })
+        .from(schema.roomImages)
+        .where(eq(schema.roomImages.roomId, roomId))
+        .orderBy(asc(schema.roomImages.sortOrder), asc(schema.roomImages.id));
+      return records.map(r => r.imageUrl);
+    } catch (e) {
+      handleDbError('getRoomImages', e);
+    }
+  }
+  return [];
 }
 
 export async function getAllFaqs(): Promise<schema.Faq[]> {
