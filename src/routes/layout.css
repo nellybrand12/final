@@ -561,3 +561,12 @@
     height: 32px;
   }
 }
+
+@media (max-width: 380px) {
+  /* Smallest phones (320-380px): at 28px the lockup leaves only ~3px either
+     side of the menu button and the CTA. Dropping to 24px restores a real
+     gutter. Header only — the footer and drawer are full-width there. */
+  .site-logo {
+    height: 24px;
+  }
+}

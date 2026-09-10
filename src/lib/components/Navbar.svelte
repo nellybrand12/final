@@ -86,23 +86,14 @@
           ? 'opacity-100 scale-100 translate-y-0'
           : 'opacity-0 scale-90 -translate-y-2 pointer-events-none'}"
       >
+        <!-- Wordmark + subtitle are baked into the PNG — no sibling text elements. -->
         <img
-          alt="Hotel Résidence Madadjeu Logo"
-          class="h-7 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
+          src="/images/madadjeu-logo.png"
+          alt="Hôtel Résidence Madadjeu"
+          width="1899"
+          height="412"
+          class="site-logo {!isScrolled && isHomePage ? 'site-logo--float' : ''}"
         />
-        <div class="hidden sm:flex flex-col items-start">
-          <span
-            class="font-headline text-xs sm:text-sm md:text-base font-medium tracking-[0.22em] text-soft-cream uppercase group-hover:text-muted-gold transition-colors"
-          >
-            Madadjeu
-          </span>
-          <span
-            class="text-[6px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.28em] text-muted-gold font-sans"
-          >
-            Hôtel & Résidence
-          </span>
-        </div>
       </a>
     </div>
 
@@ -240,18 +231,15 @@
       <a
         href="/"
         onclick={() => (isDrawerOpen = false)}
-        class="flex items-center gap-3"
+        class="flex items-center"
       >
         <img
-          alt="Hotel Résidence Madadjeu Logo"
-          class="h-7 w-auto object-contain"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
+          src="/images/madadjeu-logo.png"
+          alt="Hôtel Résidence Madadjeu"
+          width="1899"
+          height="412"
+          class="site-logo site-logo--drawer"
         />
-        <span
-          class="font-headline text-base tracking-[0.2em] uppercase text-soft-cream"
-        >
-          Madadjeu
-        </span>
       </a>
 
       <!-- Close Button -->

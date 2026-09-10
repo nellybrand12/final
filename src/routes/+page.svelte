@@ -130,7 +130,7 @@
     "alternateName": "Résidence Madadjeu Yaoundé",
     "description": homeDesc,
     "url": "https://residence-madadjeu.com",
-    "logo": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
+    "logo": "https://residence-madadjeu.com/images/madadjeu-logo.png",
     "image": "https://residence-madadjeu.com/images/og-image.jpg",
     "telephone": "+237699000000",
     "email": "contact@residence-madadjeu.com",
