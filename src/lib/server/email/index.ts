@@ -1,6 +1,10 @@
-import { env } from '$env/dynamic/private';
-import type { Booking, Room } from '$lib/server/db/schema';
-import { generateBookingReceiptPdf, formatPriceFCFA, getPaymentMethodLabel } from '$lib/server/pdf/receiptGenerator';
+import { env } from "$env/dynamic/private";
+import type { Booking, Room } from "$lib/server/db/schema";
+import {
+  generateBookingReceiptPdf,
+  formatPriceFCFA,
+  getPaymentMethodLabel,
+} from "$lib/server/pdf/receiptGenerator";
 
 export interface EmailDispatchResult {
   success: boolean;
@@ -11,29 +15,33 @@ export interface EmailDispatchResult {
 
 export async function sendBookingConfirmationEmail(
   booking: Booking,
-  room?: Room | null
+  room?: Room | null,
 ): Promise<EmailDispatchResult> {
   const apiKey = env.EMAIL_API_KEY || env.RESEND_API_KEY;
-  const fromAddress = env.EMAIL_FROM_ADDRESS || 'reservations@madadjeu-hotel.com';
-  const hotelContact = 'concierge@madadjeu-hotel.com';
+  const fromAddress =
+    env.EMAIL_FROM_ADDRESS || "reservations@madadjeu-hotel.com";
+  const hotelContact = "concierge@madadjeu-hotel.com";
 
   const isConfiguredApiKey = Boolean(
     apiKey &&
-    apiKey.trim() !== '' &&
-    !apiKey.includes('your_') &&
-    !apiKey.includes('sample_') &&
-    !apiKey.includes('PLACEHOLDER')
+    apiKey.trim() !== "" &&
+    !apiKey.includes("your_") &&
+    !apiKey.includes("sample_") &&
+    !apiKey.includes("PLACEHOLDER"),
   );
 
   // 1. Generate PDF receipt buffer
-  let pdfBase64 = '';
+  let pdfBase64 = "";
   let pdfByteLength = 0;
   try {
     const pdfBytes = await generateBookingReceiptPdf({ booking, room });
     pdfByteLength = pdfBytes.byteLength;
-    pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+    pdfBase64 = Buffer.from(pdfBytes).toString("base64");
   } catch (pdfErr) {
-    console.warn('[Email Service] Could not generate PDF attachment, sending email without attachment:', pdfErr);
+    console.warn(
+      "[Email Service] Could not generate PDF attachment, sending email without attachment:",
+      pdfErr,
+    );
   }
 
   // 2. Calculate duration
@@ -42,7 +50,7 @@ export async function sendBookingConfirmationEmail(
   const diffTime = Math.abs(end.getTime() - start.getTime());
   const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
   const roomsCount = booking.guestsCount || 1;
-  const roomName = room?.name || 'Appartement Supérieur';
+  const roomName = room?.name || "Appartement Supérieur";
   const paymentMethodStr = getPaymentMethodLabel(booking.paymentMethod);
   const totalFormatted = `${formatPriceFCFA(booking.totalPrice)} FCFA`;
   const attachmentFilename = `Recu-Reservation-Madadjeu-${booking.bookingReference}.pdf`;
@@ -158,7 +166,7 @@ export async function sendBookingConfirmationEmail(
               <p style="margin: 0 0 8px;"><strong>Informations pratiques :</strong></p>
               <ul style="margin: 0; padding-left: 18px;">
                 <li>Présentez ce message ou votre reçu PDF lors de votre enregistrement à la réception.</li>
-                <li>Le service conciergerie et room service est joignable 24h/24 au +237 699 00 00 00.</li>
+                <li>Le service conciergerie et room service est joignable 24h/24 au +237 691 23 45 67.</li>
                 <li>Pour toute demande de navette aéroportuaire ou aménagement spécial, contactez-nous à <a href="mailto:${hotelContact}" style="color: #8c7653;">${hotelContact}</a>.</li>
               </ul>
             </td>
@@ -205,7 +213,7 @@ RÉCAPITULATIF DE VOTRE SÉJOUR :
 
 Votre reçu officiel de réservation est joint à cet email au format PDF (${attachmentFilename}).
 
-Contact Conciergerie 24h/24 : +237 699 00 00 00 / ${hotelContact}
+Contact Conciergerie 24h/24 : +237 691 23 45 67 / ${hotelContact}
 Adresse : Quartier Bastos, Yaoundé, Cameroun.
 
 Nous vous souhaitons un agréable séjour parmi nous.
@@ -214,11 +222,11 @@ Nous vous souhaitons un agréable séjour parmi nous.
   // 5. Dispatch via live provider API or Simulated Log
   if (isConfiguredApiKey && apiKey) {
     try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           from: `Hôtel Résidence Madadjeu <${fromAddress}>`,
@@ -230,40 +238,50 @@ Nous vous souhaitons un agréable séjour parmi nous.
             ? [
                 {
                   filename: attachmentFilename,
-                  content: pdfBase64
-                }
+                  content: pdfBase64,
+                },
               ]
-            : []
-        })
+            : [],
+        }),
       });
 
       const responseData = await response.json();
       if (!response.ok) {
-        console.warn('[Email Service] Provider API responded with error:', responseData);
+        console.warn(
+          "[Email Service] Provider API responded with error:",
+          responseData,
+        );
         return {
           success: false,
-          error: responseData.message || 'Email API error'
+          error: responseData.message || "Email API error",
         };
       }
 
-      console.log(`[Email Service] Confirmation email sent successfully to ${booking.guestEmail} (ID: ${responseData.id})`);
+      console.log(
+        `[Email Service] Confirmation email sent successfully to ${booking.guestEmail} (ID: ${responseData.id})`,
+      );
       return {
         success: true,
-        messageId: responseData.id
+        messageId: responseData.id,
       };
     } catch (sendErr: any) {
-      console.warn('[Email Service] Failed to send email via provider API:', sendErr?.message || sendErr);
+      console.warn(
+        "[Email Service] Failed to send email via provider API:",
+        sendErr?.message || sendErr,
+      );
       return {
         success: false,
-        error: sendErr?.message || 'Network error sending email'
+        error: sendErr?.message || "Network error sending email",
       };
     }
   } else {
     // Graceful simulation mode: logs dispatch details cleanly
-    console.log(`[Email Service] [SIMULATED] Automated confirmation email dispatched to ${booking.guestEmail} for reservation ${booking.bookingReference} with attached PDF receipt (${pdfByteLength} bytes).`);
+    console.log(
+      `[Email Service] [SIMULATED] Automated confirmation email dispatched to ${booking.guestEmail} for reservation ${booking.bookingReference} with attached PDF receipt (${pdfByteLength} bytes).`,
+    );
     return {
       success: true,
-      simulated: true
+      simulated: true,
     };
   }
 }
