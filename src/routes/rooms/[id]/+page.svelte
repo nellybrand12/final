@@ -2,6 +2,7 @@
   import type { PageData } from './$types';
   import RoomCard from '$lib/components/RoomCard.svelte';
   import SEO from '$lib/components/SEO.svelte';
+  import DatePicker from '$lib/components/DatePicker.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data }: { data: PageData } = $props();
@@ -227,26 +228,27 @@
                 <label for="checkIn" class="block font-label-caps text-[10px] text-on-surface-variant dark:text-neutral-400 mb-1.5">
                   {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de début' : 'Start Date') : i18n.t.roomDetails.checkIn}
                 </label>
-                <input
+                <DatePicker
                   id="checkIn"
-                  type="date"
                   name="checkIn"
                   bind:value={checkIn}
                   class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/50 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark font-body-md"
                   required
+                  align="left"
                 />
               </div>
               <div>
                 <label for="checkOut" class="block font-label-caps text-[10px] text-on-surface-variant dark:text-neutral-400 mb-1.5">
                   {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de fin' : 'End Date') : i18n.t.roomDetails.checkOut}
                 </label>
-                <input
+                <DatePicker
                   id="checkOut"
-                  type="date"
                   name="checkOut"
                   bind:value={checkOut}
+                  min={checkIn}
                   class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/50 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark font-body-md"
                   required
+                  align="right"
                 />
               </div>
             </div>

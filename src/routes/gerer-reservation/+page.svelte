@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
   import SEO from '$lib/components/SEO.svelte';
+  import DatePicker from '$lib/components/DatePicker.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -367,9 +368,8 @@
             <label for="newCheckOut" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5 uppercase">
               {i18n.locale === 'fr' ? 'Nouvelle date de départ' : 'New Checkout Date'}
             </label>
-            <input
+            <DatePicker
               id="newCheckOut"
-              type="date"
               name="newCheckOut"
               bind:value={extendNewCheckOut}
               min={extendModalBooking.checkOutDate}

@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import type { PageData, ActionData } from './$types';
   import SEO from '$lib/components/SEO.svelte';
+  import DatePicker from '$lib/components/DatePicker.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -466,24 +467,25 @@
                   <label for="step1CheckIn" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.checkInLabel}
                   </label>
-                  <input
+                  <DatePicker
                     id="step1CheckIn"
-                    type="date"
+                    name="checkIn"
                     bind:value={checkIn}
-                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
                     required
+                    align="left"
                   />
                 </div>
                 <div>
                   <label for="step1CheckOut" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
                     {i18n.t.reserve.checkOutLabel}
                   </label>
-                  <input
+                  <DatePicker
                     id="step1CheckOut"
-                    type="date"
+                    name="checkOut"
                     bind:value={checkOut}
-                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
+                    min={checkIn}
                     required
+                    align="right"
                   />
                 </div>
               </div>
