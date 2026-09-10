@@ -5,7 +5,7 @@
   let { 
     id = '', 
     name = '', 
-    value = '', 
+    value = $bindable(''), 
     label = "URL de l'image" 
   } = $props();
 
@@ -13,11 +13,16 @@
   let isUploading = $state(false);
   let uploadError = $state('');
   
-  let currentValue = $state('');
+  let currentValue = $state(value || '');
   
   $effect(() => {
     currentValue = value || '';
   });
+
+  function handleValueChange(newValue: string) {
+    currentValue = newValue;
+    value = newValue;
+  }
 
   async function handleFileUpload(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -47,7 +52,7 @@
         .from('images')
         .getPublicUrl(filePath);
 
-      currentValue = publicUrlData.publicUrl;
+      handleValueChange(publicUrlData.publicUrl);
     } catch (err: any) {
       console.error('Upload error:', err);
       uploadError = err.message || 'Erreur lors du téléversement';
@@ -80,12 +85,13 @@
     </div>
   </div>
 
-  <input type="hidden" {name} {id} bind:value={currentValue} />
+  <input type="hidden" {name} {id} value={currentValue} />
 
   {#if mode === 'url'}
     <input 
       type="text" 
-      bind:value={currentValue} 
+      value={currentValue} 
+      oninput={(e) => handleValueChange((e.target as HTMLInputElement).value)}
       placeholder="https://..." 
       class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark sm:text-sm" 
     />

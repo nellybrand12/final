@@ -16,6 +16,7 @@
     Sparkles
   } from 'lucide-svelte';
   import ImageField from '$lib/components/admin/ImageField.svelte';
+  import AdditionalImagesManager from '$lib/components/admin/AdditionalImagesManager.svelte';
 
   let { data, form } = $props();
   
@@ -222,6 +223,12 @@
               name="imageUrl" 
               value={room.imageUrl} 
               label="Photo principale (Upload ou URL)" 
+            />
+
+            <!-- Additional Images / Gallery -->
+            <AdditionalImagesManager 
+              prefix="edit_{room.id}"
+              initialImages={room.additionalImages || []}
             />
 
             <!-- Room Meta pills -->
@@ -667,6 +674,12 @@
             name="imageUrl" 
             value="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=1200" 
             label="Image principale" 
+          />
+
+          <!-- Additional Images / Gallery -->
+          <AdditionalImagesManager 
+            prefix="create_modal"
+            initialImages={[]}
           />
         </div>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Save, AlertCircle, Plus, Trash2 } from 'lucide-svelte';
+  import ImageField from '$lib/components/admin/ImageField.svelte';
 
   let { data, form } = $props();
   
@@ -42,6 +43,13 @@
         <label for="new_id" class="block text-sm font-medium text-gray-700 dark:text-neutral-300">Slug (ID Unique)</label>
         <input type="text" name="id" id="new_id" placeholder="ex: massage-spa" class="mt-1 block w-full border border-gray-300 dark:border-neutral-700 rounded-md py-2 px-3 bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" required />
       </div>
+      <div>
+        <ImageField 
+          id="new_imageUrl" 
+          name="imageUrl" 
+          label="Photo du service (Upload ou URL)" 
+        />
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="new_nameFr" class="block text-sm font-medium text-gray-700 dark:text-neutral-300">Nom (Fr)</label>
@@ -80,11 +88,20 @@
         
         <div class="p-6 border-b border-gray-200 dark:border-neutral-800 flex items-center justify-between bg-gray-50/50 dark:bg-neutral-800/60">
           <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-deep-charcoal dark:bg-neutral-700 text-white dark:text-neutral-100 flex items-center justify-center font-bold">
-              {service.nameFr[0] || '?'}
-            </div>
+            {#if service.imageUrl}
+              <img 
+                src={service.imageUrl} 
+                alt={service.nameFr} 
+                class="w-12 h-12 rounded-lg object-cover border border-gray-200 dark:border-neutral-700 shadow-sm"
+              />
+            {:else}
+              <div class="w-12 h-12 rounded-lg bg-deep-charcoal dark:bg-neutral-700 text-white dark:text-neutral-100 flex items-center justify-center font-bold text-lg">
+                {service.nameFr[0] || '?'}
+              </div>
+            {/if}
             <div>
               <h3 class="text-lg font-medium text-gray-900 dark:text-neutral-100">{service.nameFr}</h3>
+              <span class="text-xs text-gray-500 dark:text-neutral-400 font-mono">ID: {service.id}</span>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -99,6 +116,15 @@
         </div>
 
         <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="md:col-span-2 pb-2 border-b border-gray-100 dark:border-neutral-800">
+            <ImageField 
+              id="imageUrl_{service.id}" 
+              name="imageUrl" 
+              value={service.imageUrl || ''} 
+              label="Photo du service (Upload ou URL)" 
+            />
+          </div>
+
           <div class="space-y-4">
             <h4 class="text-sm font-semibold text-gray-900 dark:text-neutral-100 uppercase tracking-wider">Français</h4>
             <div>

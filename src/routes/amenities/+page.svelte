@@ -1,10 +1,23 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import AmenityCard from '$lib/components/AmenityCard.svelte';
   import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
+
+  let settings = $derived($page.data.settings || {});
+  let whatsappNumber = $derived(
+    (settings.contact_whatsapp || '237699000000').replace(/[^0-9]/g, '')
+  );
+  let whatsappText = $derived(
+    encodeURIComponent(
+      i18n.locale === 'fr'
+        ? 'Bonjour, je souhaite en savoir plus sur vos services.'
+        : 'Hello, I would like to know more about your services.'
+    )
+  );
 </script>
 
 <SEO title={i18n.t.amenities.metaTitle} description={i18n.t.amenities.metaDesc} />
@@ -25,17 +38,32 @@
     </div>
 
     <!-- 6 Service Entries Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
       {#each data.services as service}
         <AmenityCard
-          icon={service.icon}
-          highlight={i18n.locale === 'fr' ? service.highlightFr : service.highlightEn}
+          imageUrl={service.imageUrl}
           title={i18n.locale === 'fr' ? service.nameFr : service.nameEn}
           description={i18n.locale === 'fr' ? service.descriptionFr : service.descriptionEn}
-          ctaText={i18n.locale === 'fr' ? service.ctaTextFr : service.ctaTextEn}
-          ctaLink={service.ctaLink}
         />
       {/each}
+    </div>
+
+    <!-- WhatsApp Invitation Line (Below services grid, separate from cards) -->
+    <div class="mb-20 text-center py-6 px-6 sm:px-8 bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800 shadow-sm flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
+      <p class="font-body-md text-sm sm:text-base text-deep-charcoal dark:text-neutral-200">
+        {i18n.locale === 'fr' 
+          ? 'Vous souhaitez en savoir plus sur nos services ?' 
+          : 'Want to know more about our services?'}
+      </p>
+      <a
+        href="https://wa.me/{whatsappNumber}?text={whatsappText}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 font-semibold text-xs sm:text-sm tracking-wider uppercase px-5 py-2.5 bg-[#661f23] hover:bg-[#52191c] text-soft-cream dark:bg-[#bc9347] dark:hover:bg-[#a8823b] dark:text-neutral-950 transition-all duration-300 shadow-sm"
+      >
+        <span class="material-symbols-outlined text-base">chat_bubble</span>
+        <span>{i18n.locale === 'fr' ? 'Contactez-nous sur WhatsApp' : 'Contact us on WhatsApp'}</span>
+      </a>
     </div>
 
     <!-- Immersive Feature Banner -->

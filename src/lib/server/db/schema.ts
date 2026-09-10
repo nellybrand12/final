@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { pgTable, text, serial, timestamp, integer, decimal, jsonb, date, varchar, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -38,6 +39,25 @@ export const rooms = pgTable('rooms', {
   forceAvailable: boolean('force_available').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const roomImages = pgTable('room_images', {
+  id: serial('id').primaryKey(),
+  roomId: integer('room_id').references(() => rooms.id, { onDelete: 'cascade' }).notNull(),
+  imageUrl: text('image_url').notNull(),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const roomsRelations = relations(rooms, ({ many }) => ({
+  images: many(roomImages),
+}));
+
+export const roomImagesRelations = relations(roomImages, ({ one }) => ({
+  room: one(rooms, {
+    fields: [roomImages.roomId],
+    references: [rooms.id],
+  }),
+}));
 
 export const bookings = pgTable('bookings', {
   id: serial('id').primaryKey(),
@@ -111,6 +131,7 @@ export const services = pgTable('services', {
   descriptionFr: text('description_fr').notNull(),
   descriptionEn: text('description_en').notNull(),
   icon: varchar('icon', { length: 50 }).notNull(),
+  imageUrl: text('image_url').default('').notNull(),
   ctaTextFr: varchar('cta_text_fr', { length: 100 }).notNull(),
   ctaTextEn: varchar('cta_text_en', { length: 100 }).notNull(),
   ctaLink: text('cta_link').notNull(),
@@ -134,3 +155,5 @@ export type AdminUser = typeof adminUsers.$inferSelect;
 export type AdminSession = typeof adminSessions.$inferSelect;
 export type Service = typeof services.$inferSelect;
 export type SiteSetting = typeof siteSettings.$inferSelect;
+export type RoomImage = typeof roomImages.$inferSelect;
+export type NewRoomImage = typeof roomImages.$inferInsert;
