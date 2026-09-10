@@ -12,10 +12,7 @@ export const users = pgTable('users', {
 export const rooms = pgTable('rooms', {
   id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 100 }).notNull().unique(),
-  name: text('name').notNull(), // Keep simple name since translation is for DB fields? Wait, user agreed to multilingual. We can use JSONB for name and description.
-  // Actually, wait, let's keep name as text and add a separate jsonb for translations to avoid breaking existing code, OR update existing types.
-  // The simplest is to just make description and name jsonb. Let's look at existing code... actually the previous schema used text. I'll just change name to text, but use jsonb for the new `name` and `description` or just keep text and assume it's FR by default as requested. The user said "yes" to multilingual, so we can use jsonb for text fields.
-  // I will just use `nameFr` and `nameEn` for simplicity in types to avoid TS errors with jsonb typing.
+  name: text('name').notNull(),
   nameFr: text('name_fr').notNull().default(''),
   nameEn: text('name_en').notNull().default(''),
   taglineFr: text('tagline_fr'),
@@ -111,6 +108,7 @@ export const adminUsers = pgTable('admin_users', {
   id: serial('id').primaryKey(),
   username: varchar('username', { length: 100 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  role: varchar('role', { length: 50 }).default('admin').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
