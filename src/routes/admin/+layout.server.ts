@@ -22,7 +22,8 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
   return {
     user: {
       id: user.id,
-      username: user.username
+      username: user.username,
+      role: user.role
     }
   };
 };
