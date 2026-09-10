@@ -920,6 +920,104 @@ const translations = {
       specialRequest: "Envoyer une demande spéciale",
       faq: "Foire aux Questions",
     },
+    // Chatbot
+    chatbot: {
+      title: "Conciergerie Madadjeu",
+      subtitle: "Assistant Réservations 24/7",
+      status: "En ligne",
+      welcome: "Bonjour et bienvenue à l’Hôtel Résidence Madadjeu. Je suis votre assistant virtuel automatisé dédié aux réservations. Comment puis-je vous renseigner sur nos hébergements, salles ou services ?",
+      quickSuggestions: "Suggestions rapides :",
+      inputPlaceholder: "Posez une question sur nos chambres, tarifs, paiement...",
+      sendBtn: "Envoyer",
+      resetBtn: "Effacer l’historique",
+      fallbackMessage: "Je suis un assistant automatisé programmé exclusivement pour les questions de réservation (chambres, tarifs, salles, paiements, politique d’annulation, services). Pour toute autre demande ou assistance personnalisée, notre équipe de conciergerie est joignable directement sur WhatsApp ou par téléphone.",
+      whatsappAction: "Discuter sur WhatsApp",
+      callAction: "Appeler la Réception (+237)",
+      contactAction: "Formulaire de Contact",
+      viewAllFaq: "Consulter toute la FAQ"
+    },
+    // Cookie Banner
+    cookie: {
+      title: "Gestion des Cookies & Vie Privée",
+      description: "Nous utilisons des cookies strictement nécessaires pour vos réservations ainsi que des traceurs d’analyse (Meta Pixel) afin d’optimiser l’expérience utilisateur et mesurer l’audience de notre site.",
+      accept: "Accepter tout",
+      decline: "Refuser l’analyse",
+      policyLink: "Politique de Confidentialité"
+    },
+    // Privacy Policy Page
+    privacy: {
+      metaTitle: "Politique de Confidentialité | Hôtel Résidence Madadjeu",
+      metaDesc: "Consultez nos engagements de confidentialité, le traitement de vos données lors de la réservation, le paiement sécurisé CinetPay et l’usage des cookies.",
+      badge: "Protection & Transparence",
+      heading: "Politique de Confidentialité",
+      lastUpdated: "Dernière mise à jour : Mars 2026",
+      intro: "L’Hôtel Résidence Madadjeu attache la plus haute importance à la confidentialité et à la sécurité de vos informations personnelles. La présente politique détaille les données recueillies dans le cadre de vos réservations et nos engagements en matière de protection de la vie privée.",
+      sections: [
+        {
+          title: "1. Données personnelles collectées lors de la réservation",
+          content: "Dans le cadre exclusif de notre parcours de réservation sans création de compte obligatoire (Guest Checkout), nous collectons uniquement les données indispensables à la bonne exécution de votre séjour :\n• Votre Nom complet (nom et prénom)\n• Votre Numéro de téléphone (utilisé pour identifier votre réservation et vous assister lors de votre arrivée)\n• Votre Adresse e-mail (utilisée pour vous transmettre instantanément la confirmation et votre reçu officiel de réservation)."
+        },
+        {
+          title: "2. Finalités exclusives du traitement",
+          content: "Vos données personnelles sont traitées pour des finalités précises et légitimes :\n• La prise en compte, la validation et la gestion opérationnelle de votre séjour en chambre, suite ou appartement, ou de votre événement en salle.\n• L’émission et la transmission électronique de votre confirmation et facture/reçu officiel au format PDF.\n• L’accueil personnalisé à la réception et la vérification d’identité lors de votre check-in.\n• La gestion des demandes de prolongation de séjour via notre portail en ligne.\n• L’assistance client directe en cas d’impératif technique ou opérationnel lié à votre réservation."
+        },
+        {
+          title: "3. Sécurité des paiements en ligne via CinetPay",
+          content: "Les règlements effectués en ligne sur notre plateforme sont intégralement confiés à la passerelle de paiement agréée CinetPay (agrégateur certifié conforme aux normes internationales de sécurité PCI-DSS). CinetPay prend en charge les règlements par cartes bancaires (Visa, Mastercard) et par portefeuilles mobiles locaux (MTN Mobile Money, Orange Money).\nL’Hôtel Résidence Madadjeu ne collecte, ne stocke et ne conserve à aucun moment vos coordonnées de carte bancaire, codes confidentiels ou données sensibles de paiement. Toutes les transactions financières s’effectuent sous chiffrement bancaire sécurisé."
+        },
+        {
+          title: "4. Cookies et technologies de mesure d’audience (Pixel Meta)",
+          content: "Notre site internet dépose des cookies techniques strictement nécessaires au fonctionnement du panier et à la gestion de la session de réservation. Sous réserve de votre consentement préalable recueilli via notre bandeau dédié, nous utilisons également des traceurs d’analyse et de mesure d’audience (notamment le Pixel Meta / Facebook Pixel) dans le but d’analyser la fréquentation du site, d’améliorer nos interfaces et de mesurer l’efficacité de nos actions de communication.\nVous pouvez à tout moment accepter ou refuser ces traceurs d’analyse via les options du bandeau de consentement ou dans les paramètres de votre navigateur."
+        },
+        {
+          title: "5. Conservation et non-divulgation des données",
+          content: "Vos informations personnelles sont hébergées sur des infrastructures sécurisées et ne sont conservées que pendant la durée nécessaire aux obligations légales, comptables et administratives liées à votre séjour. Nous nous interdisons formellement de commercialiser, louer ou céder vos données personnelles à des tiers à des fins de prospection commerciale."
+        },
+        {
+          title: "6. Vos droits d’accès, de rectification et d’opposition",
+          content: "Conformément aux principes directeurs de protection des données, vous disposez d’un droit d’accès, de rectification, de limitation et de suppression des données personnelles vous concernant. Pour exercer ce droit ou pour toute interrogation concernant vos données, vous pouvez vous adresser directement à la direction de l’établissement par notre formulaire de contact en ligne ou auprès de notre conciergerie."
+        }
+      ]
+    },
+    // Terms of Service Page
+    terms: {
+      metaTitle: "Conditions Générales de Réservation | Hôtel Résidence Madadjeu",
+      metaDesc: "Consultez les conditions générales de vente et de réservation de l’Hôtel Résidence Madadjeu : annulation à 95%, paiements CinetPay, arrivée et départ.",
+      badge: "Cadre Contractuel",
+      heading: "Conditions Générales de Réservation",
+      lastUpdated: "Dernière mise à jour : Mars 2026",
+      intro: "Les présentes conditions générales régissent l’ensemble des contrats de réservation d’hébergement (chambres, suites, appartements) et de mise à disposition d’espaces événementiels souscrits auprès de l’Hôtel Résidence Madadjeu à Yaoundé.",
+      sections: [
+        {
+          title: "1. Réservation simplifiée sans compte (Guest Checkout)",
+          content: "La réservation de nos hébergements et espaces s’effectue en ligne en accès libre, sans obligation de création de compte utilisateur préalable (Guest Checkout). La réservation devient ferme dès validation des informations requises (Nom, Téléphone, E-mail) et acceptation du mode de paiement sélectionné. L’hôte garantit l’authenticité des coordonnées fournies."
+        },
+        {
+          title: "2. Tarifs et modes de paiement acceptés",
+          content: "Nos tarifs sont indiqués en Francs CFA (XAF) toutes taxes comprises. Deux modes de règlement sont proposés au client :\n• Règlement en ligne via CinetPay : paiement immédiat et sécurisé par carte bancaire internationale (Visa, Mastercard) ou Mobile Money (MTN Mobile Money, Orange Money). La confirmation avec reçu officiel est expédiée instantanément.\n• Règlement à l’arrivée : le montant total du séjour ou de la location est acquitté directement à la réception de l’hôtel lors du check-in, préalablement à l’attribution des clés (espèces, carte bancaire ou Mobile Money)."
+        },
+        {
+          title: "3. Politique d’annulation et remboursement garanti à 95%",
+          content: "Soucieux d’offrir la plus grande flexibilité à notre clientèle tout en couvrant les frais techniques d’intermédiation financière (5%), nos règles de remboursement sont strictement fixées comme suit :\n• Hébergements (Chambres, Suites et Appartements) : Toute annulation transmise au moins 20 heures avant l’heure officielle de check-in (14h00) donne droit à un remboursement garanti de 95% du montant versé.\n• Salles d’événements et de banquets : Toute annulation transmise au moins 36 heures avant le début prévu de l’événement donne droit à un remboursement garanti de 95% du montant versé.\n• Annulations hors délais et non-présentation (No-Show) : Toute annulation intervenant moins de 20 heures avant l’arrivée pour les chambres, ou moins de 36 heures pour les salles, est strictement non-remboursable. Notre conciergerie demeure néanmoins à votre écoute pour examiner un éventuel report de date sous réserve de disponibilité."
+        },
+        {
+          title: "4. Marges techniques et blocage automatique des disponibilités (Buffers)",
+          content: "Afin d’assurer des prestations de luxe conformes aux plus hauts standards d’hygiène et de sécurité, notre moteur de disponibilité applique des créneaux de blocage incompressibles :\n• Chambres et Appartements : Blocage automatique de 24 heures avant l’arrivée et de 12 heures après le départ pour aération, désinfection et remise à blanc intégrale.\n• Salles d’événements : Blocage automatique de 48 heures avant l’événement et de 24 heures après pour les opérations techniques, scénographiques et de démontage."
+        },
+        {
+          title: "5. Heures d’arrivée (Check-in) et de départ (Check-out)",
+          content: "• Heure d’enregistrement (Check-in) : À partir de 14h00. Une pièce d’identité officielle en cours de validité (carte d’identité nationale ou passeport) doit être présentée lors de l’arrivée.\n• Heure de libération (Check-out) : Jusqu’à 12h00 (midi). Tout dépassement non autorisé préalablement par la réception pourra donner lieu à la facturation d’une demi-journée ou d’une nuit supplémentaire selon les disponibilités."
+        },
+        {
+          title: "6. Consultation et prolongation de réservation",
+          content: "Chaque hôte peut à tout moment consulter sa réservation ou formuler une demande de prolongation via l’espace « Gérer ma réservation » en saisissant son Nom et son Numéro de téléphone. La prolongation est tributaire de la disponibilité effective de la catégorie demandée et devient définitive après règlement du complément tarifaire via CinetPay."
+        },
+        {
+          title: "7. Droit applicable et règlement des litiges",
+          content: "Les présentes conditions générales sont régies par le droit camerounais. En cas de contestation ou de réclamation, le client s’engage à privilégier une conciliation amiable auprès de la direction de l’établissement. À défaut d’accord amiable, les tribunaux compétents de Yaoundé seront seuls compétents."
+        }
+      ]
+    },
   },
 
   en: {
@@ -1822,6 +1920,104 @@ const translations = {
       call: "Call Front Desk (+237)",
       specialRequest: "Send Special Request",
       faq: "Frequently Asked Questions",
+    },
+    // Chatbot
+    chatbot: {
+      title: "Madadjeu Concierge",
+      subtitle: "Booking Assistant 24/7",
+      status: "Online",
+      welcome: "Welcome to Hotel Residence Madadjeu. I am your automated virtual concierge dedicated to reservations. How may I assist you regarding our rooms, event halls, rates, or services today?",
+      quickSuggestions: "Quick suggestions:",
+      inputPlaceholder: "Ask a question about our rooms, rates, payments...",
+      sendBtn: "Send",
+      resetBtn: "Clear chat history",
+      fallbackMessage: "I am an automated assistant programmed exclusively for hotel booking inquiries (rooms, rates, event halls, payment methods, cancellation policies, services). For any other inquiry or personalized assistance, our concierge team is directly available on WhatsApp or by phone.",
+      whatsappAction: "Chat on WhatsApp",
+      callAction: "Call Front Desk (+237)",
+      contactAction: "Contact Form",
+      viewAllFaq: "View Full FAQ"
+    },
+    // Cookie Banner
+    cookie: {
+      title: "Cookie Preferences & Privacy",
+      description: "We use necessary cookies for your booking sessions and analytics tracking (Meta Pixel) to improve your experience and evaluate website performance.",
+      accept: "Accept All",
+      decline: "Decline Analytics",
+      policyLink: "Privacy Policy"
+    },
+    // Privacy Policy Page
+    privacy: {
+      metaTitle: "Privacy Policy | Hotel Residence Madadjeu",
+      metaDesc: "Discover how Hotel Residence Madadjeu collects, protects, and processes personal data during your booking, CinetPay payments, and cookie usage.",
+      badge: "Data Protection & Trust",
+      heading: "Privacy Policy",
+      lastUpdated: "Last updated: March 2026",
+      intro: "Hotel Residence Madadjeu is committed to safeguarding the privacy and personal data of our guests. This policy provides complete transparency regarding how your information is collected, used, and secured during the booking process.",
+      sections: [
+        {
+          title: "1. Personal Information Collected During Booking",
+          content: "Exclusively within our streamlined booking journey requiring no account creation (Guest Checkout), we collect only the information strictly necessary to process and confirm your stay:\n• Your Full Name (first and last name)\n• Your Phone Number (used to identify your booking and assist you upon arrival)\n• Your Email Address (used to instantly deliver your booking confirmation and official PDF receipt)."
+        },
+        {
+          title: "2. Specific Purposes of Data Processing",
+          content: "Your personal details are processed solely for the following legitimate purposes:\n• Processing, confirming, and managing your reservation for rooms, suites, apartments, or event venues.\n• Generating and transmitting your official PDF confirmation and invoice.\n• Reception check-in greeting and identity verification upon arrival.\n• Handling stay extension requests through our online guest management portal.\n• Direct operational customer support regarding your stay."
+        },
+        {
+          title: "3. Secure Payment Processing via CinetPay",
+          content: "All online transactions on our platform are processed exclusively by CinetPay, an authorized payment aggregator certified in compliance with international PCI-DSS security standards. CinetPay securely processes credit/debit cards (Visa, Mastercard) and local mobile money services (MTN Mobile Money, Orange Money).\nHotel Residence Madadjeu never collects, stores, or accesses your bank card numbers, CVV codes, or mobile wallet PINs. All financial transactions occur under certified banking encryption."
+        },
+        {
+          title: "4. Cookies & Analytics Measurement (Meta Pixel)",
+          content: "Our website utilizes essential technical cookies required for booking session continuity and language preference. Subject to your explicit consent provided through our cookie consent banner, we also use analytics trackers, specifically the Meta Pixel (Facebook Pixel), to measure traffic, evaluate advertising campaign performance, and improve user experience.\nYou maintain the full right to accept or decline analytics cookies at any time via the cookie banner or your browser preferences."
+        },
+        {
+          title: "5. Data Retention & Confidentiality",
+          content: "Your personal data is stored securely on encrypted infrastructure and retained only for the duration required by statutory, accounting, and hospitality regulations in Cameroon. We strictly do not sell, rent, or trade your personal data to third parties for commercial advertising."
+        },
+        {
+          title: "6. Your Rights of Access and Rectification",
+          content: "In accordance with applicable personal data protection laws, you possess the right to access, rectify, restrict, or request the deletion of your personal records. To exercise these rights or make inquiries, please reach out to our management team through our online contact form or via the front desk concierge."
+        }
+      ]
+    },
+    // Terms of Service Page
+    terms: {
+      metaTitle: "Booking Terms & Conditions | Hotel Residence Madadjeu",
+      metaDesc: "Review the official terms of service, 95% cancellation refund policy, CinetPay payment methods, and check-in policies of Hotel Residence Madadjeu.",
+      badge: "Contractual Agreement",
+      heading: "Booking Terms of Service",
+      lastUpdated: "Last updated: March 2026",
+      intro: "These General Terms and Conditions govern all reservations for accommodations (rooms, suites, apartments) and event spaces concluded with Hotel Residence Madadjeu in Yaounde.",
+      sections: [
+        {
+          title: "1. Streamlined Guest Checkout (No Account Required)",
+          content: "Access to our booking service is completely open and simplified: no prior account creation or password registration is required (Guest Checkout). The booking becomes binding upon submitting the mandatory guest information (Name, Phone, Email) and selecting an approved payment option. The guest certifies the accuracy of the provided information."
+        },
+        {
+          title: "2. Pricing & Accepted Payment Methods",
+          content: "All rates are quoted in CFA Francs (XAF) inclusive of applicable taxes (TTC). Two payment modalities are offered to guests:\n• Online Payment via CinetPay: immediate, encrypted settlement via international cards (Visa, Mastercard) or Mobile Money (MTN MoMo, Orange Money). An official confirmation and invoice receipt are delivered immediately.\n• Pay at Arrival: the full amount for the stay or venue hire is settled directly at the hotel reception upon check-in prior to key handover (cash, card, or Mobile Money)."
+        },
+        {
+          title: "3. Cancellation Policy & 95% Guaranteed Refund",
+          content: "To provide maximum flexibility while covering unavoidable financial transaction and administrative costs (5%), our refund policies are established as follows:\n• Accommodations (Rooms, Suites & Apartments): Any cancellation notice submitted at least 20 hours prior to official check-in time (2:00 PM) qualifies for a 95% refund of the paid booking total.\n• Event Halls & Banquets: Any cancellation notice submitted at least 36 hours prior to the scheduled event start time qualifies for a 95% refund of the paid total.\n• Late Cancellations & No-Shows: Any cancellation requested less than 20 hours prior to check-in (rooms) or less than 36 hours prior (halls) is strictly non-refundable. However, our concierge desk remains available to explore date rescheduling options subject to availability."
+        },
+        {
+          title: "4. Technical Buffer Periods & Automatic Blocking",
+          content: "To uphold luxury standards of sanitation, deep cleaning, and hospitality preparation, our booking engine enforces automatic buffer periods:\n• Rooms & Apartments: 24-hour buffer prior to arrival and 12-hour buffer post check-out are automatically applied for deep sanitization and room turnover.\n• Event Halls: 48-hour buffer prior to events and 24-hour buffer post event are scheduled for staging, sound/lighting configuration, and breakdown."
+        },
+        {
+          title: "5. Check-in (2:00 PM) & Check-out (12:00 PM)",
+          content: "• Check-in: From 2:00 PM (14:00). A valid government-issued photographic ID (national ID card or passport) must be presented upon registration.\n• Check-out: By 12:00 PM (noon). Unauthorized late departures may result in additional charges corresponding to a half-day or full-night rate based on availability."
+        },
+        {
+          title: "6. Accessing & Extending Existing Bookings",
+          content: 'Guests may review booking records or submit extension requests at any time via the "Manage Booking" portal by submitting their Name and Phone number. Extensions are subject to real-time room availability for the requested dates and become confirmed upon settlement of the rate difference via CinetPay.'
+        },
+        {
+          title: "7. Applicable Law & Jurisdiction",
+          content: "These terms and conditions are governed by the laws of the Republic of Cameroon. Any dispute or claim should first be submitted to the hotel management for amicable resolution. In the absence of an amicable settlement, the competent courts of Yaounde shall hold exclusive jurisdiction."
+        }
+      ]
     },
   },
 };

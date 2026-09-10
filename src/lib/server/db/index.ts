@@ -3,7 +3,6 @@ import { eq, sql, inArray } from 'drizzle-orm';
 import postgres from 'postgres';
 import * as schema from './schema';
 import { env as dynamicEnv } from '$env/dynamic/private';
-import { DATABASE_URL as staticDatabaseUrl } from '$env/static/private';
 import dns from 'node:dns';
 
 // Force Node.js to resolve IPv4 addresses first to avoid hanging on IPv6 AAAA lookups
@@ -13,8 +12,9 @@ try {
   // Ignored if not supported in environment
 }
 
-// Resolve DATABASE_URL from dynamic env, static env, or process.env
-const rawConnectionString = dynamicEnv.DATABASE_URL || staticDatabaseUrl || process.env.DATABASE_URL || '';
+// Resolve DATABASE_URL from dynamic env or process.env (kept build-safe: no
+// $env/static/private import, so the app still builds when DATABASE_URL is unset)
+const rawConnectionString = dynamicEnv.DATABASE_URL || process.env.DATABASE_URL || '';
 const connectionString = rawConnectionString.trim();
 
 function maskConnectionString(url: string): string {

@@ -237,7 +237,11 @@
     <div
       class="flex items-center justify-between border-b border-white/10 pb-5"
     >
-      <a href="/" onclick={() => (isDrawerOpen = false)} class="inline-block">
+      <a
+        href="/"
+        onclick={() => (isDrawerOpen = false)}
+        class="flex items-center gap-3"
+      >
         <img
           alt="Hotel Résidence Madadjeu Logo"
           class="h-7 w-auto object-contain"
@@ -248,7 +252,7 @@
         >
           Madadjeu
         </span>
-      </div>
+      </a>
 
       <!-- Close Button -->
       <button

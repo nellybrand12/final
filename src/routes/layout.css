@@ -50,9 +50,18 @@
   --color-background: #fdf8f8;
   --color-on-background: #1c1b1b;
   --color-surface-variant: #e5e2e1;
-  --color-deep-charcoal: #1a1a1a;
-  --color-muted-gold: #b7a18b;
-  --color-soft-cream: #f9f7f2;
+  --color-deep-charcoal: #14110f;
+  --color-muted-gold: #b99045;
+  --color-muted-gold-dark: #d4c2b0;
+  --color-golden-brown: #8c7653;
+  --color-golden-brown-dark: #c5a880;
+  --color-brand-maroon: #6b1d2f;
+  --color-brand-maroon-dark: #b83d52;
+  --color-brand-burgundy: #6b1d2f;
+  --color-brand-burgundy-dark: #b83d52;
+  --color-soft-cream: #f8f6f2;
+  --color-deep-maroon: #601d21;
+  --color-warm-taupe: #9c9088;
   --color-rich-wood: #4a3728;
   --color-ink-black: #000000;
 

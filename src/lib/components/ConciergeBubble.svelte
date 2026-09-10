@@ -215,46 +215,96 @@
             </span>
           </div>
         </div>
-        <button
-          onclick={() => (isOpen = false)}
-          class="text-on-surface-variant hover:text-deep-charcoal p-1 rounded-full hover:bg-surface-variant/40 transition-colors"
-          aria-label="Fermer"
-        >
-          <span class="material-symbols-outlined text-xl">close</span>
-        </button>
+
+        <div class="flex items-center gap-1">
+          <button
+            type="button"
+            onclick={clearChat}
+            class="text-soft-cream/70 hover:text-soft-cream p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            title={i18n.t.chatbot.resetBtn}
+            aria-label={i18n.t.chatbot.resetBtn}
+          >
+            <span class="material-symbols-outlined text-lg">restart_alt</span>
+          </button>
+          <button
+            type="button"
+            onclick={() => (isOpen = false)}
+            class="text-soft-cream/70 hover:text-soft-cream p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            title={i18n.t.concierge.available}
+            aria-label="Fermer"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
       </div>
 
-      <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
-        {i18n.t.concierge.prompt}
-      </p>
+      <!-- Quick Topic Chips Bar -->
+      <div class="p-2.5 bg-surface-container dark:bg-neutral-850 border-b border-outline-variant/30 dark:border-neutral-800 overflow-x-auto no-scrollbar shrink-0">
+        <div class="flex items-center gap-1.5 whitespace-nowrap">
+          {#each QUICK_TOPIC_CHIPS as chip}
+            <button
+              type="button"
+              onclick={() => selectChip(chip.id)}
+              class="px-2.5 py-1 text-[11px] font-medium rounded-full bg-surface-container-lowest dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-200 border border-outline-variant/40 dark:border-neutral-700 hover:border-muted-gold dark:hover:border-muted-gold-dark hover:bg-muted-gold/10 dark:hover:bg-muted-gold-dark/15 transition-all flex items-center gap-1 shrink-0"
+            >
+              <span class="material-symbols-outlined text-[13px] text-muted-gold dark:text-muted-gold-dark">{chip.icon}</span>
+              <span>{i18n.locale === 'fr' ? chip.labelFr : chip.labelEn}</span>
+            </button>
+          {/each}
+        </div>
+      </div>
 
-      <div class="flex flex-col gap-2">
-        <a
-          href="https://wa.me/237699000000?text=Bonjour%20Madadjeu,%20je%20souhaite%20une%20information."
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container hover:bg-muted-gold/10 transition-colors border border-outline-variant/30 text-xs font-medium text-deep-charcoal group"
-        >
-          <span class="material-symbols-outlined text-green-600 group-hover:scale-110 transition-transform">chat</span>
-          <span>{i18n.t.concierge.whatsapp}</span>
-        </a>
+      <!-- Chat Thread Area -->
+      <div
+        bind:this={chatContainer}
+        class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-surface-container-lowest dark:bg-neutral-900 scroll-smooth"
+      >
+        {#each messages as msg (msg.id)}
+          {#if msg.sender === 'bot'}
+            <div class="flex items-start gap-2.5 max-w-[92%]">
+              <div class="w-7 h-7 rounded-full bg-muted-gold/20 dark:bg-muted-gold-dark/20 text-muted-gold dark:text-muted-gold-dark flex items-center justify-center shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-sm">room_service</span>
+              </div>
+              <div class="space-y-1.5 flex-1">
+                <div class="p-3 rounded-2xl rounded-tl-sm bg-surface-container dark:bg-neutral-800 text-on-surface dark:text-neutral-100 text-xs sm:text-[13px] leading-relaxed border border-outline-variant/30 dark:border-neutral-700 shadow-sm">
+                  <p class="whitespace-pre-line">{msg.text}</p>
 
-        <a
-          href="tel:+237699000000"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container hover:bg-muted-gold/10 transition-colors border border-outline-variant/30 text-xs font-medium text-deep-charcoal group"
-        >
-          <span class="material-symbols-outlined text-muted-gold group-hover:scale-110 transition-transform">call</span>
-          <span>{i18n.t.concierge.call}</span>
-        </a>
+                  {#if msg.action}
+                    <div class="mt-2.5 pt-2 border-t border-outline-variant/20 dark:border-neutral-700">
+                      <a
+                        href={msg.action.href}
+                        target={msg.action.href.startsWith('http') || msg.action.href.startsWith('//') ? '_blank' : undefined}
+                        rel={msg.action.href.startsWith('http') || msg.action.href.startsWith('//') ? 'noopener noreferrer' : undefined}
+                        onclick={() => (isOpen = false)}
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-deep-charcoal dark:bg-neutral-100 text-soft-cream dark:text-neutral-900 text-[11px] font-semibold hover:bg-muted-gold dark:hover:bg-muted-gold-dark hover:text-deep-charcoal transition-colors shadow-sm"
+                      >
+                        {#if msg.action.icon}
+                          <span class="material-symbols-outlined text-xs">{msg.action.icon}</span>
+                        {/if}
+                        <span>{msg.action.label}</span>
+                      </a>
+                    </div>
+                  {/if}
 
-        <a
-          href="/contact"
-          onclick={() => (isOpen = false)}
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container hover:bg-muted-gold/10 transition-colors border border-outline-variant/30 text-xs font-medium text-deep-charcoal group"
-        >
-          <span class="material-symbols-outlined text-muted-gold group-hover:scale-110 transition-transform">mail</span>
-          <span>{i18n.t.concierge.specialRequest}</span>
-        </a>
+                  {#if msg.isFallback}
+                    <div class="mt-3 pt-2.5 border-t border-outline-variant/20 dark:border-neutral-700 flex flex-col gap-1.5">
+                      <a
+                        href="https://wa.me/237691890963?text=Bonjour%20Madadjeu,%20je%20souhaite%20une%20assistance."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 font-medium text-[11px] hover:bg-emerald-600/25 transition-colors border border-emerald-600/30"
+                      >
+                        <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">chat</span>
+                        <span>{i18n.t.chatbot.whatsappAction}</span>
+                      </a>
+
+                      <a
+                        href="tel:+237691890963"
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-high dark:bg-neutral-700 text-deep-charcoal dark:text-neutral-200 font-medium text-[11px] hover:bg-surface-variant dark:hover:bg-neutral-600 transition-colors border border-outline-variant/30"
+                      >
+                        <span class="material-symbols-outlined text-sm text-muted-gold dark:text-muted-gold-dark">call</span>
+                        <span>{i18n.t.chatbot.callAction}</span>
+                      </a>
 
                       <a
                         href="/faq"
