@@ -60,7 +60,6 @@ export const bookings = pgTable('bookings', {
   id: serial('id').primaryKey(),
   bookingReference: varchar('booking_reference', { length: 50 }).notNull().unique(),
   guestName: text('guest_name').notNull(),
-  guestEmail: varchar('guest_email', { length: 255 }).notNull(),
   guestPhone: varchar('guest_phone', { length: 50 }),
   roomId: integer('room_id').references(() => rooms.id).notNull(),
   checkInDate: date('check_in_date').notNull(),

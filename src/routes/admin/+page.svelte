@@ -128,7 +128,7 @@
               </div>
               <div class="flex flex-col truncate pr-2">
                 <span class="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">{activity.guestName}</span>
-                <span class="text-xs text-gray-500 dark:text-neutral-400 truncate">{activity.guestEmail}</span>
+                <span class="text-xs text-gray-500 dark:text-neutral-400 truncate">{activity.guestPhone || activity.bookingReference}</span>
               </div>
             </div>
             <div class="text-sm font-medium text-gray-900 dark:text-neutral-100 shrink-0 text-right">

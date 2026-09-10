@@ -28,17 +28,16 @@ export const actions: Actions = {
     const data = await request.formData();
     const roomIdStr = data.get('roomId')?.toString();
     const guestName = data.get('guestName')?.toString()?.trim();
-    const guestEmail = data.get('guestEmail')?.toString()?.trim();
     const guestPhone = data.get('guestPhone')?.toString()?.trim();
     const checkInDate = data.get('checkInDate')?.toString();
     const checkOutDate = data.get('checkOutDate')?.toString();
     const roomsCountStr = data.get('roomsCount')?.toString() || data.get('guestsCount')?.toString() || '1';
     const specialRequests = data.get('specialRequests')?.toString()?.trim();
 
-    if (!roomIdStr || !guestName || !guestEmail || !checkInDate || !checkOutDate) {
+    if (!roomIdStr || !guestName || !guestPhone || !checkInDate || !checkOutDate) {
       return fail(400, {
         error: 'Veuillez remplir tous les champs obligatoires.',
-        values: { guestName, guestEmail, guestPhone, checkInDate, checkOutDate }
+        values: { guestName, guestPhone, checkInDate, checkOutDate }
       });
     }
 
@@ -65,7 +64,6 @@ export const actions: Actions = {
       const newBooking = await createBooking({
         bookingReference,
         guestName,
-        guestEmail,
         guestPhone: guestPhone || null,
         roomId,
         checkInDate,
@@ -79,7 +77,7 @@ export const actions: Actions = {
         eventType: data.get('eventType')?.toString() || null
       });
 
-      // Send confirmation email with PDF receipt
+      // Send confirmation notification with PDF receipt
       if (newBooking) {
         sendBookingConfirmationEmail(newBooking, room).catch(err => {
           console.warn('[Email] Non-blocking confirmation email error:', err);
@@ -90,6 +88,6 @@ export const actions: Actions = {
       return fail(500, { error: 'Une erreur est survenue lors de la réservation. Veuillez réessayer.' });
     }
 
-    throw redirect(303, `/confirmation?ref=${bookingReference}&email=${encodeURIComponent(guestEmail)}`);
+    throw redirect(303, `/confirmation?ref=${bookingReference}`);
   }
 };

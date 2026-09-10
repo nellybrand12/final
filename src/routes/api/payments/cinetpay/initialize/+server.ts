@@ -13,7 +13,6 @@ export const POST: RequestHandler = async ({ request, url }) => {
       checkOutDate,
       totalPrice,
       guestName,
-      guestEmail,
       guestPhone,
       guestAddress,
       guestCity,
@@ -23,7 +22,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
       eventType
     } = body;
 
-    if (!roomId || !checkInDate || !checkOutDate || !totalPrice || !guestName || !guestEmail) {
+    if (!roomId || !checkInDate || !checkOutDate || !totalPrice || !guestName || !guestPhone) {
       return json({ success: false, error: 'Champs requis manquants pour la réservation' }, { status: 400 });
     }
 
@@ -62,7 +61,6 @@ export const POST: RequestHandler = async ({ request, url }) => {
       await createBooking({
         bookingReference,
         guestName: guestName.trim(),
-        guestEmail: guestEmail.trim().toLowerCase(),
         guestPhone: guestPhone ? guestPhone.trim() : '',
         roomId: Number(roomId),
         checkInDate,
@@ -100,7 +98,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
       customer: {
         name: customerName,
         surname: customerSurname,
-        email: guestEmail.trim(),
+        email: 'client@residence-madadjeu.com',
         phoneNumber: (guestPhone || '').trim(),
         address: (guestAddress || 'Bastos, Yaoundé').trim(),
         city: (guestCity || 'Yaoundé').trim(),

@@ -161,8 +161,8 @@
             </div>
 
             <div>
-              <span class="text-on-surface-variant dark:text-neutral-400 block text-[11px]">{i18n.t.confirmation.emailPhone}</span>
-              <strong class="text-deep-charcoal dark:text-neutral-100 text-sm">{data.booking.guestEmail} {data.booking.guestPhone ? `• ${data.booking.guestPhone}` : ''}</strong>
+              <span class="text-on-surface-variant dark:text-neutral-400 block text-[11px]">{i18n.locale === 'fr' ? 'Téléphone' : 'Phone'}</span>
+              <strong class="text-deep-charcoal dark:text-neutral-100 text-sm">{data.booking.guestPhone || '—'}</strong>
             </div>
 
             <div>

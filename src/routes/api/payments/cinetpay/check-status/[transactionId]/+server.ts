@@ -30,8 +30,7 @@ export const GET: RequestHandler = async ({ params }) => {
       return json({
         success: true,
         status: 'confirmed',
-        bookingReference: booking.bookingReference,
-        guestEmail: booking.guestEmail
+        bookingReference: booking.bookingReference
       });
     }
 
@@ -55,8 +54,7 @@ export const GET: RequestHandler = async ({ params }) => {
       return json({
         success: true,
         status: 'confirmed',
-        bookingReference: confirmRes.booking?.bookingReference || booking.bookingReference,
-        guestEmail: confirmRes.booking?.guestEmail || booking.guestEmail
+        bookingReference: confirmRes.booking?.bookingReference || booking.bookingReference
       });
     } else if (verification.status === 'WAITING_FOR_CUSTOMER') {
       return json({

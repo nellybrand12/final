@@ -348,7 +348,6 @@ const inMemoryBookings: schema.Booking[] = [
     id: 1,
     bookingReference: 'MDJ-84920',
     guestName: 'Jean-Paul Kamga',
-    guestEmail: 'jp.kamga@example.com',
     guestPhone: '+237 6 99 00 11 22',
     roomId: 1,
     checkInDate: '2026-09-10',
@@ -601,6 +600,17 @@ export async function createBooking(data: Omit<schema.Booking, 'id' | 'createdAt
     }
   }
 
+  const inMemRoom = INITIAL_ROOMS.find(r => r.id === data.roomId);
+  if (inMemRoom) {
+    const requestedCount = data.guestsCount || 1;
+    inMemRoom.availableRooms = Math.max(0, inMemRoom.availableRooms - requestedCount);
+    if (data.status === 'confirmed') {
+      inMemRoom.inUseRooms += requestedCount;
+    } else {
+      inMemRoom.onHoldRooms += requestedCount;
+    }
+  }
+
   inMemoryBookings.push(newBooking);
   return newBooking;
 }
@@ -698,16 +708,16 @@ export async function updateBookingStatus(
   return null;
 }
 
-export async function getBookingByReference(reference: string, email: string): Promise<schema.Booking | null> {
+export async function getBookingByReference(reference: string, phone?: string): Promise<schema.Booking | null> {
   const cleanedRef = reference.trim().toUpperCase();
-  const cleanedEmail = email.trim().toLowerCase();
+  const normalizedPhone = phone ? normalizePhone(phone) : null;
 
   if (dbInstance && isDbHealthy) {
     try {
       const results = await dbInstance.select().from(schema.bookings);
       const match = results.find(b => 
         b.bookingReference.toUpperCase() === cleanedRef && 
-        b.guestEmail.toLowerCase() === cleanedEmail
+        (!normalizedPhone || (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false))
       );
       if (match) return match;
     } catch (e) {
@@ -717,7 +727,7 @@ export async function getBookingByReference(reference: string, email: string): P
 
   return inMemoryBookings.find(b => 
     b.bookingReference.toUpperCase() === cleanedRef && 
-    b.guestEmail.toLowerCase() === cleanedEmail
+    (!normalizedPhone || (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false))
   ) || null;
 }
 
@@ -758,9 +768,9 @@ export function evaluateCancellationPolicy(checkInDateStr: string, roomType: str
   };
 }
 
-export async function cancelBooking(reference: string, email: string): Promise<CancelBookingResult> {
+export async function cancelBooking(reference: string, phone?: string): Promise<CancelBookingResult> {
   const cleanedRef = reference.trim().toUpperCase();
-  const cleanedEmail = email.trim().toLowerCase();
+  const normalizedPhone = phone ? normalizePhone(phone) : null;
 
   if (dbInstance && isDbHealthy) {
     try {
@@ -768,13 +778,15 @@ export async function cancelBooking(reference: string, email: string): Promise<C
         // 1. Fetch booking with lock
         const [booking] = await tx.select()
           .from(schema.bookings)
-          .where(
-            sql`${schema.bookings.bookingReference} = ${cleanedRef} AND lower(${schema.bookings.guestEmail}) = ${cleanedEmail}`
-          )
+          .where(sql`${schema.bookings.bookingReference} = ${cleanedRef}`)
           .for('update');
         
         if (!booking) {
           return { success: false, message: 'Aucune réservation trouvée pour ces identifiants.' };
+        }
+
+        if (normalizedPhone && booking.guestPhone && normalizePhone(booking.guestPhone) !== normalizedPhone) {
+          return { success: false, message: 'Numéro de téléphone non concordant pour cette réservation.' };
         }
 
         if (booking.status === 'cancelled') {
@@ -849,7 +861,7 @@ export async function cancelBooking(reference: string, email: string): Promise<C
   // Fallback for in-memory
   const booking = inMemoryBookings.find(b => 
     b.bookingReference.toUpperCase() === cleanedRef && 
-    b.guestEmail.toLowerCase() === cleanedEmail
+    (!normalizedPhone || (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false))
   );
   if (!booking) return { success: false, message: 'Aucune réservation trouvée.' };
   if (booking.status === 'cancelled') return { success: false, message: 'Cette réservation a déjà été annulée.' };
@@ -945,22 +957,40 @@ export async function getBookingsByGuest(name: string, phone: string): Promise<s
   const normalizedPhone = normalizePhone(phone);
   const searchName = name.trim().toLowerCase();
 
+  let phoneBookings: schema.Booking[] = [];
+
+  // Step 1: Search/query bookings by phone number first
   if (dbInstance && isDbHealthy) {
     try {
       const results = await dbInstance.select().from(schema.bookings);
-      return results.filter(b => 
-        b.guestName.toLowerCase().includes(searchName) && 
-        (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false)
+      phoneBookings = results.filter(b => 
+        b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false
       );
     } catch (e) {
       handleDbError('getBookingsByGuest', e);
     }
+  } else {
+    phoneBookings = inMemoryBookings.filter(b => 
+      b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false
+    );
   }
 
-  return inMemoryBookings.filter(b => 
-    b.guestName.toLowerCase().includes(searchName) && 
-    (b.guestPhone ? normalizePhone(b.guestPhone) === normalizedPhone : false)
-  );
+  // Step 2: From the results returned for that phone number, check whether at least one record's guest name matches the name entered
+  const hasNameMatch = phoneBookings.some(b => {
+    const bName = b.guestName.toLowerCase().trim();
+    return bName.includes(searchName) || searchName.includes(bName);
+  });
+
+  // Step 3: If no name match is found among that phone number's bookings, treat it as no results (do not reveal any booking data)
+  if (!hasNameMatch) {
+    return [];
+  }
+
+  // Step 4: If at least one name match is found, proceed with showing the matching booking(s) for that phone number
+  return phoneBookings.filter(b => {
+    const bName = b.guestName.toLowerCase().trim();
+    return bName.includes(searchName) || searchName.includes(bName);
+  });
 }
 
 export async function hardDeleteBooking(id: number): Promise<boolean> {

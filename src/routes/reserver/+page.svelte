@@ -46,7 +46,6 @@
 
   // Guest Details
   let guestName = $state('');
-  let guestEmail = $state('');
   let guestPhone = $state('');
   let specialRequests = $state('');
 
@@ -124,7 +123,7 @@
       if (form) (form as any).error = null;
       currentStep = 2;
     } else if (currentStep === 2) {
-      if (!guestName || !guestEmail) return;
+      if (!guestName || !guestPhone) return;
       currentStep = 3;
     }
   }
@@ -138,7 +137,7 @@
     }
   }
 
-  function pollAuthoritativeStatus(transactionId: string, bookingRef: string, email: string) {
+  function pollAuthoritativeStatus(transactionId: string, bookingRef: string) {
     clearTimers();
     let attempts = 0;
     const maxAttempts = 30; // 30 * 2.5s = 75 seconds max polling
@@ -154,7 +153,7 @@
           clearTimers();
           paymentStepState = 'success';
           setTimeout(() => {
-            goto(`/confirmation?ref=${encodeURIComponent(bookingRef)}&email=${encodeURIComponent(email)}`);
+            goto(`/confirmation?ref=${encodeURIComponent(bookingRef)}`);
           }, 1200);
         } else if (data.status === 'failed') {
           clearTimers();
@@ -192,7 +191,6 @@
             checkOutDate: checkOut,
             totalPrice,
             guestName,
-            guestEmail,
             guestPhone,
             guestAddress: guestAddress || 'Bastos, Yaoundé',
             guestCity: guestCity || 'Yaoundé',
@@ -224,7 +222,7 @@
 
         paymentStepState = 'success';
         setTimeout(() => {
-          goto(`/confirmation?ref=${ref}&email=${encodeURIComponent(guestEmail)}`);
+          goto(`/confirmation?ref=${ref}`);
         }, 600);
       } catch (err: any) {
         paymentStepState = 'failed';
@@ -248,7 +246,6 @@
             checkOutDate: checkOut,
             totalPrice,
             guestName,
-            guestEmail,
             guestPhone,
             guestAddress: guestAddress || 'Bastos, Yaoundé',
             guestCity: guestCity || 'Yaoundé',
@@ -311,7 +308,7 @@
         CinetPay.waitResponse(async (response: any) => {
           paymentStepState = 'verifying';
           // Immediately poll authoritative status from our server
-          pollAuthoritativeStatus(initData.transactionId, initData.bookingReference, initData.customer.email);
+          pollAuthoritativeStatus(initData.transactionId, initData.bookingReference);
         });
 
         if (typeof CinetPay.onError === 'function') {
@@ -399,7 +396,7 @@
         <button
           type="button"
           disabled={isInFlight}
-          onclick={() => { if (guestName && guestEmail) currentStep = 3; }}
+          onclick={() => { if (guestName && guestPhone) currentStep = 3; }}
           class="relative z-10 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none disabled:opacity-50"
         >
           <div class="w-9 h-9 rounded-full flex items-center justify-center font-label-caps text-xs font-bold transition-all duration-300 {currentStep >= 3 ? 'bg-deep-charcoal text-soft-cream dark:bg-neutral-100 dark:text-neutral-900 shadow-md' : 'bg-surface-container dark:bg-neutral-800 text-on-surface-variant dark:text-neutral-400'}">
@@ -572,33 +569,18 @@
                 />
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label for="guestEmail" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
-                    {i18n.t.reserve.emailLabel}
-                  </label>
-                  <input
-                    id="guestEmail"
-                    type="email"
-                    placeholder={i18n.t.reserve.emailPlaceholder}
-                    bind:value={guestEmail}
-                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
-                    required
-                  />
-                </div>
-                <div>
-                  <label for="guestPhone" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
-                    {i18n.t.reserve.phoneLabel}
-                  </label>
-                  <input
-                    id="guestPhone"
-                    type="tel"
-                    placeholder={i18n.t.reserve.phonePlaceholder}
-                    bind:value={guestPhone}
-                    class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
-                    required
-                  />
-                </div>
+              <div>
+                <label for="guestPhone" class="block font-label-caps text-xs text-on-surface-variant dark:text-neutral-400 mb-1.5">
+                  {i18n.t.reserve.phoneLabel}
+                </label>
+                <input
+                  id="guestPhone"
+                  type="tel"
+                  placeholder={i18n.t.reserve.phonePlaceholder}
+                  bind:value={guestPhone}
+                  class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 px-4 py-3 text-sm text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark"
+                  required
+                />
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

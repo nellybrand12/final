@@ -12,10 +12,10 @@ import { getCinetPayConfig } from '$lib/server/payments/cinetpay';
 export const POST: RequestHandler = async ({ request, url }) => {
   try {
     const body = await request.json();
-    const { extensionId, guestName, guestEmail, guestPhone, guestAddress, guestCity, guestCountry } = body;
+    const { extensionId, guestName, guestPhone, guestAddress, guestCity, guestCountry } = body;
 
-    if (!extensionId || !guestName || !guestEmail) {
-      return json({ success: false, error: 'extensionId, guestName, and guestEmail are required' }, { status: 400 });
+    if (!extensionId || !guestName) {
+      return json({ success: false, error: 'extensionId and guestName are required' }, { status: 400 });
     }
 
     if (!db || !isDbHealthy) {
@@ -66,7 +66,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
       customer: {
         name: customerName,
         surname: customerSurname,
-        email: guestEmail.trim(),
+        email: 'client@residence-madadjeu.com',
         phoneNumber: (guestPhone || '').trim(),
         address: (guestAddress || 'Bastos, Yaoundé').trim(),
         city: (guestCity || 'Yaoundé').trim(),

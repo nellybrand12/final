@@ -10,7 +10,6 @@ export async function GET() {
       id: 9999,
       bookingReference: 'MDJ-TEST-1234',
       guestName: 'Admin Tester',
-      guestEmail: 'nellybrand03@gmail.com', // Using the EMAIL_FROM_ADDRESS to ensure it delivers
       guestPhone: '+237 6000000',
       roomId: 1,
       checkInDate: '2026-10-01',

@@ -28,6 +28,9 @@ export function getPaymentMethodLabel(method: string | null | undefined): string
   switch (method) {
     case 'hotel':
       return "Paiement sur place a l'arrivee (Hotel)";
+    case 'cash':
+    case 'especes':
+      return 'Paiement comptant a la reception (Especes)';
     case 'cinetpay':
       return 'CinetPay (Mobile Money / Carte Bancaire)';
     case 'mtn_momo':
@@ -206,10 +209,6 @@ export async function generateBookingReceiptPdf(data: ReceiptData): Promise<Uint
   clientY -= 16;
   page.drawText(cleanPdfText('Nom du client :'), { x: 55, y: clientY, size: 8, font: fontRegular, color: colorMuted });
   page.drawText(cleanPdfText(booking.guestName), { x: 135, y: clientY, size: 8, font: fontBold, color: colorCharcoal });
-
-  clientY -= 16;
-  page.drawText(cleanPdfText('Email :'), { x: 55, y: clientY, size: 8, font: fontRegular, color: colorMuted });
-  page.drawText(cleanPdfText(booking.guestEmail), { x: 135, y: clientY, size: 8, font: fontRegular, color: colorCharcoal });
 
   clientY -= 16;
   page.drawText(cleanPdfText('Telephone :'), { x: 55, y: clientY, size: 8, font: fontRegular, color: colorMuted });

@@ -67,15 +67,14 @@ export const actions: Actions = {
   cancel: async ({ request }) => {
     const data = await request.formData();
     const reference = data.get('reference')?.toString()?.trim();
-    const email = data.get('email')?.toString()?.trim();
     const name = data.get('name')?.toString()?.trim();
     const phone = data.get('phone')?.toString()?.trim();
 
-    if (!reference || !email) {
+    if (!reference) {
       return fail(400, { error: 'Données manquantes.' });
     }
 
-    const result = await cancelBooking(reference, email);
+    const result = await cancelBooking(reference, phone);
     if (!result.success) {
       return fail(400, { error: result.message || 'Impossible d’annuler cette réservation.' });
     }
@@ -169,7 +168,6 @@ export const actions: Actions = {
           bookingReference: reference,
           requestedCheckoutDate: newCheckOut,
           additionalCharge,
-          guestEmail: booking.guestEmail,
           guestName: booking.guestName,
           guestPhone: booking.guestPhone
         }

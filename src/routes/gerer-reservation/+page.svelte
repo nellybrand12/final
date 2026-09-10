@@ -44,7 +44,6 @@
         body: JSON.stringify({
           extensionId: extension.id,
           guestName: extension.guestName,
-          guestEmail: extension.guestEmail,
           guestPhone: extension.guestPhone
         })
       });
@@ -245,10 +244,6 @@
                 <strong class="text-deep-charcoal dark:text-neutral-200">{booking.guestName}</strong>
               </div>
               <div class="flex justify-between border-b border-outline-variant/20 dark:border-neutral-800 py-2">
-                <span>{i18n.t.manageBooking.emailLabel}</span>
-                <strong class="text-deep-charcoal dark:text-neutral-200">{booking.guestEmail}</strong>
-              </div>
-              <div class="flex justify-between border-b border-outline-variant/20 dark:border-neutral-800 py-2">
                 <span>{i18n.t.manageBooking.phoneLabel}</span>
                 <strong class="text-deep-charcoal dark:text-neutral-200">{booking.guestPhone || '—'}</strong>
               </div>
@@ -299,7 +294,6 @@
                 if (!confirm(promptMsg)) e.preventDefault(); 
               }}>
                 <input type="hidden" name="reference" value={booking.bookingReference} />
-                <input type="hidden" name="email" value={booking.guestEmail} />
                 <input type="hidden" name="name" value={name} />
                 <input type="hidden" name="phone" value={phone} />
                 <button

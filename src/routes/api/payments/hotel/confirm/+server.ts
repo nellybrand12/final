@@ -36,7 +36,6 @@ export const POST: RequestHandler = async ({ request }) => {
     return json({
       success: true,
       bookingReference: booking.bookingReference,
-      guestEmail: booking.guestEmail,
       message: 'Réservation confirmée avec règlement sur place.'
     });
   } catch (err: any) {

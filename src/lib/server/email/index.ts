@@ -222,8 +222,8 @@ Nous vous souhaitons un agréable séjour parmi nous.
         },
         body: JSON.stringify({
           from: `Hôtel Résidence Madadjeu <${fromAddress}>`,
-          to: [booking.guestEmail],
-          subject: `Confirmation de votre réservation [${booking.bookingReference}] - Hôtel Résidence Madadjeu`,
+          to: [fromAddress],
+          subject: `Nouvelle réservation [${booking.bookingReference}] - Hôtel Résidence Madadjeu`,
           html: htmlContent,
           text: textContent,
           attachments: pdfBase64
@@ -246,7 +246,7 @@ Nous vous souhaitons un agréable séjour parmi nous.
         };
       }
 
-      console.log(`[Email Service] Confirmation email sent successfully to ${booking.guestEmail} (ID: ${responseData.id})`);
+      console.log(`[Email Service] Notification email sent successfully for ${booking.bookingReference} (ID: ${responseData.id})`);
       return {
         success: true,
         messageId: responseData.id
@@ -260,7 +260,7 @@ Nous vous souhaitons un agréable séjour parmi nous.
     }
   } else {
     // Graceful simulation mode: logs dispatch details cleanly
-    console.log(`[Email Service] [SIMULATED] Automated confirmation email dispatched to ${booking.guestEmail} for reservation ${booking.bookingReference} with attached PDF receipt (${pdfByteLength} bytes).`);
+    console.log(`[Email Service] [SIMULATED] Reservation ${booking.bookingReference} registered for ${booking.guestName} with attached PDF receipt (${pdfByteLength} bytes).`);
     return {
       success: true,
       simulated: true
