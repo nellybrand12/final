@@ -145,7 +145,7 @@ export async function seedDatabase() {
       console.log("[Seed] Admin user already exists.");
     }
 
-    // Seed Rooms
+    // Seed Rooms & Event Halls
     const existingRooms = await dbInstance.select().from(schema.rooms);
     if (existingRooms.length === 0) {
       await dbInstance.insert(schema.rooms).values(

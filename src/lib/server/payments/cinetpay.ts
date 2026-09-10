@@ -260,7 +260,7 @@ export async function failCinetPayBooking(transactionId: string): Promise<boolea
       .from(schema.bookings)
       .where(eq(schema.bookings.paymentTransactionId, transactionId));
 
-    if (booking && booking.status === 'pending_payment') {
+    if (booking && booking.status === 'pending') {
       await db
         .update(schema.bookings)
         .set({ status: 'failed' })
@@ -270,6 +270,73 @@ export async function failCinetPayBooking(transactionId: string): Promise<boolea
     return false;
   } catch (err) {
     console.error('[CinetPay Fail] Error marking booking as failed:', err);
+    return false;
+  }
+}
+
+/**
+ * Confirms a booking extension when CinetPay payment is ACCEPTED.
+ * Updates the extension row to 'confirmed', then updates the original booking's checkOutDate.
+ */
+export async function confirmCinetPayExtension(
+  transactionId: string
+): Promise<{ success: boolean; alreadyConfirmed: boolean; error?: string }> {
+  if (!db || !isDbHealthy) {
+    return { success: false, alreadyConfirmed: false, error: 'Database unavailable' };
+  }
+
+  try {
+    let alreadyConfirmed = false;
+
+    await db.transaction(async (tx) => {
+      const [extension] = await tx
+        .select()
+        .from(schema.bookingExtensions)
+        .where(eq(schema.bookingExtensions.paymentTransactionId, transactionId))
+        .for('update');
+
+      if (!extension) {
+        throw new Error(`Extension with transactionId ${transactionId} not found`);
+      }
+
+      if (extension.status === 'confirmed') {
+        alreadyConfirmed = true;
+        return;
+      }
+
+      await tx
+        .update(schema.bookingExtensions)
+        .set({ status: 'confirmed' })
+        .where(eq(schema.bookingExtensions.id, extension.id));
+
+      await tx
+        .update(schema.bookings)
+        .set({ checkOutDate: extension.requestedCheckoutDate })
+        .where(eq(schema.bookings.id, extension.bookingId));
+    });
+
+    return { success: true, alreadyConfirmed };
+  } catch (err: any) {
+    console.error('[CinetPay Extension Confirm] Error:', err);
+    return { success: false, alreadyConfirmed: false, error: err.message };
+  }
+}
+
+/**
+ * Fails/expires a booking extension if CinetPay payment is REFUSED.
+ * The original booking is completely unaffected.
+ */
+export async function failCinetPayExtension(transactionId: string): Promise<boolean> {
+  if (!db || !isDbHealthy) return false;
+
+  try {
+    await db
+      .update(schema.bookingExtensions)
+      .set({ status: 'failed' })
+      .where(eq(schema.bookingExtensions.paymentTransactionId, transactionId));
+    return true;
+  } catch (err) {
+    console.error('[CinetPay Extension Fail] Error:', err);
     return false;
   }
 }

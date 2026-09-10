@@ -916,7 +916,7 @@ const translations = {
       prompt:
         "Comment notre équipe peut-elle rendre votre séjour inoubliable à Yaoundé ?",
       whatsapp: "Discuter sur WhatsApp",
-      call: "Appeler la Réception (+237 691 89 09 63)",
+      call: "Appeler la Réception (+237)",
       specialRequest: "Envoyer une demande spéciale",
       faq: "Foire aux Questions",
     },

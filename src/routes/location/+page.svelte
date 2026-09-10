@@ -1,32 +1,30 @@
 <script lang="ts">
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   const landmarks = $derived(i18n.t.location.landmarks);
 </script>
 
-<svelte:head>
-  <title>{i18n.t.location.metaTitle}</title>
-  <meta name="description" content={i18n.t.location.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.location.metaTitle} description={i18n.t.location.metaDesc} />
 
-<div class="w-full bg-surface py-12 md:py-20">
+<div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     
     <!-- ================= HEADER HERO INTRO ================= -->
     <div class="text-center max-w-3xl mx-auto mb-16 md:mb-20">
       <div class="inline-flex items-center gap-3 mb-4">
-        <span class="w-8 h-[1px] bg-deep-maroon"></span>
-        <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-xs uppercase">
+        <span class="w-8 h-[1px] bg-muted-gold"></span>
+        <span class="font-label-caps text-muted-gold tracking-[0.25em] text-xs uppercase">
           {i18n.t.location.badge}
         </span>
-        <span class="w-8 h-[1px] bg-deep-maroon"></span>
+        <span class="w-8 h-[1px] bg-muted-gold"></span>
       </div>
 
-      <h1 class="font-display-lg text-deep-charcoal mb-6 leading-tight">
+      <h1 class="font-display-lg text-deep-charcoal dark:text-neutral-100 mb-6 leading-tight">
         {i18n.t.location.title}
       </h1>
 
-      <p class="font-body-lg text-on-surface-variant leading-relaxed">
+      <p class="font-body-lg text-on-surface-variant dark:text-neutral-400 leading-relaxed">
         {i18n.t.location.subtitle}
       </p>
     </div>
@@ -36,42 +34,42 @@
       
       <!-- LEFT COLUMN: Scrollable List of Surrounding Points of Interest & Landmarks -->
       <div class="lg:col-span-6 space-y-5">
-        <div class="border-b border-outline-variant/30 pb-3 flex items-center justify-between">
+        <div class="border-b border-outline-variant/30 dark:border-neutral-800 pb-3 flex items-center justify-between">
           <div>
-            <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal font-bold">
+            <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 font-bold">
               {i18n.t.location.transitTitle}
             </h2>
-            <span class="text-[10px] font-label-caps text-warm-taupe tracking-widest mt-1 block">
+            <span class="text-[10px] font-label-caps text-muted-gold tracking-widest mt-1 block">
               Yaoundé • Secteur Etoug-Ebe
             </span>
           </div>
-          <span class="material-symbols-outlined text-muted-gold text-xl">near_me</span>
+          <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-xl">near_me</span>
         </div>
 
         <!-- Landmarks Cards List -->
         <div class="flex flex-col gap-3.5">
           {#each landmarks as landmark}
-            <div class="bg-surface-container-lowest border border-outline-variant/35 p-5 shadow-sm hover:shadow-md hover:border-muted-gold/60 transition-all duration-300 group">
+            <div class="bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/35 dark:border-neutral-800 p-5 shadow-sm hover:shadow-md hover:border-muted-gold/60 dark:hover:border-muted-gold-dark/60 transition-all duration-300 group">
               <div class="flex items-start justify-between gap-3 mb-2.5">
                 <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 bg-surface-container flex items-center justify-center text-muted-gold group-hover:bg-deep-charcoal group-hover:text-soft-cream transition-colors">
+                  <div class="w-9 h-9 bg-surface-container dark:bg-neutral-800 flex items-center justify-center text-muted-gold dark:text-muted-gold-dark group-hover:bg-deep-charcoal dark:group-hover:bg-neutral-100 group-hover:text-soft-cream dark:group-hover:text-neutral-950 transition-colors">
                     <span class="material-symbols-outlined text-lg">{landmark.icon}</span>
                   </div>
-                  <h3 class="font-headline text-base sm:text-lg text-deep-charcoal font-bold group-hover:text-muted-gold transition-colors">
+                  <h3 class="font-headline text-base sm:text-lg text-deep-charcoal dark:text-neutral-100 font-bold group-hover:text-muted-gold dark:group-hover:text-muted-gold-dark transition-colors">
                     {landmark.name}
                   </h3>
                 </div>
 
                 <!-- Drive/Travel Time Tag (Distance removed) -->
-                <div class="bg-surface-container px-2.5 py-1 text-right shrink-0">
-                  <span class="font-mono text-[11px] font-bold text-muted-gold flex items-center gap-1">
+                <div class="bg-surface-container dark:bg-neutral-800 px-2.5 py-1 text-right shrink-0">
+                  <span class="font-mono text-[11px] font-bold text-muted-gold dark:text-muted-gold-dark flex items-center gap-1">
                     <span class="material-symbols-outlined text-xs">directions_car</span>
                     <span>{landmark.time}</span>
                   </span>
                 </div>
               </div>
 
-              <p class="font-body-md text-xs sm:text-[13px] text-on-surface-variant leading-relaxed pl-12">
+              <p class="font-body-md text-xs sm:text-[13px] text-on-surface-variant dark:text-neutral-400 leading-relaxed pl-12">
                 {landmark.desc}
               </p>
             </div>
@@ -79,8 +77,8 @@
         </div>
 
         <!-- Transfer Assistance Card -->
-        <div class="p-6 md:p-8 bg-deep-charcoal text-soft-cream border border-white/10 space-y-4 shadow-xl">
-          <div class="flex items-center gap-3 text-muted-gold">
+        <div class="p-6 md:p-8 bg-deep-charcoal dark:bg-neutral-900 text-soft-cream border border-white/10 dark:border-neutral-800 space-y-4 shadow-xl">
+          <div class="flex items-center gap-3 text-muted-gold dark:text-muted-gold-dark">
             <span class="material-symbols-outlined text-2xl">directions_car</span>
             <span class="font-label-caps text-xs tracking-widest uppercase">{i18n.t.location.transferTitle}</span>
           </div>
@@ -105,7 +103,7 @@
       <div class="lg:col-span-6 lg:sticky lg:top-28 space-y-4">
         
         <!-- Interactive Map Container (Enlarged prominent size ~560-620px on desktop) -->
-        <div class="bg-deep-charcoal overflow-hidden shadow-2xl border border-outline-variant/40 relative w-full h-[450px] sm:h-[520px] lg:h-[600px] min-h-[450px] lg:min-h-[600px]">
+        <div class="bg-deep-charcoal overflow-hidden shadow-2xl border border-outline-variant/40 dark:border-neutral-800 relative w-full h-[450px] sm:h-[520px] lg:h-[600px] min-h-[450px] lg:min-h-[600px]">
           <!-- Embedded Google Maps iframe centered at Etoug-Ebe, Yaoundé -->
           <iframe
             title={i18n.locale === 'fr' ? 'Carte interactive Hôtel Résidence Madadjeu - Face Garde Présidentielle, Etoug-Ebe, Yaoundé' : 'Interactive Map Hotel Residence Madadjeu - Opposite Presidential Guard, Etoug-Ebe, Yaounde'}
@@ -122,7 +120,7 @@
               <strong class="text-xs font-headline font-bold text-soft-cream block">
                 Face Garde Présidentielle
               </strong>
-              <span class="text-[11px] text-muted-gold font-sans">
+              <span class="text-[11px] text-muted-gold dark:text-muted-gold-dark font-sans">
                 Etoug-Ebe, Yaoundé, Cameroun
               </span>
             </div>
@@ -139,12 +137,12 @@
         </div>
 
         <!-- Address Card Details -->
-        <div class="bg-surface-container-lowest border border-outline-variant/35 p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/35 dark:border-neutral-800 p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="space-y-1">
-            <span class="font-label-caps text-[10px] text-warm-taupe tracking-widest uppercase block">
+            <span class="font-label-caps text-[10px] text-muted-gold tracking-widest uppercase block">
               {i18n.t.location.addressTitle}
             </span>
-            <strong class="font-body-md text-xs sm:text-sm text-deep-charcoal block">
+            <strong class="font-body-md text-xs sm:text-sm text-deep-charcoal dark:text-neutral-100 block">
               {i18n.t.location.addressFull}
             </strong>
           </div>

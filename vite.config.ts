@@ -1,3 +1,11 @@
+import dns from 'node:dns';
+
+try {
+	dns.setDefaultResultOrder('ipv4first');
+} catch {
+	// Ignored if not supported in environment
+}
+
 import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';

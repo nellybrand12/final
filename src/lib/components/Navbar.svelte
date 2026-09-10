@@ -2,6 +2,7 @@
   import { page } from "$app/state";
   import { i18n } from "$lib/i18n.svelte";
   import { introManager } from "$lib/introState.svelte";
+  import { themeManager } from "$lib/theme.svelte";
 
   let scrollY = $state(0);
   let isDrawerOpen = $state(false);
@@ -86,12 +87,22 @@
           : 'opacity-0 scale-90 -translate-y-2 pointer-events-none'}"
       >
         <img
-          src="/images/madadjeu-logo.png"
-          alt="Hôtel Résidence Madadjeu"
-          width="1899"
-          height="412"
-          class="site-logo {isScrolled || !isHomePage ? '' : 'site-logo--float'}"
+          alt="Hotel Résidence Madadjeu Logo"
+          class="h-7 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
         />
+        <div class="hidden sm:flex flex-col items-start">
+          <span
+            class="font-headline text-xs sm:text-sm md:text-base font-medium tracking-[0.22em] text-soft-cream uppercase group-hover:text-muted-gold transition-colors"
+          >
+            Madadjeu
+          </span>
+          <span
+            class="text-[6px] sm:text-[7px] md:text-[8px] uppercase tracking-[0.28em] text-muted-gold font-sans"
+          >
+            Hôtel & Résidence
+          </span>
+        </div>
       </a>
     </div>
 
@@ -125,6 +136,23 @@
           EN
         </button>
       </div>
+
+      <!-- Theme Toggle (Desktop & Tablet) -->
+      <button
+        type="button"
+        onclick={() => themeManager.toggle('public')}
+        class="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-soft-cream hover:text-muted-gold transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-muted-gold"
+        role="switch"
+        aria-checked={themeManager.isDark}
+        aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+        title={themeManager.isDark ? (i18n.locale === 'fr' ? 'Thème clair' : 'Light theme') : (i18n.locale === 'fr' ? 'Thème sombre' : 'Dark theme')}
+      >
+        {#if themeManager.isDark}
+          <span class="material-symbols-outlined text-[17px]">light_mode</span>
+        {:else}
+          <span class="material-symbols-outlined text-[17px]">dark_mode</span>
+        {/if}
+      </button>
 
       <!-- Action Button (Réserver / Book Now) (Ultra-compact on mobile) -->
       <a
@@ -170,6 +198,22 @@
   >
     EN
   </button>
+  <span class="text-white/30 text-[8px] px-1">•</span>
+  <button
+    type="button"
+    onclick={() => themeManager.toggle('public')}
+    class="px-2 py-1 text-soft-cream hover:text-muted-gold transition-colors flex items-center justify-center cursor-pointer focus:outline-none"
+    role="switch"
+    aria-checked={themeManager.isDark}
+    aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+    title={themeManager.isDark ? (i18n.locale === 'fr' ? 'Thème clair' : 'Light theme') : (i18n.locale === 'fr' ? 'Thème sombre' : 'Dark theme')}
+  >
+    {#if themeManager.isDark}
+      <span class="material-symbols-outlined text-[14px]">light_mode</span>
+    {:else}
+      <span class="material-symbols-outlined text-[14px]">dark_mode</span>
+    {/if}
+  </button>
 </div>
 
 <!-- ================= SLIDE-OUT DRAWER / OVERLAY MENU ================= -->
@@ -195,13 +239,16 @@
     >
       <a href="/" onclick={() => (isDrawerOpen = false)} class="inline-block">
         <img
-          src="/images/madadjeu-logo.png"
-          alt="Hôtel Résidence Madadjeu"
-          width="1899"
-          height="412"
-          class="site-logo site-logo--drawer"
+          alt="Hotel Résidence Madadjeu Logo"
+          class="h-7 w-auto object-contain"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
         />
-      </a>
+        <span
+          class="font-headline text-base tracking-[0.2em] uppercase text-soft-cream"
+        >
+          Madadjeu
+        </span>
+      </div>
 
       <!-- Close Button -->
       <button
@@ -247,6 +294,33 @@
           English (EN)
         </button>
       </div>
+    </div>
+
+    <!-- Theme Switcher in Menu -->
+    <div
+      class="py-4 border-b border-white/10 flex items-center justify-between"
+    >
+      <span
+        class="font-label-caps text-[11px] text-soft-cream/60 tracking-widest uppercase"
+      >
+        {i18n.locale === 'fr' ? 'Thème' : 'Theme'} :
+      </span>
+      <button
+        type="button"
+        onclick={() => themeManager.toggle('public')}
+        class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-soft-cream hover:text-muted-gold font-label-caps text-[10px] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-muted-gold"
+        role="switch"
+        aria-checked={themeManager.isDark}
+        aria-label={themeManager.isDark ? (i18n.locale === 'fr' ? 'Passer au thème clair' : 'Switch to light theme') : (i18n.locale === 'fr' ? 'Passer au thème sombre' : 'Switch to dark theme')}
+      >
+        {#if themeManager.isDark}
+          <span class="material-symbols-outlined text-sm text-muted-gold">light_mode</span>
+          <span>{i18n.locale === 'fr' ? 'Mode Clair' : 'Light Mode'}</span>
+        {:else}
+          <span class="material-symbols-outlined text-sm text-muted-gold">dark_mode</span>
+          <span>{i18n.locale === 'fr' ? 'Mode Sombre' : 'Dark Mode'}</span>
+        {/if}
+      </button>
     </div>
 
     <!-- Navigation Links -->

@@ -5,19 +5,20 @@
   let settings = $derived($page.data.settings || {});
 </script>
 
-<footer class="w-full bg-deep-charcoal text-soft-cream py-16 md:py-24 border-t border-outline/20">
+<footer class="w-full bg-deep-charcoal text-soft-cream py-16 md:py-24 border-t border-outline/20 dark:border-neutral-800">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
       <!-- Brand & Mission -->
       <div class="col-span-1 md:col-span-2 flex flex-col items-start gap-6">
         <a href="/" class="inline-block">
           <img
-            src="/images/madadjeu-logo.png"
-            alt="Hôtel Résidence Madadjeu"
-            width="1899"
-            height="412"
-            class="site-logo site-logo--footer"
+            alt="Hotel Résidence Madadjeu Logo"
+            class="h-9 w-auto object-contain brightness-0 invert"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
           />
+          <span class="font-headline text-lg sm:text-xl tracking-[0.25em] uppercase text-soft-cream">
+            Madadjeu
+          </span>
         </a>
         <p class="font-headline-md text-base sm:text-lg text-soft-cream/80 max-w-md font-light italic leading-relaxed">
           {i18n.t.footer.tagline}
@@ -34,7 +35,7 @@
 
       <!-- Address & Info -->
       <div class="flex flex-col gap-3">
-        <h4 class="font-label-caps text-warm-taupe tracking-widest text-[11px] uppercase">{i18n.t.footer.addressTitle}</h4>
+        <h4 class="font-label-caps text-muted-gold tracking-widest text-[11px] uppercase">{i18n.t.footer.addressTitle}</h4>
         <p class="font-body-md text-xs sm:text-[13px] text-soft-cream/80 leading-relaxed whitespace-pre-line">
           {#if settings.contact_address}
             {settings.contact_address}
@@ -61,7 +62,7 @@
 
       <!-- Quick Links & Social -->
       <div class="flex flex-col gap-3">
-        <h4 class="hidden md:block font-label-caps text-warm-taupe tracking-widest text-[11px] uppercase">{i18n.t.footer.navigation}</h4>
+        <h4 class="hidden md:block font-label-caps text-muted-gold tracking-widest text-[11px] uppercase">{i18n.t.footer.navigation}</h4>
         <ul class="hidden md:flex flex-col gap-1.5 text-xs sm:text-[13px] text-soft-cream/75">
           <li><a href="/" class="hover:text-muted-gold transition-colors">{i18n.t.nav.home}</a></li>
           <li><a href="/rooms" class="hover:text-muted-gold transition-colors">{i18n.t.nav.rooms}</a></li>
@@ -111,9 +112,9 @@
     <div class="mt-16 pt-8 border-t border-soft-cream/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] uppercase tracking-widest text-soft-cream/50">
       <span>{i18n.t.footer.copyright}</span>
       <div class="flex gap-6">
-        <a href="/about" class="hover:text-soft-cream transition-colors">{i18n.t.footer.privacyPolicy}</a>
+        <a href="/politique-de-confidentialite" class="hover:text-soft-cream transition-colors">{i18n.t.footer.privacyPolicy}</a>
         <span>•</span>
-        <a href="/faq" class="hover:text-soft-cream transition-colors">{i18n.t.footer.termsOfService}</a>
+        <a href="/conditions-generales" class="hover:text-soft-cream transition-colors">{i18n.t.footer.termsOfService}</a>
       </div>
     </div>
   </div>

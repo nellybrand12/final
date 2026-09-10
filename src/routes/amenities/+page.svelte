@@ -1,27 +1,25 @@
 <script lang="ts">
   import AmenityCard from '$lib/components/AmenityCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-  <title>{i18n.t.amenities.metaTitle}</title>
-  <meta name="description" content={i18n.t.amenities.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.amenities.metaTitle} description={i18n.t.amenities.metaDesc} />
 
-<div class="w-full bg-surface py-12 md:py-20">
+<div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
     <!-- Header Hero Intro -->
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <span class="font-label-caps text-warm-taupe tracking-widest text-xs mb-3 block uppercase font-semibold">
+      <span class="font-label-caps text-muted-gold tracking-widest text-xs mb-3 block uppercase font-semibold">
         {i18n.t.amenities.badge}
       </span>
-      <h1 class="font-display-lg text-deep-charcoal mb-6">
+      <h1 class="font-display-lg text-deep-charcoal dark:text-neutral-100 mb-6">
         {i18n.t.amenities.heading}
       </h1>
-      <p class="font-body-lg text-on-surface-variant leading-relaxed">
+      <p class="font-body-lg text-on-surface-variant dark:text-neutral-400 leading-relaxed">
         {i18n.t.amenities.description}
       </p>
     </div>
@@ -41,9 +39,9 @@
     </div>
 
     <!-- Immersive Feature Banner -->
-    <div class="relative bg-deep-charcoal text-soft-cream p-8 md:p-14 lg:p-16 shadow-2xl border border-white/10">
+    <div class="relative bg-deep-charcoal dark:bg-neutral-900 text-soft-cream p-8 md:p-14 lg:p-16 shadow-2xl border border-white/10 dark:border-neutral-800">
       <div class="relative z-10 max-w-2xl space-y-5">
-        <span class="font-label-caps text-warm-taupe tracking-widest text-xs block uppercase font-semibold">
+        <span class="font-label-caps text-muted-gold tracking-widest text-xs block uppercase font-semibold">
           {i18n.t.amenities.bannerBadge}
         </span>
         <h2 class="font-display-lg leading-tight text-soft-cream">
@@ -69,7 +67,7 @@
       </div>
 
       <!-- Decorative Background Pattern -->
-      <div class="absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-muted-gold/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -right-20 -bottom-20 w-96 h-96 rounded-full bg-muted-gold/10 dark:bg-muted-gold-dark/10 blur-3xl pointer-events-none"></div>
     </div>
   </div>
 </div>

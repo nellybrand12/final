@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import type { PageData } from './$types';
   import RoomCard from '$lib/components/RoomCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import { introManager } from '$lib/introState.svelte';
 
@@ -109,12 +110,58 @@
   onDestroy(() => {
     stopNeighborhoodAutoplay();
   });
+
+  const homeTitle = $derived(
+    i18n.locale === 'fr'
+      ? "Hôtel Résidence Madadjeu | L'élégance résidentielle à Yaoundé"
+      : "Hotel Residence Madadjeu | Luxury Residential Hotel in Yaounde"
+  );
+
+  const homeDesc = $derived(
+    i18n.locale === 'fr'
+      ? "Découvrez l'Hôtel Résidence Madadjeu à Yaoundé, face à la Garde Présidentielle. Appartements haut de gamme, restaurant panoramique, rooftop et conciergerie 24/7."
+      : "Experience Hotel Residence Madadjeu in Yaounde, opposite the Presidential Guard. Luxury apartments, rooftop restaurant, panoramic views, and 24/7 concierge."
+  );
+
+  const hotelSchema = $derived({
+    "@context": "https://schema.org",
+    "@type": "Hotel",
+    "name": "Hôtel Résidence Madadjeu",
+    "alternateName": "Résidence Madadjeu Yaoundé",
+    "description": homeDesc,
+    "url": "https://residence-madadjeu.com",
+    "logo": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
+    "image": "https://residence-madadjeu.com/images/og-image.jpg",
+    "telephone": "+237699000000",
+    "email": "contact@residence-madadjeu.com",
+    "priceRange": "50 000 - 350 000 XAF",
+    "currenciesAccepted": "XAF",
+    "paymentAccepted": "Cash, Credit Card, Mobile Money (MTN MoMo, Orange Money)",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Face Garde Présidentielle, Quartier Etoug-Ebe",
+      "addressLocality": "Yaoundé",
+      "addressRegion": "Centre",
+      "addressCountry": "CM"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 3.848,
+      "longitude": 11.488
+    },
+    "checkinTime": "14:00",
+    "checkoutTime": "12:00",
+    "amenityFeature": [
+      { "@type": "LocationFeatureSpecification", "name": "Free High-Speed Wi-Fi", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "24/7 Security & Concierge", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Restaurant & Room Service", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Fitness Center", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Private Chauffeur & Airport Shuttle", "value": true }
+    ]
+  });
 </script>
 
-<svelte:head>
-  <title>Hôtel Résidence Madadjeu | {i18n.locale === 'fr' ? "L'élégance résidentielle à Yaoundé" : 'Residential Luxury in Yaounde'}</title>
-  <meta name="description" content="Découvrez l'Hôtel Résidence Madadjeu à Yaoundé, face à la Garde Présidentielle. Appartements haut de gamme, restaurant panoramique, rooftop et conciergerie 24/7." />
-</svelte:head>
+<SEO title={homeTitle} description={homeDesc} jsonLd={hotelSchema} />
 
 <div class="flex flex-col w-full -mt-20 overflow-x-hidden">
   
@@ -219,7 +266,7 @@
   </section>
 
   <!-- ================= 2. SUB-HERO SECTION: "AN INVITATION TO UNWIND" ================= -->
-  <section class="w-full bg-surface py-16 md:py-24 lg:py-28 relative overflow-hidden border-b border-outline-variant/25">
+  <section class="w-full bg-surface dark:bg-neutral-950 py-16 md:py-24 lg:py-28 relative overflow-hidden border-b border-outline-variant/25 dark:border-neutral-800">
     <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
@@ -227,16 +274,16 @@
         <div class="lg:col-span-6 order-2 lg:order-1 flex flex-col items-start gap-4 sm:gap-6">
           <div class="flex items-center gap-3">
             <span class="w-8 h-[1.5px] bg-muted-gold"></span>
-            <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
+            <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
               {i18n.t.invitation.badge}
             </span>
           </div>
 
-          <h2 class="font-display-lg text-deep-charcoal leading-tight">
+          <h2 class="font-display-lg text-deep-charcoal dark:text-neutral-100 leading-tight">
             {i18n.t.invitation.title}
           </h2>
 
-          <p class="font-body-md text-xs sm:text-sm lg:text-base text-on-surface-variant leading-relaxed">
+          <p class="font-body-md text-xs sm:text-sm lg:text-base text-on-surface-variant dark:text-neutral-300 leading-relaxed">
             {i18n.t.invitation.description}
           </p>
 
@@ -255,16 +302,16 @@
         <div class="lg:col-span-6 order-1 lg:order-2 flex justify-center lg:justify-end">
           <div class="relative w-full max-w-[420px] lg:max-w-[460px]">
             <!-- Overlapping Background Offset Frame Line Behind Image -->
-            <div class="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-full h-full border-2 border-muted-gold/70 z-0 pointer-events-none"></div>
+            <div class="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-full h-full border-2 border-muted-gold/70 dark:border-muted-gold-dark/70 z-0 pointer-events-none"></div>
             
             <!-- Main Portrait Feature Image -->
-            <div class="relative z-10 aspect-[4/5] overflow-hidden shadow-2xl bg-deep-charcoal border border-outline-variant/30 group">
+            <div class="relative z-10 aspect-[4/5] overflow-hidden shadow-2xl bg-deep-charcoal dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800 group">
               <img
                 src="/images/room-picture.png"
                 alt={i18n.t.invitation.imageAlt}
                 class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/40 via-transparent to-transparent pointer-events-none"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-deep-charcoal/40 dark:from-neutral-950/60 via-transparent to-transparent pointer-events-none"></div>
             </div>
           </div>
         </div>
@@ -274,41 +321,41 @@
   </section>
 
   <!-- ================= 3. QUICK PILLARS SECTION ================= -->
-  <section class="w-full bg-soft-cream py-10 md:py-14 border-b border-outline-variant/20 relative z-20">
+  <section class="w-full bg-soft-cream dark:bg-neutral-900 py-10 md:py-14 border-b border-outline-variant/20 dark:border-neutral-800 relative z-20">
     <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y sm:divide-y-0 lg:divide-x divide-outline-variant/30">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y sm:divide-y-0 lg:divide-x divide-outline-variant/30 dark:divide-neutral-800">
         <!-- Pillar 1: Massages -->
         <div class="flex flex-col items-center gap-2 pt-3 sm:pt-0 px-2">
-          <span class="material-symbols-outlined text-[28px] text-muted-gold">spa</span>
-          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal font-bold">{i18n.t.pillars.massageTitle}</h3>
-          <p class="font-body-md text-xs text-on-surface-variant max-w-[220px] leading-relaxed">
+          <span class="material-symbols-outlined text-[28px] text-muted-gold dark:text-muted-gold-dark">spa</span>
+          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal dark:text-neutral-100 font-bold">{i18n.t.pillars.massageTitle}</h3>
+          <p class="font-body-md text-xs text-on-surface-variant dark:text-neutral-400 max-w-[220px] leading-relaxed">
             {i18n.t.pillars.massageDesc}
           </p>
         </div>
 
         <!-- Pillar 2: Gastronomie -->
         <div class="flex flex-col items-center gap-2 pt-5 sm:pt-0 px-2">
-          <span class="material-symbols-outlined text-[28px] text-muted-gold">restaurant</span>
-          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal font-bold">{i18n.t.pillars.diningTitle}</h3>
-          <p class="font-body-md text-xs text-on-surface-variant max-w-[220px] leading-relaxed">
+          <span class="material-symbols-outlined text-[28px] text-muted-gold dark:text-muted-gold-dark">restaurant</span>
+          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal dark:text-neutral-100 font-bold">{i18n.t.pillars.diningTitle}</h3>
+          <p class="font-body-md text-xs text-on-surface-variant dark:text-neutral-400 max-w-[220px] leading-relaxed">
             {i18n.t.pillars.diningDesc}
           </p>
         </div>
 
         <!-- Pillar 3: Conciergerie 24/7 -->
         <div class="flex flex-col items-center gap-2 pt-5 sm:pt-0 px-2">
-          <span class="material-symbols-outlined text-[28px] text-muted-gold">room_service</span>
-          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal font-bold">{i18n.t.pillars.conciergeTitle}</h3>
-          <p class="font-body-md text-xs text-on-surface-variant max-w-[220px] leading-relaxed">
+          <span class="material-symbols-outlined text-[28px] text-muted-gold dark:text-muted-gold-dark">room_service</span>
+          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal dark:text-neutral-100 font-bold">{i18n.t.pillars.conciergeTitle}</h3>
+          <p class="font-body-md text-xs text-on-surface-variant dark:text-neutral-400 max-w-[220px] leading-relaxed">
             {i18n.t.pillars.conciergeDesc}
           </p>
         </div>
 
         <!-- Pillar 4: Gym & Fitness -->
         <div class="flex flex-col items-center gap-2 pt-5 sm:pt-0 px-2">
-          <span class="material-symbols-outlined text-[28px] text-muted-gold">fitness_center</span>
-          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal font-bold">{i18n.t.pillars.fitnessTitle}</h3>
-          <p class="font-body-md text-xs text-on-surface-variant max-w-[220px] leading-relaxed">
+          <span class="material-symbols-outlined text-[28px] text-muted-gold dark:text-muted-gold-dark">fitness_center</span>
+          <h3 class="font-headline text-base sm:text-lg text-deep-charcoal dark:text-neutral-100 font-bold">{i18n.t.pillars.fitnessTitle}</h3>
+          <p class="font-body-md text-xs text-on-surface-variant dark:text-neutral-400 max-w-[220px] leading-relaxed">
             {i18n.t.pillars.fitnessDesc}
           </p>
         </div>
@@ -320,7 +367,7 @@
   <section class="relative w-screen left-1/2 -translate-x-1/2 bg-deep-charcoal text-soft-cream py-16 md:py-24 overflow-hidden">
     <!-- Header Title Overlay -->
     <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16 text-center mb-10 relative z-20">
-      <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] uppercase block mb-2">
+      <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] uppercase block mb-2">
         {i18n.t.distinction.badge}
       </span>
       <h2 class="font-display-lg text-soft-cream mb-3">
@@ -352,7 +399,7 @@
         <div class="relative z-10 max-w-2xl mx-auto px-6 sm:px-10 text-center flex flex-col items-center gap-4 animate-fade-in">
           <!-- Slide Number & Category Tag -->
           <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1 border border-white/20">
-            <span class="font-mono text-muted-gold text-[11px] font-bold">{slide.num}</span>
+            <span class="font-mono text-muted-gold dark:text-muted-gold-dark text-[11px] font-bold">{slide.num}</span>
             <span class="text-white/30 text-xs">•</span>
             <span class="font-label-caps text-[10px] text-soft-cream uppercase tracking-widest">{slide.tag}</span>
           </div>
@@ -389,7 +436,7 @@
         <button
           onclick={prevApartSlide}
           type="button"
-          class="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 text-soft-cream/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-2 focus:outline-none items-center justify-center shrink-0"
+          class="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 text-soft-cream/70 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-2 focus:outline-none items-center justify-center shrink-0"
           aria-label="Previous Slide"
         >
           <span class="material-symbols-outlined text-3xl lg:text-4xl">chevron_left</span>
@@ -399,7 +446,7 @@
         <button
           onclick={nextApartSlide}
           type="button"
-          class="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 text-soft-cream/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-2 focus:outline-none items-center justify-center shrink-0"
+          class="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 text-soft-cream/70 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-2 focus:outline-none items-center justify-center shrink-0"
           aria-label="Next Slide"
         >
           <span class="material-symbols-outlined text-3xl lg:text-4xl">chevron_right</span>
@@ -412,7 +459,7 @@
           <button
             onclick={() => (activeApartIndex = i)}
             type="button"
-            class="h-1.5 transition-all duration-300 cursor-pointer {activeApartIndex === i ? 'w-8 bg-muted-gold' : 'w-2.5 bg-white/30 hover:bg-white/60'}"
+            class="h-1.5 transition-all duration-300 cursor-pointer {activeApartIndex === i ? 'w-8 bg-muted-gold dark:bg-muted-gold-dark' : 'w-2.5 bg-white/30 hover:bg-white/60'}"
             aria-label="Go to slide {i + 1}"
           ></button>
         {/each}
@@ -421,7 +468,7 @@
   </section>
 
   <!-- ================= 5. ROOMS & APARTMENTS SHOWCASE ================= -->
-  <section class="w-full bg-surface py-16 md:py-24">
+  <section class="w-full bg-surface dark:bg-neutral-950 py-16 md:py-24">
     <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
       
       <!-- Section Editorial Intro -->
@@ -429,12 +476,12 @@
         <div class="max-w-2xl">
           <div class="flex items-center gap-3 mb-2">
             <span class="w-6 h-[1.5px] bg-muted-gold"></span>
-            <span class="font-label-caps text-warm-taupe tracking-widest text-[10px] uppercase font-semibold">{i18n.t.showcase.badge}</span>
+            <span class="font-label-caps text-muted-gold tracking-widest text-[10px] uppercase font-semibold">{i18n.t.showcase.badge}</span>
           </div>
-          <h2 class="font-display-lg text-deep-charcoal leading-tight">
+          <h2 class="font-display-lg text-deep-charcoal dark:text-neutral-100 leading-tight">
             {i18n.t.showcase.heading}
           </h2>
-          <p class="font-body-md text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">
+          <p class="font-body-md text-xs sm:text-sm text-on-surface-variant dark:text-neutral-400 mt-2 leading-relaxed">
             {i18n.t.showcase.description}
           </p>
         </div>
@@ -458,10 +505,10 @@
   </section>
 
   <!-- ================= 6. PRIME GEOGRAPHICAL LOCATION — WALLACE-STYLE PEEKING CAROUSEL ================= -->
-  <section class="relative w-full bg-deep-charcoal text-soft-cream py-16 md:py-24 overflow-hidden border-t border-outline-variant/30">
+  <section class="relative w-full bg-neutral-950 text-soft-cream py-16 md:py-24 overflow-hidden border-t border-outline-variant/30">
     <!-- Header Title Overlay -->
     <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 md:mb-12 relative z-20">
-      <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] uppercase block mb-2 font-semibold">
+      <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] uppercase block mb-2 font-semibold">
         {i18n.t.neighborhoods.badge}
       </span>
       <h2 class="font-display-lg text-soft-cream mb-3">
@@ -509,7 +556,7 @@
           <button
             type="button"
             onclick={prevNeighborhoodSlide}
-            class="hidden md:flex text-soft-cream/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-1 sm:p-2 -mx-1 sm:-mx-2 z-30 focus:outline-none items-center justify-center shrink-0"
+            class="hidden md:flex text-soft-cream/70 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-1 sm:p-2 -mx-1 sm:-mx-2 z-30 focus:outline-none items-center justify-center shrink-0"
             aria-label="Previous Location"
           >
             <span class="material-symbols-outlined text-2xl sm:text-3xl md:text-4xl">chevron_left</span>
@@ -533,35 +580,35 @@
             {#key activeNeighborhoodIndex}
               <div
                 class="absolute bottom-0 left-1/2 w-[92%] sm:w-[86%] md:w-[82%] max-w-[650px]
-                       bg-white text-deep-charcoal p-5 sm:p-7 md:p-8 shadow-2xl border-t border-x border-neutral-200/60
+                       bg-white dark:bg-neutral-900 text-deep-charcoal dark:text-neutral-100 p-5 sm:p-7 md:p-8 shadow-2xl border-t border-x border-neutral-200/60 dark:border-neutral-800
                        text-center animate-slide-up-box z-30 pointer-events-auto"
               >
                 <!-- Badge / Category Label -->
-                <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[9px] sm:text-[10px] uppercase font-bold block mb-1.5">
+                <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[9px] sm:text-[10px] uppercase font-bold block mb-1.5">
                   {i18n.t.neighborhoods.badge}
                 </span>
 
                 <!-- Neighborhood Name -->
-                <h3 class="font-headline text-lg sm:text-2xl md:text-3xl text-deep-charcoal font-semibold leading-snug mb-2">
+                <h3 class="font-headline text-lg sm:text-2xl md:text-3xl text-deep-charcoal dark:text-neutral-100 font-semibold leading-snug mb-2">
                   {activeSlide.name}
                 </h3>
 
                 <!-- Short Description -->
-                <p class="font-body-md text-xs sm:text-sm text-neutral-600 leading-relaxed mb-4 max-w-lg mx-auto">
+                <p class="font-body-md text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed mb-4 max-w-lg mx-auto">
                   {activeSlide.description}
                 </p>
 
                 <!-- Drive Time and Walk Time (Distance removed) -->
-                <div class="pt-3 border-t border-neutral-200/80 flex items-center justify-center gap-3 sm:gap-6 flex-wrap font-mono text-[10px] sm:text-[11px] text-deep-charcoal/80 uppercase tracking-wider">
+                <div class="pt-3 border-t border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center gap-3 sm:gap-6 flex-wrap font-mono text-[10px] sm:text-[11px] text-deep-charcoal/80 dark:text-neutral-300 uppercase tracking-wider">
                   <span class="inline-flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-xs text-muted-gold">directions_car</span>
-                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal font-bold">{activeSlide.driveTime}</strong></span>
+                    <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_car</span>
+                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.driveTime}</strong></span>
                   </span>
                   {#if activeSlide.walkTime !== 'N/A'}
-                    <span class="text-neutral-300">•</span>
+                    <span class="text-neutral-300 dark:text-neutral-600">•</span>
                     <span class="inline-flex items-center gap-1.5">
-                      <span class="material-symbols-outlined text-xs text-muted-gold">directions_walk</span>
-                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal font-bold">{activeSlide.walkTime}</strong></span>
+                      <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_walk</span>
+                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.walkTime}</strong></span>
                     </span>
                   {/if}
                 </div>
@@ -573,7 +620,7 @@
           <button
             type="button"
             onclick={nextNeighborhoodSlide}
-            class="hidden md:flex text-soft-cream/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-1 sm:p-2 -mx-1 sm:-mx-2 z-30 focus:outline-none items-center justify-center shrink-0"
+            class="hidden md:flex text-soft-cream/70 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-1 sm:p-2 -mx-1 sm:-mx-2 z-30 focus:outline-none items-center justify-center shrink-0"
             aria-label="Next Location"
           >
             <span class="material-symbols-outlined text-2xl sm:text-3xl md:text-4xl">chevron_right</span>
@@ -607,7 +654,7 @@
           <button
             onclick={() => setNeighborhoodIndex(i)}
             type="button"
-            class="h-1.5 transition-all duration-300 cursor-pointer {activeNeighborhoodIndex === i ? 'w-8 bg-muted-gold' : 'w-2.5 bg-white/30 hover:bg-white/60'}"
+            class="h-1.5 transition-all duration-300 cursor-pointer {activeNeighborhoodIndex === i ? 'w-8 bg-muted-gold dark:bg-muted-gold-dark' : 'w-2.5 bg-white/30 hover:bg-white/60'}"
             aria-label="Go to location slide {i + 1}"
           ></button>
         {/each}
@@ -627,18 +674,18 @@
   </section>
 
   <!-- ================= 7. VERIFIED REVIEWS SECTION: "DON'T JUST TAKE OUR WORD FOR IT!" ================= -->
-  <section class="w-full bg-soft-cream py-16 md:py-24 lg:py-28 border-t border-outline-variant/30 relative z-20">
+  <section class="w-full bg-soft-cream dark:bg-neutral-950 py-16 md:py-24 lg:py-28 border-t border-outline-variant/30 dark:border-neutral-800 relative z-20">
     <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
       
       <!-- Section Title Prominently at Top Left -->
       <div class="mb-10 md:mb-14">
         <div class="flex items-center gap-3 mb-2">
           <span class="w-8 h-[1.5px] bg-muted-gold"></span>
-          <span class="font-label-caps text-warm-taupe tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
+          <span class="font-label-caps text-muted-gold tracking-[0.25em] text-[10px] sm:text-[11px] uppercase font-semibold">
             {i18n.t.testimonials.badge}
           </span>
         </div>
-        <h2 class="font-display-lg text-deep-charcoal leading-tight">
+        <h2 class="font-display-lg text-deep-charcoal dark:text-neutral-100 leading-tight">
           {i18n.t.testimonials.title}
         </h2>
       </div>
@@ -649,15 +696,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
           <!-- LEFT: Numeric Index Indicator & Plain Unboxed Chevron Navigation Controls -->
-          <div class="lg:col-span-4 flex flex-col justify-between gap-6 border-b lg:border-b-0 lg:border-r border-outline-variant/30 pb-6 lg:pb-0 lg:pr-8">
+          <div class="lg:col-span-4 flex flex-col justify-between gap-6 border-b lg:border-b-0 lg:border-r border-outline-variant/30 dark:border-neutral-800 pb-6 lg:pb-0 lg:pr-8">
             <div>
-              <span class="font-label-caps text-[11px] text-on-surface-variant tracking-widest uppercase block mb-1">
+              <span class="font-label-caps text-[11px] text-on-surface-variant dark:text-neutral-400 tracking-widest uppercase block mb-1">
                 {i18n.locale === 'fr' ? 'Témoignage' : 'Testimonial'}
               </span>
-              <div class="font-headline text-4xl sm:text-5xl font-light text-deep-charcoal flex items-baseline gap-2">
-                <span class="font-bold text-muted-gold">{String(activeReviewIndex + 1).padStart(2, '0')}</span>
-                <span class="text-2xl sm:text-3xl text-outline-variant">/</span>
-                <span class="text-2xl sm:text-3xl text-on-surface-variant/60">{String(reviews.length).padStart(2, '0')}</span>
+              <div class="font-headline text-4xl sm:text-5xl font-light text-deep-charcoal dark:text-neutral-100 flex items-baseline gap-2">
+                <span class="font-bold text-muted-gold dark:text-muted-gold-dark">{String(activeReviewIndex + 1).padStart(2, '0')}</span>
+                <span class="text-2xl sm:text-3xl text-outline-variant dark:text-neutral-700">/</span>
+                <span class="text-2xl sm:text-3xl text-on-surface-variant/60 dark:text-neutral-500">{String(reviews.length).padStart(2, '0')}</span>
               </div>
             </div>
 
@@ -666,7 +713,7 @@
               <button
                 type="button"
                 onclick={prevReview}
-                class="text-deep-charcoal/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-1 -ml-1 focus:outline-none flex items-center justify-center"
+                class="text-deep-charcoal/70 dark:text-neutral-300 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-1 -ml-1 focus:outline-none flex items-center justify-center"
                 aria-label="Previous Review"
               >
                 <span class="material-symbols-outlined text-3xl">chevron_left</span>
@@ -675,7 +722,7 @@
               <button
                 type="button"
                 onclick={nextReview}
-                class="text-deep-charcoal/70 hover:text-muted-gold transition-colors duration-200 cursor-pointer p-1 focus:outline-none flex items-center justify-center"
+                class="text-deep-charcoal/70 dark:text-neutral-300 hover:text-muted-gold dark:hover:text-muted-gold-dark transition-colors duration-200 cursor-pointer p-1 focus:outline-none flex items-center justify-center"
                 aria-label="Next Review"
               >
                 <span class="material-symbols-outlined text-3xl">chevron_right</span>
@@ -684,30 +731,30 @@
           </div>
 
           <!-- RIGHT: Content Block (Title, Full Quote, Author, and Platform Badges) -->
-          <div class="lg:col-span-8 flex flex-col justify-between gap-5 transition-all duration-500 animate-fade-in bg-surface-container-lowest border border-outline-variant/35 p-6 sm:p-8 md:p-10 shadow-sm">
+          <div class="lg:col-span-8 flex flex-col justify-between gap-5 transition-all duration-500 animate-fade-in bg-surface-container-lowest dark:bg-neutral-900 border border-outline-variant/35 dark:border-neutral-800 p-6 sm:p-8 md:p-10 shadow-sm">
             <!-- Review Title -->
             {#if review.title}
-              <h3 class="font-headline text-lg sm:text-xl md:text-2xl text-deep-charcoal font-semibold leading-snug">
+              <h3 class="font-headline text-lg sm:text-xl md:text-2xl text-deep-charcoal dark:text-neutral-100 font-semibold leading-snug">
                 {review.title}
               </h3>
             {/if}
 
             <!-- Review Full Body Quote -->
-            <blockquote class="font-headline italic text-sm sm:text-base md:text-lg text-deep-charcoal/90 font-light leading-relaxed my-1">
+            <blockquote class="font-headline italic text-sm sm:text-base md:text-lg text-deep-charcoal/90 dark:text-neutral-200 font-light leading-relaxed my-1">
               “{review.quote}”
             </blockquote>
 
             <!-- Author & Metadata & Platform Badge -->
-            <div class="pt-4 border-t border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="pt-4 border-t border-outline-variant/30 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <strong class="font-headline text-sm sm:text-base text-deep-charcoal block">{review.author}</strong>
-                <span class="text-xs text-on-surface-variant font-sans">{review.origin} • {review.stayType} ({review.date})</span>
+                <strong class="font-headline text-sm sm:text-base text-deep-charcoal dark:text-neutral-100 block">{review.author}</strong>
+                <span class="text-xs text-on-surface-variant dark:text-neutral-400 font-sans">{review.origin} • {review.stayType} ({review.date})</span>
               </div>
 
               <!-- Platform Badge Tag (strictly NO count numbers) -->
-              <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container border border-outline-variant/40 self-start sm:self-auto">
-                <span class="material-symbols-outlined text-muted-gold text-sm">verified</span>
-                <span class="font-label-caps text-[10px] sm:text-[11px] text-deep-charcoal font-bold tracking-wider uppercase">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container dark:bg-neutral-800 border border-outline-variant/40 dark:border-neutral-700 self-start sm:self-auto">
+                <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-sm">verified</span>
+                <span class="font-label-caps text-[10px] sm:text-[11px] text-deep-charcoal dark:text-neutral-200 font-bold tracking-wider uppercase">
                   {review.platform}
                 </span>
               </div>

@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 .agents
 Design.md
 Spec.md
+
+# Admin Credentials
+admin.md
