@@ -52,16 +52,10 @@
   <!-- Page header & Tabs -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight">Tableau de bord</h1>
-    <button class="bg-deep-charcoal text-white dark:bg-muted-gold dark:text-deep-charcoal dark:hover:bg-soft-cream px-4 py-2 rounded-md text-sm font-medium hover:bg-black transition-colors cursor-pointer">
+    <button onclick={() => window.print()} class="flex items-center gap-2 bg-deep-charcoal text-white dark:bg-muted-gold dark:text-deep-charcoal dark:hover:bg-soft-cream px-4 py-2 rounded-md text-sm font-medium hover:bg-black transition-colors cursor-pointer">
+      <span class="material-symbols-outlined text-sm">print</span>
       Télécharger le Rapport
     </button>
-  </div>
-
-  <div class="flex items-center gap-6 border-b border-gray-200 dark:border-neutral-800 pb-2 overflow-x-auto scrollbar-hide">
-    <button class="text-sm font-medium text-deep-charcoal dark:text-muted-gold border-b-2 border-deep-charcoal dark:border-muted-gold pb-2 whitespace-nowrap">Aperçu</button>
-    <button class="text-sm font-medium text-gray-500 dark:text-neutral-400 hover:text-gray-700 hover:dark:text-neutral-200 pb-2 whitespace-nowrap">Analyses</button>
-    <button class="text-sm font-medium text-gray-500 dark:text-neutral-400 hover:text-gray-700 hover:dark:text-neutral-200 pb-2 whitespace-nowrap">Rapports</button>
-    <button class="text-sm font-medium text-gray-500 dark:text-neutral-400 hover:text-gray-700 hover:dark:text-neutral-200 pb-2 whitespace-nowrap">Notifications</button>
   </div>
 
   <!-- Stat Cards -->

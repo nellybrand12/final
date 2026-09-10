@@ -36,6 +36,8 @@
 
 <svelte:head>
   <title>Admin Dashboard - Résidence Madadjeu</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="googlebot" content="noindex, nofollow" />
 </svelte:head>
 
 <!-- If it's the login page, don't show the dashboard layout -->

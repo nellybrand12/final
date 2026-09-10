@@ -2,6 +2,7 @@
   import { onDestroy } from 'svelte';
   import { goto } from '$app/navigation';
   import type { PageData, ActionData } from './$types';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -33,8 +34,8 @@
             const result = await res.json();
             roomAvailability[room.id] = result.available;
           }
-        } catch (e) {
-          console.error(e);
+        } catch {
+          // Ignore transient availability fetch failure
         }
       });
     } else {
@@ -164,8 +165,8 @@
             ? 'Votre paiement est en cours de traitement par votre opérateur. Vous pourrez télécharger votre reçu officiel dès confirmation de votre séjour.'
             : 'Your payment is being processed by your provider. You will be able to download your official receipt once your booking is confirmed.';
         }
-      } catch (err) {
-        console.warn('Polling status error:', err);
+      } catch {
+        // Polling retry on next interval
       }
     }, 2500);
   }
@@ -307,7 +308,6 @@
 
         // Listen for client-side feedback (non-authoritative)
         CinetPay.waitResponse(async (response: any) => {
-          console.log('[CinetPay waitResponse]:', response);
           paymentStepState = 'verifying';
           // Immediately poll authoritative status from our server
           pollAuthoritativeStatus(initData.transactionId, initData.bookingReference, initData.customer.email);
@@ -315,7 +315,6 @@
 
         if (typeof CinetPay.onError === 'function') {
           CinetPay.onError((err: any) => {
-            console.warn('[CinetPay onError]:', err);
             paymentStepState = 'failed';
             paymentErrorMessage = err?.message || 'La session de paiement CinetPay a rencontré une erreur.';
           });
@@ -339,9 +338,9 @@
   });
 </script>
 
+<SEO title={i18n.t.reserve.metaTitle} description={i18n.t.reserve.metaDesc} />
+
 <svelte:head>
-  <title>{i18n.t.reserve.metaTitle}</title>
-  <meta name="description" content={i18n.t.reserve.metaDesc} />
   <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
 </svelte:head>
 
@@ -446,7 +445,7 @@
                       class="flex items-center justify-between p-4 border text-left transition-all cursor-pointer {selectedRoomId === room.id ? 'border-muted-gold dark:border-muted-gold-dark bg-muted-gold/10 dark:bg-muted-gold-dark/10 outline outline-1 outline-muted-gold dark:outline-muted-gold-dark' : 'border-outline-variant/40 dark:border-neutral-800 bg-surface-container dark:bg-neutral-800/80 hover:bg-surface-variant dark:hover:bg-neutral-700/60'}"
                     >
                       <div class="flex items-center gap-4">
-                        <img src={room.imageUrl} alt={room.name} class="w-16 h-12 object-cover" />
+                        <img src={room.imageUrl} alt={i18n.locale === 'fr' ? (room.nameFr || room.name) : (room.nameEn || room.name)} class="w-16 h-12 object-cover" />
                         <div>
                           <h4 class="font-headline text-base text-deep-charcoal dark:text-neutral-100 font-bold">{room.name}</h4>
                           <span class="text-xs text-on-surface-variant dark:text-neutral-400">{room.category} • Max {room.maxGuests} pers.</span>
@@ -890,7 +889,7 @@
       <div class="lg:col-span-5">
         <div class="bg-surface-container dark:bg-neutral-900 border border-outline-variant/40 dark:border-neutral-800 p-6 md:p-8 space-y-6 sticky top-28 shadow-sm">
           <div class="flex items-center gap-4 border-b border-outline-variant/30 dark:border-neutral-800 pb-4">
-            <img src={selectedRoom.imageUrl} alt={selectedRoom.name} class="w-20 h-16 object-cover" />
+            <img src={selectedRoom.imageUrl} alt={i18n.locale === 'fr' ? (selectedRoom.nameFr || selectedRoom.name) : (selectedRoom.nameEn || selectedRoom.name)} class="w-20 h-16 object-cover" />
             <div>
               <span class="text-[10px] font-label-caps text-muted-gold dark:text-muted-gold-dark block font-semibold">{selectedRoom.category}</span>
               <h3 class="font-headline text-xl text-deep-charcoal dark:text-neutral-100 font-bold">{selectedRoom.name}</h3>

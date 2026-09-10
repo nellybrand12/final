@@ -1,11 +1,9 @@
 <script lang="ts">
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 </script>
 
-<svelte:head>
-  <title>{i18n.t.about.metaTitle}</title>
-  <meta name="description" content={i18n.t.about.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.about.metaTitle} description={i18n.t.about.metaDesc} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
@@ -27,7 +25,7 @@
       <div class="lg:col-span-6 relative aspect-[4/3] overflow-hidden shadow-2xl bg-deep-charcoal dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-"
-          alt="Lounge Madadjeu"
+          alt={i18n.locale === 'fr' ? "Espace salon feutré et architecture raffinée de l'Hôtel Résidence Madadjeu" : "Sophisticated lounge area and refined interior of Hotel Residence Madadjeu"}
           class="w-full h-full object-cover"
         />
       </div>

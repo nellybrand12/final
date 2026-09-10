@@ -1,15 +1,13 @@
 <script lang="ts">
   import AmenityCard from '$lib/components/AmenityCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 </script>
 
-<svelte:head>
-  <title>{i18n.t.amenities.metaTitle}</title>
-  <meta name="description" content={i18n.t.amenities.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.amenities.metaTitle} description={i18n.t.amenities.metaDesc} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">

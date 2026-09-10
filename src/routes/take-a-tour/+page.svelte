@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let lightboxIndex = $state<number | null>(null);
@@ -35,10 +36,7 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<svelte:head>
-  <title>{i18n.t.tour.metaTitle}</title>
-  <meta name="description" content={i18n.t.tour.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.tour.metaTitle} description={i18n.t.tour.metaDesc} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-24">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">

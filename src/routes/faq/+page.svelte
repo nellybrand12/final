@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import FaqAccordion from '$lib/components/FaqAccordion.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import { formatLiveRoomPricing, formatLiveHallPricing } from '$lib/data/bookingKnowledgeBase';
 
@@ -44,12 +45,22 @@
       ? faqsList
       : faqsList.filter(f => f.category === selectedCategory)
   );
+
+  const faqJsonLd = $derived({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqsList.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  });
 </script>
 
-<svelte:head>
-  <title>{i18n.t.faq.metaTitle}</title>
-  <meta name="description" content={i18n.t.faq.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.faq.metaTitle} description={i18n.t.faq.metaDesc} jsonLd={faqJsonLd} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-4xl mx-auto px-4 md:px-8">

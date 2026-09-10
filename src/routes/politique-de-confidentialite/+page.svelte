@@ -1,11 +1,9 @@
 <script lang="ts">
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 </script>
 
-<svelte:head>
-  <title>{i18n.t.privacy.metaTitle}</title>
-  <meta name="description" content={i18n.t.privacy.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.privacy.metaTitle} description={i18n.t.privacy.metaDesc} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-4xl mx-auto px-4 md:px-8">

@@ -10,6 +10,8 @@
 
 <svelte:head>
   <title>Admin Login - Résidence Madadjeu</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="googlebot" content="noindex, nofollow" />
 </svelte:head>
 
 <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-neutral-950 py-12 px-4 sm:px-6 lg:px-8 relative">

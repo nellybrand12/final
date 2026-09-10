@@ -13,9 +13,6 @@ try {
   // Ignored if not supported in environment
 }
 
-// Known resilient Anycast/ALB IP addresses for Supabase AWS eu-central-1 pooler
-const SUPABASE_EU_CENTRAL_POOLER_IPS = ['18.198.145.223', '52.59.152.35', '18.198.30.239'];
-
 // Resolve DATABASE_URL from dynamic env, static env, or process.env
 const rawConnectionString = dynamicEnv.DATABASE_URL || staticDatabaseUrl || process.env.DATABASE_URL || '';
 const connectionString = rawConnectionString.trim();
@@ -63,27 +60,16 @@ let isDbHealthy = false;
 if (!validation.isValid) {
   console.warn(`[Database Init] Warning: DATABASE_URL not configured (${validation.reason}). Using in-memory fallback. Masked value: ${maskConnectionString(connectionString)}`);
 } else {
-  // To avoid DNS resolution stalls (EAI_AGAIN) from local router resolvers,
-  // route Supabase pooler connections directly to AWS pooler IPs with SNI servername preserved
-  const isSupabaseEuPooler = validation.host === 'aws-0-eu-central-1.pooler.supabase.com';
-  const effectiveHost = isSupabaseEuPooler ? SUPABASE_EU_CENTRAL_POOLER_IPS[0] : validation.host!;
-  const effectiveConnectionString = isSupabaseEuPooler
-    ? connectionString.replace(validation.host!, effectiveHost)
-    : connectionString;
-
-  console.log(`[Database Init] Connecting to Postgres at ${validation.host}:${validation.port}${isSupabaseEuPooler ? ` (via direct IP ${effectiveHost} with SNI)` : ''} (target: ${maskConnectionString(connectionString)})`);
+  console.log(`[Database Init] Connecting to Postgres at ${validation.host}:${validation.port} (target: ${maskConnectionString(connectionString)})`);
 
   try {
-    client = postgres(effectiveConnectionString, {
+    client = postgres(connectionString, {
       max: 10,
       idle_timeout: 120, // 2 minutes idle connection lifetime to prevent frequent connection renegotiation
       connect_timeout: 15,
       prepare: false, // Essential for Supabase PgBouncer (Transaction mode port 6543)
       onnotice: () => {},
-      ssl: {
-        servername: validation.host,
-        rejectUnauthorized: false
-      }
+      ssl: 'require'
     });
     dbInstance = drizzle(client, { schema });
     isDbHealthy = true;

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="%lang%">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,6 +12,11 @@
 		<script>
 			(function() {
 				try {
+					var urlLang = new URLSearchParams(window.location.search).get('lang');
+					var savedLang = localStorage.getItem('madadjeu_lang');
+					var activeLang = (urlLang === 'en' || urlLang === 'fr') ? urlLang : ((savedLang === 'en' || savedLang === 'fr') ? savedLang : 'fr');
+					document.documentElement.lang = activeLang;
+
 					var isAdmin = window.location.pathname.startsWith('/admin');
 					var key = isAdmin ? 'admin-theme' : 'theme';
 					var saved = localStorage.getItem(key);

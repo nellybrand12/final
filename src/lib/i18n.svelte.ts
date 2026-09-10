@@ -99,7 +99,7 @@ const translations = {
           tag: 'Rooftop & Haute Gastronomie',
           title: 'Panorama Spectaculaire & Table d’Hôtes',
           description: 'Savourez une cuisine inventive et des cocktails signature sur notre terrasse panoramique surplombant la capitale, pour des instants de détente inoubliables.',
-          imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB2eI6d4BvFff1_1jR1JcW0fMhN0lK4-B83_19k0g8e91uG1c62qKx4yUu3k5v4jL6b8e8f8_2z3g-4h5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2',
+          imageUrl: '/images/dining.jpg',
           link: '/amenities'
         }
       ]
@@ -773,7 +773,7 @@ const translations = {
           tag: 'Terrasse & Gastronomie',
           title: 'Rooftop Panoramique & Table Gourmande',
           description: 'Une vue imprenable sur les collines de Yaoundé pour savourer une cuisine raffinée associant saveurs du terroir camerounais et gastronomie mondiale.',
-          imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB2eI6d4BvFff1_1jR1JcW0fMhN0lK4-B83_19k0g8e91uG1c62qKx4yUu3k5v4jL6b8e8f8_2z3g-4h5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2',
+          imageUrl: '/images/dining.jpg',
           highlights: ['Coucher de soleil sur Yaoundé', 'Carte de vins & spiritueux', 'Dîners privés sur réservation']
         }
       ]
@@ -994,7 +994,7 @@ const translations = {
           tag: 'Rooftop & Fine Dining',
           title: 'Panoramic Capital Views & Gourmet Dining',
           description: 'Savor gourmet delicacies and signature cocktails on our rooftop terrace overlooking the hills of Yaounde for memorable evenings.',
-          imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB2eI6d4BvFff1_1jR1JcW0fMhN0lK4-B83_19k0g8e91uG1c62qKx4yUu3k5v4jL6b8e8f8_2z3g-4h5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2',
+          imageUrl: '/images/dining.jpg',
           link: '/amenities'
         }
       ]
@@ -1670,7 +1670,7 @@ const translations = {
           tag: 'Terrace & Gastronomy',
           title: 'Panoramic Rooftop & Gourmet Table',
           description: 'Breathtaking views of Yaounde’s hills to enjoy refined dining pairing Cameroonian ingredients with world gastronomy.',
-          imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB2eI6d4BvFff1_1jR1JcW0fMhN0lK4-B83_19k0g8e91uG1c62qKx4yUu3k5v4jL6b8e8f8_2z3g-4h5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2',
+          imageUrl: '/images/dining.jpg',
           highlights: ['Sunset views of Yaounde', 'Curated wine list', 'Private dining upon reservation']
         }
       ]
@@ -1826,6 +1826,7 @@ class I18nManager {
     this.locale = newLocale;
     if (browser) {
       localStorage.setItem('madadjeu_lang', newLocale);
+      document.cookie = `madadjeu_lang=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
       document.documentElement.lang = newLocale;
     }
   }

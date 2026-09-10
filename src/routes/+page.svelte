@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import type { PageData } from './$types';
   import RoomCard from '$lib/components/RoomCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import { introManager } from '$lib/introState.svelte';
 
@@ -109,12 +110,58 @@
   onDestroy(() => {
     stopNeighborhoodAutoplay();
   });
+
+  const homeTitle = $derived(
+    i18n.locale === 'fr'
+      ? "Hôtel Résidence Madadjeu | L'élégance résidentielle à Yaoundé"
+      : "Hotel Residence Madadjeu | Luxury Residential Hotel in Yaounde"
+  );
+
+  const homeDesc = $derived(
+    i18n.locale === 'fr'
+      ? "Découvrez l'Hôtel Résidence Madadjeu à Yaoundé, face à la Garde Présidentielle. Appartements haut de gamme, restaurant panoramique, rooftop et conciergerie 24/7."
+      : "Experience Hotel Residence Madadjeu in Yaounde, opposite the Presidential Guard. Luxury apartments, rooftop restaurant, panoramic views, and 24/7 concierge."
+  );
+
+  const hotelSchema = $derived({
+    "@context": "https://schema.org",
+    "@type": "Hotel",
+    "name": "Hôtel Résidence Madadjeu",
+    "alternateName": "Résidence Madadjeu Yaoundé",
+    "description": homeDesc,
+    "url": "https://residence-madadjeu.com",
+    "logo": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
+    "image": "https://residence-madadjeu.com/images/og-image.jpg",
+    "telephone": "+237699000000",
+    "email": "contact@residence-madadjeu.com",
+    "priceRange": "50 000 - 350 000 XAF",
+    "currenciesAccepted": "XAF",
+    "paymentAccepted": "Cash, Credit Card, Mobile Money (MTN MoMo, Orange Money)",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Face Garde Présidentielle, Quartier Etoug-Ebe",
+      "addressLocality": "Yaoundé",
+      "addressRegion": "Centre",
+      "addressCountry": "CM"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 3.848,
+      "longitude": 11.488
+    },
+    "checkinTime": "14:00",
+    "checkoutTime": "12:00",
+    "amenityFeature": [
+      { "@type": "LocationFeatureSpecification", "name": "Free High-Speed Wi-Fi", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "24/7 Security & Concierge", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Restaurant & Room Service", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Fitness Center", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Private Chauffeur & Airport Shuttle", "value": true }
+    ]
+  });
 </script>
 
-<svelte:head>
-  <title>Hôtel Résidence Madadjeu | {i18n.locale === 'fr' ? "L'élégance résidentielle à Yaoundé" : 'Residential Luxury in Yaounde'}</title>
-  <meta name="description" content="Découvrez l'Hôtel Résidence Madadjeu à Yaoundé, face à la Garde Présidentielle. Appartements haut de gamme, restaurant panoramique, rooftop et conciergerie 24/7." />
-</svelte:head>
+<SEO title={homeTitle} description={homeDesc} jsonLd={hotelSchema} />
 
 <div class="flex flex-col w-full -mt-20 overflow-x-hidden">
   

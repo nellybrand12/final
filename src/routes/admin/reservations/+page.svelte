@@ -4,6 +4,20 @@
   let { data } = $props();
   let reservations = $derived(data.reservations);
   let rooms = $derived(data.rooms);
+  let searchQuery = $state('');
+
+  let filteredReservations = $derived(
+    (reservations || []).filter((r: any) => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        (r.bookingReference && r.bookingReference.toLowerCase().includes(q)) ||
+        (r.guestName && r.guestName.toLowerCase().includes(q)) ||
+        (r.guestEmail && r.guestEmail.toLowerCase().includes(q)) ||
+        (r.roomName && r.roomName.toLowerCase().includes(q))
+      );
+    })
+  );
 
   function formatCurrency(amount: number) {
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XAF', maximumFractionDigits: 0 }).format(amount);
@@ -33,10 +47,10 @@
 <div class="space-y-6">
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight">Réservations</h1>
-    <button class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2">
+    <a href="/reserver" target="_blank" class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2 cursor-pointer">
       <Plus size={16} />
       <span>Nouvelle Réservation</span>
-    </button>
+    </a>
   </div>
 
   <div class="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800 overflow-hidden">
@@ -45,7 +59,7 @@
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search size={16} class="text-gray-400 dark:text-neutral-500" />
         </div>
-        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" placeholder="Rechercher par nom, référence...">
+        <input type="text" bind:value={searchQuery} class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" placeholder="Rechercher par nom, référence...">
       </div>
       <div class="flex items-center gap-2">
         <form method="GET" class="flex items-center gap-2">
@@ -75,7 +89,7 @@
           </tr>
         </thead>
         <tbody class="bg-white dark:bg-neutral-900 divide-y divide-gray-200 dark:divide-neutral-800">
-          {#each reservations as res}
+          {#each filteredReservations as res}
             <tr>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-neutral-100">{res.bookingReference}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-neutral-400">{res.guestName}</td>

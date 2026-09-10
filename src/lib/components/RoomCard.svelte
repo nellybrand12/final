@@ -28,7 +28,7 @@
   <div class="relative aspect-[16/10] w-full overflow-hidden bg-deep-charcoal">
     <img
       src={room.imageUrl}
-      alt={room.name}
+      alt={i18n.locale === 'fr' ? (room.nameFr || room.name) : (room.nameEn || room.name)}
       class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       loading="lazy"
     />

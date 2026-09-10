@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import RoomCard from '$lib/components/RoomCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data }: { data: PageData } = $props();
@@ -36,12 +37,21 @@
     const count = data.room.type === 'hall' ? 1 : roomsCount;
     return base * nights * count;
   });
+
+  const roomTitle = $derived(
+    i18n.locale === 'fr'
+      ? `${data.room.nameFr || data.room.name} | Hôtel Résidence Madadjeu`
+      : `${data.room.nameEn || data.room.name} | Hotel Residence Madadjeu`
+  );
+
+  const roomDesc = $derived(
+    i18n.locale === 'fr'
+      ? `${data.room.nameFr || data.room.name} à l'Hôtel Résidence Madadjeu Yaoundé. ${data.room.taglineFr || data.room.descriptionFr || ''}`
+      : `${data.room.nameEn || data.room.name} at Hotel Residence Madadjeu Yaounde. ${data.room.taglineEn || data.room.descriptionEn || ''}`
+  );
 </script>
 
-<svelte:head>
-  <title>{i18n.locale === 'fr' ? (data.room.nameFr || data.room.name) : (data.room.nameEn || data.room.name)} | Hôtel Résidence Madadjeu</title>
-  <meta name="description" content="{data.room.name} à l'Hôtel Résidence Madadjeu. {i18n.locale === 'fr' ? data.room.descriptionFr : data.room.descriptionEn}" />
-</svelte:head>
+<SEO title={roomTitle} description={roomDesc} image={data.room.imageUrl} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-10 md:py-16">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">
@@ -90,7 +100,7 @@
       <div class="lg:col-span-2 relative aspect-[16/10] overflow-hidden rounded-xl bg-deep-charcoal dark:bg-neutral-900">
         <img
           src={images[activeImageIndex] || data.room.imageUrl}
-          alt="{data.room.name} {activeImageIndex + 1}"
+          alt="{i18n.locale === 'fr' ? (data.room.nameFr || data.room.name) : (data.room.nameEn || data.room.name)} - {i18n.locale === 'fr' ? 'Photo' : 'View'} {activeImageIndex + 1}"
           class="w-full h-full object-cover transition-all duration-500"
         />
         <div class="absolute bottom-4 right-4 bg-deep-charcoal/80 dark:bg-neutral-900/80 backdrop-blur-md text-soft-cream px-3 py-1.5 rounded-full font-label-caps text-[10px]">
@@ -106,7 +116,7 @@
             onclick={() => (activeImageIndex = i)}
             class="relative aspect-[16/10] lg:h-1/3 rounded-lg overflow-hidden border-2 transition-all cursor-pointer shrink-0 w-28 lg:w-full {activeImageIndex === i ? 'border-muted-gold dark:border-muted-gold-dark ring-2 ring-muted-gold/30 dark:ring-muted-gold-dark/30' : 'border-transparent opacity-75 hover:opacity-100'}"
           >
-            <img src={img} alt="Thumbnail {i + 1}" class="w-full h-full object-cover" />
+            <img src={img} alt="{i18n.locale === 'fr' ? (data.room.nameFr || data.room.name) : (data.room.nameEn || data.room.name)} - {i18n.locale === 'fr' ? 'Aperçu' : 'Thumbnail'} {i + 1}" class="w-full h-full object-cover" />
           </button>
         {/each}
       </div>

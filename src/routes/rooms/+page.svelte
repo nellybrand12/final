@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types';
   import RoomCard from '$lib/components/RoomCard.svelte';
+  import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
 
   let { data }: { data: PageData } = $props();
@@ -8,10 +9,11 @@
   let selectedCategory = $state('all');
   let selectedGuests = $state('all');
 
-  let filteredRooms = $derived(
+  const filteredRooms = $derived(
     data.rooms.filter(room => {
       const matchCat = selectedCategory === 'all' || 
-        (selectedCategory === 'appartement' && room.category.toLowerCase().includes('appartement')) ||
+        (selectedCategory === 'prestige' && room.category.toLowerCase().includes('prestige')) ||
+        (selectedCategory === 'junior' && room.category.toLowerCase().includes('junior')) ||
         (selectedCategory === 'chambre' && room.category.toLowerCase().includes('chambre')) ||
         (selectedCategory === 'hall' && (room.type === 'hall' || room.category.toLowerCase().includes('salle') || room.category.toLowerCase().includes('salon')));
       
@@ -23,10 +25,7 @@
   );
 </script>
 
-<svelte:head>
-  <title>{i18n.t.rooms.metaTitle}</title>
-  <meta name="description" content={i18n.t.rooms.metaDesc} />
-</svelte:head>
+<SEO title={i18n.t.rooms.metaTitle} description={i18n.t.rooms.metaDesc} />
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">
   <div class="max-w-[1280px] mx-auto px-4 md:px-8 lg:px-16">

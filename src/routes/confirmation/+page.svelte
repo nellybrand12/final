@@ -51,9 +51,8 @@
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
-      console.error('Receipt download error:', err);
-      // Fallback direct navigation
+    } catch {
+      // Fallback direct navigation if blob download fails
       window.location.href = `/api/reservations/${encodeURIComponent(activeRef)}/receipt`;
     } finally {
       isDownloading = false;
@@ -63,6 +62,8 @@
 
 <svelte:head>
   <title>{i18n.t.confirmation.metaTitle}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="googlebot" content="noindex, nofollow" />
 </svelte:head>
 
 <div class="w-full bg-surface dark:bg-neutral-950 py-12 md:py-20">

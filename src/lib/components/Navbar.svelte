@@ -86,7 +86,7 @@
         aria-label="Hôtel Résidence Madadjeu"
       >
         <img
-          alt="Hotel Résidence Madadjeu Logo"
+          alt={i18n.locale === 'fr' ? 'Hôtel Résidence Madadjeu - Logo officiel' : 'Hotel Residence Madadjeu - Official Logo'}
           class="h-7 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
         />
@@ -238,7 +238,7 @@
     >
       <div class="flex items-center gap-3">
         <img
-          alt="Hotel Résidence Madadjeu Logo"
+          alt={i18n.locale === 'fr' ? 'Hôtel Résidence Madadjeu - Logo officiel' : 'Hotel Residence Madadjeu - Official Logo'}
           class="h-7 w-auto object-contain"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
         />

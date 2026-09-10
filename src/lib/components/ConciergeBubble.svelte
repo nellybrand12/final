@@ -273,6 +273,8 @@
                     <div class="mt-2.5 pt-2 border-t border-outline-variant/20 dark:border-neutral-700">
                       <a
                         href={msg.action.href}
+                        target={msg.action.href.startsWith('http') || msg.action.href.startsWith('//') ? '_blank' : undefined}
+                        rel={msg.action.href.startsWith('http') || msg.action.href.startsWith('//') ? 'noopener noreferrer' : undefined}
                         onclick={() => (isOpen = false)}
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-deep-charcoal dark:bg-neutral-100 text-soft-cream dark:text-neutral-900 text-[11px] font-semibold hover:bg-muted-gold dark:hover:bg-muted-gold-dark hover:text-deep-charcoal transition-colors shadow-sm"
                       >

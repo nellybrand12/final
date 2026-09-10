@@ -7,10 +7,16 @@
   import CookieBanner from '$lib/components/CookieBanner.svelte';
   import { themeManager } from '$lib/theme.svelte';
 
+  import { browser } from '$app/environment';
+  import { i18n } from '$lib/i18n.svelte';
+
   let { children } = $props();
 
   $effect(() => {
     themeManager.syncRoute($page.url.pathname);
+    if (browser) {
+      document.documentElement.lang = i18n.locale;
+    }
   });
 </script>
 
