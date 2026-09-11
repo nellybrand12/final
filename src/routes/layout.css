@@ -464,54 +464,46 @@
 
 /* ========================================================
    HERO TEXT HIERARCHY (Home page)
-   The location pill is the sole kicker above the headline — a
-   compact, glassy badge matching the frosted-glass treatment
-   used on the scrolled header / drawer (deep-charcoal fill,
-   hairline muted-gold border, backdrop blur).
+   Headline, tagline and CTA sit in one centred column
+   (.hero-text-block) rather than three separately-centred
+   elements, so the group reads as a single block. The
+   max-width keeps the headline to a balanced two lines
+   instead of dropping a lone orphan word onto line two.
    ======================================================== */
-.hero-location-pill {
-  display: inline-flex;
+.hero-text-block {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.45em;
-  margin-bottom: 1.1rem;
-  padding: 8px 18px;
-  background: rgba(20, 17, 15, 0.5);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(185, 144, 69, 0.35);
-  border-radius: 999px;
-  color: #f8f6f2;
-  font-family: "Work Sans", sans-serif;
-  font-size: clamp(0.85rem, 1.6vw, 0.95rem);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  max-width: 100%;
-}
-
-.hero-location-pill .material-symbols-outlined {
-  font-size: 1.05em;
-  color: #b99045;
-}
-
-@media (max-width: 480px) {
-  /* Small phones: let the pill wrap rather than overflow its rounded shape. */
-  .hero-location-pill {
-    white-space: normal;
-    text-align: center;
-    font-size: 0.8rem;
-  }
+  width: 100%;
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .hero-title {
-  font-size: clamp(24px, 3.6vw, 40px);
+  /* ~12% larger than the previous clamp(24px, 3.6vw, 40px). */
+  font-size: clamp(27px, 4.05vw, 45px);
   font-weight: 500;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  text-wrap: balance;
 }
 
 .hero-subtitle {
+  /* A bigger jump than the headline's (was 14/16/18px via utilities),
+     while staying comfortably below the headline in the hierarchy. */
+  font-size: clamp(17px, 1.9vw, 23px);
+  line-height: 1.45;
+  max-width: 34ch;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  text-wrap: balance;
+}
+
+@media (min-width: 768px) {
+  /* Wide enough for the tagline + location to hold one line on desktop. */
+  .hero-subtitle {
+    max-width: none;
+  }
 }
 
 /* ========================================================

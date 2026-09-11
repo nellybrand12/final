@@ -226,24 +226,19 @@
         ? 'opacity-100 translate-y-0 scale-100'
         : 'opacity-0 translate-y-16 scale-95 pointer-events-none'}"
     >
-      <!-- Location Pill: sole kicker element above the headline -->
-      <div class="hero-location-pill">
-        <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
-        <span>{i18n.t.hero.locationPill}</span>
-      </div>
+      <!-- Headline, tagline and CTA centred as a single block -->
+      <div class="hero-text-block">
+        <!-- Main Headline -->
+        <h1 class="hero-title font-display-lg text-soft-cream mb-3 leading-[1.14] drop-shadow-2xl uppercase">
+          {i18n.t.hero.showcaseTitle}
+        </h1>
 
-      <!-- Main Headline -->
-      <h1 class="hero-title font-display-lg text-soft-cream mb-3 max-w-4xl mx-auto leading-[1.14] drop-shadow-2xl uppercase">
-        {i18n.t.hero.showcaseTitle}
-      </h1>
+        <!-- Subtitle -->
+        <p class="hero-subtitle font-headline text-soft-cream/90 mb-7 font-light italic">
+          {i18n.t.hero.showcaseSubtitle}
+        </p>
 
-      <!-- Subtitle -->
-      <p class="hero-subtitle font-headline text-sm sm:text-base md:text-lg text-soft-cream/90 max-w-2xl mx-auto mb-7 font-light italic">
-        {i18n.t.hero.showcaseSubtitle}
-      </p>
-
-      <!-- Centered Action Button inside Luxury Double-Bordered Rectangular Frame -->
-      <div class="flex items-center justify-center w-full max-w-md">
+        <!-- Centered Action Button inside Luxury Double-Bordered Rectangular Frame -->
         <a
           href="/rooms"
           class="btn-luxury-primary text-xs py-2.5 px-6 sm:px-8"
