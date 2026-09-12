@@ -5,6 +5,7 @@
   import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import { introManager } from '$lib/introState.svelte';
+  import { neighborhoodPlaces } from '$lib/data/neighborhoods';
 
   let { data }: { data: PageData } = $props();
 
@@ -22,7 +23,14 @@
 
   // Wallace-Style Peeking Neighborhood Strategic Location Carousel State (5s Autoplay + Manual Reset)
   let activeNeighborhoodIndex = $state(0);
-  const neighborhoodSlides = $derived(i18n.t.neighborhoods.slides);
+  // Shared facts (photo, distance, travel times) merged with the active
+  // locale's text, so both languages always render the same set of slides.
+  const neighborhoodSlides = $derived(
+    neighborhoodPlaces.map((place) => ({
+      ...place,
+      ...i18n.t.neighborhoods.slides[place.id as keyof typeof i18n.t.neighborhoods.slides],
+    }))
+  );
   let prevNeighborhoodIndex = $derived((activeNeighborhoodIndex - 1 + neighborhoodSlides.length) % neighborhoodSlides.length);
   let nextNeighborhoodIndex = $derived((activeNeighborhoodIndex + 1) % neighborhoodSlides.length);
   let neighborhoodAutoplayTimer: any;
@@ -593,17 +601,17 @@
                   {activeSlide.description}
                 </p>
 
-                <!-- Drive Time and Walk Time (Distance removed) -->
+                <!-- Drive / Walk time, each followed by the distance to the place -->
                 <div class="pt-3 border-t border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center gap-3 sm:gap-6 flex-wrap font-mono text-[10px] sm:text-[11px] text-deep-charcoal/80 dark:text-neutral-300 uppercase tracking-wider">
                   <span class="inline-flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_car</span>
-                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.driveTime}</strong></span>
+                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.driveTime}</strong><span class="text-neutral-300 dark:text-neutral-600 mx-1">·</span><span class="text-muted-gold dark:text-muted-gold-dark font-semibold">{activeSlide.distance}</span></span>
                   </span>
                   {#if activeSlide.walkTime !== 'N/A'}
                     <span class="text-neutral-300 dark:text-neutral-600">•</span>
                     <span class="inline-flex items-center gap-1.5">
                       <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_walk</span>
-                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.walkTime}</strong></span>
+                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.walkTime}</strong><span class="text-neutral-300 dark:text-neutral-600 mx-1">·</span><span class="text-muted-gold dark:text-muted-gold-dark font-semibold">{activeSlide.distance}</span></span>
                     </span>
                   {/if}
                 </div>

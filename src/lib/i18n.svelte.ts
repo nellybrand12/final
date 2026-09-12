@@ -139,74 +139,40 @@ const translations = {
       subtitle:
         "Une implantation d’élite à Etoug-Ebe, alliant la sérénité face à la Garde Présidentielle à une accessibilité immédiate vers les centres névralgiques de la capitale.",
       interactiveMapCta: "Consulter la carte interactive & tous les accès",
-      slides: [
-        {
-          id: "garde",
+      // Text only — photos, distances and travel times are shared across
+      // locales and live in `$lib/data/neighborhoods.ts`, keyed by these ids.
+      slides: {
+        garde: {
           name: "Garde Présidentielle (Etoug-Ebe)",
           description:
             "Situé à proximité immédiate de la Résidence, le quartier de la Garde Présidentielle offre un calme souverain et un niveau de sécurité maximal 24h/24.",
-          distance: "200 m",
-          driveTime: "1 min",
-          walkTime: "2 min",
-          imageUrl:
-            "https://mindef.gov.cm/wp-content/uploads/2025/05/Passe-et-Avenir-6.jpg",
         },
-        {
-          id: "zoo",
+        zoo: {
           name: "Parc Zoo-Botanique de Mvog-Betsi",
           description:
             "Le plus grand parc zoologique du Cameroun, abritant une diversité d’espèces animales et végétales, idéal pour les familles et les passionnés de nature.",
-          distance: "950 m",
-          driveTime: "3 min",
-          walkTime: "14 min",
-          imageUrl:
-            "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-400x400/15/92/fd/fc.jpg",
         },
-        {
-          id: "palais",
+        palais: {
           name: "Palais des Congrès de Yaoundé",
           description:
             "Haut lieu des sommets internationaux, des réceptions d’État et des grands événements culturels, situé sur une colline verdoyante surplombant la cité.",
-          distance: "4.2 km",
-          driveTime: "8 min",
-          walkTime: "35 min",
-          imageUrl:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Yaound%C3%A9_Sports_Palace_2014_%2802%29.JPG/3840px-Yaound%C3%A9_Sports_Palace_2014_%2802%29.JPG",
         },
-        {
-          id: "centre",
+        centre: {
           name: "Centre Administratif & Boulevard du 20 Mai",
           description:
             "Le cœur décisionnel de la capitale : ministères, banques centrales, sièges d’entreprises et grandes galeries commerciales.",
-          distance: "4.9 km",
-          driveTime: "9 min",
-          walkTime: "45 min",
-          imageUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMUcwix3wbLQpUwzHRRtVmLuTqTzsA1nP5p5o09apKONbOmYvA9cApO0Z4&s=10",
         },
-        {
-          id: "bastos",
+        bastos: {
           name: "Bastos & Quartier Diplomatique",
           description:
             "Quartier résidentiel huppé abritant ambassades internationales, résidences consulaires, terrasses raffinées et tables gastronomiques.",
-          distance: "6.8 km",
-          driveTime: "15 min",
-          walkTime: "55 min",
-          imageUrl:
-            "https://news.uniresa.com/wp-content/uploads/2026/04/Top-5-quartiers-confortables-a-Yaounde-scaled.jpg",
         },
-        {
-          id: "aeroport",
+        aeroport: {
           name: "Aéroport International de Yaoundé-Nsimalen (NSI)",
           description:
             "Porte d’entrée aérienne internationale de Yaoundé avec service dédié de navette VIP et chauffeur privé Madadjeu disponible.",
-          distance: "24 km",
-          driveTime: "30 min",
-          walkTime: "N/A",
-          imageUrl:
-            "https://www.1flt.com/_next/image?url=%2Fphotos%2Fairport-aerial.jpg&w=3840&q=75",
         },
-      ],
+      },
     },
     // Testimonials
     testimonials: {
@@ -1153,63 +1119,40 @@ const translations = {
       subtitle:
         "An elite address in Etoug-Ebe, combining serenity directly facing the Presidential Guard with seamless access to the capital’s central hubs.",
       interactiveMapCta: "View interactive map & all travel routes",
-      slides: [
-        {
-          id: "garde",
+      // Text only — photos, distances and travel times are shared across
+      // locales and live in `$lib/data/neighborhoods.ts`, keyed by these ids.
+      slides: {
+        garde: {
           name: "Presidential Guard (Etoug-Ebe)",
           description:
             "Located in immediate proximity to the Residence, the Presidential Guard district offers serene tranquility and 24/7 top-tier state security.",
-          distance: "200 m",
-          driveTime: "1 min",
-          walkTime: "2 min",
-          imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
         },
-        {
-          id: "palais",
+        zoo: {
+          name: "Mvog-Betsi Zoo-Botanical Park",
+          description:
+            "Cameroon’s largest zoological park, home to a wide diversity of animal and plant species — ideal for families and nature enthusiasts.",
+        },
+        palais: {
           name: "Yaounde Conference Center",
           description:
             "Prestigious venue for international diplomatic summits, state banquets, and major cultural galas set upon a lush hill.",
-          distance: "4.2 km",
-          driveTime: "8 min",
-          walkTime: "35 min",
-          imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-",
         },
-        {
-          id: "centre",
+        centre: {
           name: "Administrative Center & Boulevard du 20 Mai",
           description:
             "The political and business center of Cameroon’s capital: key ministries, central banks, corporate headquarters, and commercial centers.",
-          distance: "5.5 km",
-          driveTime: "12 min",
-          walkTime: "45 min",
-          imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBBGPsJh3GmBgTdqbmMJ1RSGU5jUS2thrqklnqctH-6CwyCH4jIzUqhfMNCF1mPbVKuyE4x8pL5R5L13_0pmWa34qfz-85J_Srsv_tUq6zURhhsvNZhPbaayWF0WesF2JUReQJdrYZ0xRoyNGCHGY_6MSjBaKxHrqyWcZYxnF2ESOsWAOkmXLH61Y2tGynskpfCMXITsgKYWaFAyIxUfJ0XfQPf0RADhrseRt9ebBeEy4M-MxZL_TM1",
         },
-        {
-          id: "bastos",
+        bastos: {
           name: "Bastos & Diplomatic Enclave",
           description:
             "Prestigious residential district home to embassies, high commissions, art galleries, sophisticated terraces, and fine dining.",
-          distance: "6.8 km",
-          driveTime: "15 min",
-          walkTime: "55 min",
-          imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuD2wAnr00WSMLfS4u4kwD_Z_X_uI1TMmL8C99ulDfVWorQ3wZ8Jtx038hBtlJZFMCH52zAxeHuJGHeZXYirO7WqpxkYWsyvL-gd4ZtA1fvGUnNERVv--ziiHJ1croF5YKCIRh5OozEQYWxm_XmiIJMnKPz0jdVrN2AtTv4B9xzi0yB2N-r4FP-38NnlnBi6HTsz3eHCT_SblG_ROAwtcgBaDwD6D9_o5I1XUo3_23B6Z2m5PqdM6tsL",
         },
-        {
-          id: "aeroport",
+        aeroport: {
           name: "Yaounde-Nsimalen International Airport (NSI)",
           description:
             "Yaounde’s primary international air hub with direct Madadjeu private chauffeur transfers and VIP shuttles available.",
-          distance: "24 km",
-          driveTime: "30 min",
-          walkTime: "N/A",
-          imageUrl:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
         },
-      ],
+      },
     },
     // Testimonials
     testimonials: {
