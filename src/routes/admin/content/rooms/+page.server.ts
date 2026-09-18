@@ -2,8 +2,17 @@ import type { PageServerLoad, Actions } from './$types';
 import { db, isDbHealthy } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { eq, sql, asc } from 'drizzle-orm';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { supabaseAdmin } from '$lib/server/supabaseAdmin';
+import { validateSession } from '$lib/server/auth';
+
+async function ensureSuperAdmin(cookies: any, locals: any) {
+  const user = locals?.adminUser || (cookies.get('admin_session') ? await validateSession(cookies.get('admin_session')) : null);
+  if (!user || user.role !== 'super_admin') {
+    return null;
+  }
+  return user;
+}
 
 function slugify(text: string): string {
   return text
@@ -18,7 +27,12 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ parent }) => {
+  const { user } = await parent();
+  if (!user || user.role !== 'super_admin') {
+    throw redirect(303, '/admin');
+  }
+
   let rooms: any[] = [];
 
   if (db && isDbHealthy) {
@@ -68,14 +82,19 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-  create: async ({ request }) => {
+  create: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     if (!db || !isDbHealthy) return fail(500, { error: 'Base de données indisponible' });
 
     const data = await request.formData();
     const name = data.get('name')?.toString().trim();
-    const type = (data.get('type')?.toString() || 'room') as 'room' | 'hall';
-    const category = data.get('category')?.toString().trim() || (type === 'hall' ? 'Salle de Réception' : 'Suite');
-    const pricePerNight = data.get('pricePerNight')?.toString().trim();
+    const type = (data.get('type')?.toString() || 'room') as 'room' | 'apartment' | 'hall';
+    const category = data.get('category')?.toString().trim() || (type === 'hall' ? 'Salle de Réception' : (type === 'apartment' ? 'Appartement' : 'Suite'));
+    const pricePerNightRaw = data.get('pricePerNight')?.toString().trim();
+    const pricePerSeatRaw = data.get('pricePerSeat')?.toString().trim();
+    const capacityRaw = data.get('capacity')?.toString() || '0';
     const maxGuests = parseInt(data.get('maxGuests')?.toString() || '2');
     const sizeSqM = parseInt(data.get('sizeSqM')?.toString() || (type === 'hall' ? '150' : '65'));
     const bedType = data.get('bedType')?.toString().trim() || (type === 'hall' ? 'Configuration Modulable' : 'King Size');
@@ -88,8 +107,32 @@ export const actions: Actions = {
     const taglineEn = data.get('taglineEn')?.toString().trim() || taglineFr;
     const amenitiesRaw = data.get('amenities')?.toString().trim() || '';
 
-    if (!name || !pricePerNight || isNaN(parseFloat(pricePerNight))) {
-      return fail(400, { error: 'Le nom et le tarif sont requis et valides.' });
+    if (!name) {
+      return fail(400, { error: 'Le nom de la fiche est obligatoire.' });
+    }
+
+    let pricePerNight: string | null = null;
+    let pricePerSeat: string | null = null;
+    let capacity: number | null = null;
+
+    if (type === 'hall') {
+      const parsedSeatPrice = parseFloat(pricePerSeatRaw || '');
+      const parsedCapacity = parseInt(capacityRaw, 10);
+      if (isNaN(parsedSeatPrice) || parsedSeatPrice <= 0 || isNaN(parsedCapacity) || parsedCapacity <= 0) {
+        return fail(400, { 
+          error: 'Pour une salle d’événements, le tarif par place et la capacité d’accueil (places assises) sont obligatoires et doivent être supérieurs à 0.' 
+        });
+      }
+      pricePerSeat = pricePerSeatRaw!;
+      capacity = parsedCapacity;
+    } else {
+      const parsedNightPrice = parseFloat(pricePerNightRaw || '');
+      if (isNaN(parsedNightPrice) || parsedNightPrice <= 0) {
+        return fail(400, { 
+          error: 'Pour une chambre ou un appartement, le tarif par nuit est obligatoire et doit être supérieur à 0.' 
+        });
+      }
+      pricePerNight = pricePerNightRaw!;
     }
 
     const amenities = amenitiesRaw
@@ -104,7 +147,7 @@ export const actions: Actions = {
       .filter((url) => Boolean(url));
 
     let baseSlug = slugify(name);
-    if (!baseSlug) baseSlug = type === 'hall' ? 'salle-evenement' : 'chambre-suite';
+    if (!baseSlug) baseSlug = type === 'hall' ? 'salle-evenement' : (type === 'apartment' ? 'appartement' : 'chambre-suite');
 
     // Verify unique slug
     let finalSlug = baseSlug;
@@ -122,7 +165,9 @@ export const actions: Actions = {
         type,
         category,
         pricePerNight,
-        maxGuests: maxGuests > 0 ? maxGuests : 2,
+        pricePerSeat,
+        capacity,
+        maxGuests: type === 'hall' ? (capacity || 100) : (maxGuests > 0 ? maxGuests : 2),
         sizeSqM: sizeSqM > 0 ? sizeSqM : 50,
         bedType,
         totalRooms: totalRooms > 0 ? totalRooms : 1,
@@ -155,20 +200,25 @@ export const actions: Actions = {
     return { 
       success: true, 
       created: true, 
-      message: `${type === 'hall' ? 'La salle événementielle' : 'La chambre'} "${name}" a été créée avec succès.` 
+      message: `${type === 'hall' ? 'La salle événementielle' : (type === 'apartment' ? "L'appartement" : 'La chambre')} "${name}" a été créée avec succès.` 
     };
   },
 
-  updateRoom: async ({ request }) => {
+  updateRoom: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = parseInt(data.get('id')?.toString() || '0');
     
     if (!id || !db || !isDbHealthy) return fail(400, { error: 'Requête invalide' });
 
     const name = data.get('name')?.toString().trim();
-    const type = data.get('type')?.toString() as 'room' | 'hall' | undefined;
+    const type = data.get('type')?.toString() as 'room' | 'apartment' | 'hall' | undefined;
     const category = data.get('category')?.toString().trim();
-    const pricePerNight = data.get('pricePerNight')?.toString().trim();
+    const pricePerNightRaw = data.get('pricePerNight')?.toString().trim();
+    const pricePerSeatRaw = data.get('pricePerSeat')?.toString().trim();
+    const capacityRaw = data.get('capacity')?.toString() || '0';
     const maxGuests = parseInt(data.get('maxGuests')?.toString() || '0');
     const sizeSqM = parseInt(data.get('sizeSqM')?.toString() || '0');
     const bedType = data.get('bedType')?.toString().trim();
@@ -193,12 +243,43 @@ export const actions: Actions = {
     }
 
     try {
-      let oldRoom: schema.Room | undefined;
+      const [foundRoom] = await db.select().from(schema.rooms).where(eq(schema.rooms.id, id));
+      if (!foundRoom) {
+        return fail(404, { error: 'Fiche introuvable.' });
+      }
+      const oldRoom: schema.Room = foundRoom;
+      const effectiveType = type || oldRoom.type;
+
+      let pricePerNight: string | null = null;
+      let pricePerSeat: string | null = null;
+      let capacity: number | null = null;
+
+      if (effectiveType === 'hall') {
+        const parsedSeatPrice = parseFloat(pricePerSeatRaw || '');
+        const parsedCapacity = parseInt(capacityRaw, 10);
+        if (isNaN(parsedSeatPrice) || parsedSeatPrice <= 0 || isNaN(parsedCapacity) || parsedCapacity <= 0) {
+          return fail(400, { 
+            error: 'Pour une salle d’événements, le tarif par place et la capacité d’accueil (places assises) sont obligatoires et doivent être supérieurs à 0.' 
+          });
+        }
+        pricePerSeat = pricePerSeatRaw!;
+        capacity = parsedCapacity;
+        pricePerNight = null;
+      } else {
+        const parsedNightPrice = parseFloat(pricePerNightRaw || '');
+        if (isNaN(parsedNightPrice) || parsedNightPrice <= 0) {
+          return fail(400, { 
+            error: 'Pour un hébergement, le tarif par nuit est obligatoire et doit être supérieur à 0.' 
+          });
+        }
+        pricePerNight = pricePerNightRaw!;
+        pricePerSeat = null;
+        capacity = null;
+      }
+
       // Check if image is being replaced
       if (imageUrl || hasAdditionalImagesManager) {
-        const [foundRoom] = await db.select().from(schema.rooms).where(eq(schema.rooms.id, id));
-        oldRoom = foundRoom;
-        if (imageUrl && oldRoom && oldRoom.imageUrl && oldRoom.imageUrl !== imageUrl && oldRoom.imageUrl.includes('/storage/v1/object/public/images/')) {
+        if (imageUrl && oldRoom.imageUrl && oldRoom.imageUrl !== imageUrl && oldRoom.imageUrl.includes('/storage/v1/object/public/images/')) {
           const urlParts = oldRoom.imageUrl.split('/storage/v1/object/public/images/');
           if (urlParts.length > 1) {
             const filePath = urlParts[1];
@@ -209,6 +290,8 @@ export const actions: Actions = {
 
       const updateData: Record<string, any> = {
         pricePerNight,
+        pricePerSeat,
+        capacity,
         totalRooms,
         availableRooms,
         inUseRooms,
@@ -225,7 +308,11 @@ export const actions: Actions = {
       }
       if (type) updateData.type = type;
       if (category) updateData.category = category;
-      if (maxGuests > 0) updateData.maxGuests = maxGuests;
+      if (effectiveType === 'hall') {
+        updateData.maxGuests = capacity;
+      } else if (maxGuests > 0) {
+        updateData.maxGuests = maxGuests;
+      }
       if (sizeSqM > 0) updateData.sizeSqM = sizeSqM;
       if (bedType) updateData.bedType = bedType;
 
@@ -245,7 +332,7 @@ export const actions: Actions = {
             sortOrder: i
           });
         }
-        const effectiveMain = imageUrl || oldRoom?.imageUrl || '';
+        const effectiveMain = imageUrl || oldRoom.imageUrl || '';
         updateData.galleryImages = [effectiveMain, ...additionalImages].filter(Boolean);
       }
 
@@ -260,7 +347,10 @@ export const actions: Actions = {
     return { success: true, updated: true, message: 'Fiche mise à jour avec succès.' };
   },
 
-  deleteRoom: async ({ request }) => {
+  deleteRoom: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = parseInt(data.get('id')?.toString() || '0');
 
@@ -303,7 +393,10 @@ export const actions: Actions = {
     }
   },
 
-  restoreRoom: async ({ request }) => {
+  restoreRoom: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = parseInt(data.get('id')?.toString() || '0');
 

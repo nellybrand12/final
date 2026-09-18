@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { validateSession } from '$lib/server/auth';
 
-export const load: LayoutServerLoad = async ({ cookies, url }) => {
+export const load: LayoutServerLoad = async ({ cookies, url, locals }) => {
   // Allow the login page to load without a valid session
   if (url.pathname === '/admin/login') {
     return { user: null };
@@ -13,10 +13,17 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     throw redirect(303, '/admin/login');
   }
 
-  const user = await validateSession(sessionId);
+  const user = locals.adminUser || (await validateSession(sessionId));
   if (!user) {
     cookies.delete('admin_session', { path: '/' });
     throw redirect(303, '/admin/login');
+  }
+
+  // Server-side redirect for staff hitting blocked routes directly
+  if (user.role === 'staff') {
+    if (url.pathname.startsWith('/admin/content') || url.pathname.startsWith('/admin/admins')) {
+      throw redirect(303, '/admin');
+    }
   }
 
   return {

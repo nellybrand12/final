@@ -8,11 +8,11 @@ import { validateSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = async ({ parent }) => {
   const layoutData = await parent();
-  if (!layoutData.user || layoutData.user.role !== 'super-admin') {
+  if (!layoutData.user || layoutData.user.role !== 'super_admin') {
     throw redirect(303, '/admin');
   }
 
-  let admins: Array<{ id: number; username: string; role: string; createdAt: Date }> = [];
+  let admins: Array<{ id: number; username: string; role: 'super_admin' | 'staff'; isActive: boolean; createdAt: Date }> = [];
 
   if (db && isDbHealthy) {
     try {
@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ parent }) => {
           id: schema.adminUsers.id,
           username: schema.adminUsers.username,
           role: schema.adminUsers.role,
+          isActive: schema.adminUsers.isActive,
           createdAt: schema.adminUsers.createdAt
         })
         .from(schema.adminUsers)
@@ -41,7 +42,7 @@ export const actions: Actions = {
       return fail(401, { error: 'Non authentifié' });
     }
     const currentUser = await validateSession(sessionId);
-    if (!currentUser || currentUser.role !== 'super-admin') {
+    if (!currentUser || currentUser.role !== 'super_admin') {
       return fail(403, { error: 'Action réservée au Super Administrateur' });
     }
 
@@ -76,13 +77,75 @@ export const actions: Actions = {
       await db.insert(schema.adminUsers).values({
         username,
         passwordHash,
-        role: 'admin'
+        role: 'staff',
+        isActive: true
       });
 
-      return { success: true, message: `Compte administrateur "${username}" créé avec succès.` };
+      return { success: true, message: `Compte personnel "${username}" (Staff) créé avec succès.` };
     } catch (e) {
       console.error('Error creating admin account:', e);
-      return fail(500, { error: 'Erreur lors de la création du compte administrateur', username });
+      return fail(500, { error: 'Erreur lors de la création du compte', username });
+    }
+  },
+
+  toggleStatus: async ({ request, cookies }) => {
+    const sessionId = cookies.get('admin_session');
+    if (!sessionId) {
+      return fail(401, { error: 'Non authentifié' });
+    }
+    const currentUser = await validateSession(sessionId);
+    if (!currentUser || currentUser.role !== 'super_admin') {
+      return fail(403, { error: 'Action réservée au Super Administrateur' });
+    }
+
+    const data = await request.formData();
+    const id = Number(data.get('id'));
+
+    if (!id || isNaN(id)) {
+      return fail(400, { error: 'Identifiant invalide' });
+    }
+
+    if (!db || !isDbHealthy) {
+      return fail(500, { error: 'Base de données non disponible' });
+    }
+
+    try {
+      const [targetUser] = await db
+        .select()
+        .from(schema.adminUsers)
+        .where(eq(schema.adminUsers.id, id));
+
+      if (!targetUser) {
+        return fail(404, { error: 'Compte introuvable' });
+      }
+
+      if (targetUser.id === currentUser.id) {
+        return fail(400, { error: 'Impossible de modifier le statut de votre propre compte' });
+      }
+
+      if (targetUser.role === 'super_admin') {
+        return fail(400, { error: 'Impossible de désactiver un compte Super Administrateur' });
+      }
+
+      const newStatus = !targetUser.isActive;
+
+      await db
+        .update(schema.adminUsers)
+        .set({ isActive: newStatus })
+        .where(eq(schema.adminUsers.id, id));
+
+      // If deactivated, revoke all active sessions immediately
+      if (!newStatus) {
+        await db.delete(schema.adminSessions).where(eq(schema.adminSessions.userId, id));
+      }
+
+      return {
+        success: true,
+        message: `Le compte "${targetUser.username}" a été ${newStatus ? 'réactivé' : 'désactivé'}.`
+      };
+    } catch (e) {
+      console.error('Error toggling admin status:', e);
+      return fail(500, { error: 'Erreur lors de la mise à jour du statut du compte' });
     }
   },
 
@@ -92,7 +155,7 @@ export const actions: Actions = {
       return fail(401, { error: 'Non authentifié' });
     }
     const currentUser = await validateSession(sessionId);
-    if (!currentUser || currentUser.role !== 'super-admin') {
+    if (!currentUser || currentUser.role !== 'super_admin') {
       return fail(403, { error: 'Action réservée au Super Administrateur' });
     }
 
@@ -118,14 +181,14 @@ export const actions: Actions = {
         return fail(404, { error: 'Compte introuvable' });
       }
 
-      if (targetUser.role === 'super-admin' || targetUser.id === currentUser.id) {
-        return fail(400, { error: 'Impossible de supprimer un compte Super Administrateur' });
+      if (targetUser.role === 'super_admin' || targetUser.id === currentUser.id) {
+        return fail(400, { error: 'Impossible de supprimer un compte Super Administrateur ou votre propre compte' });
       }
 
       await db.delete(schema.adminSessions).where(eq(schema.adminSessions.userId, id));
       await db.delete(schema.adminUsers).where(eq(schema.adminUsers.id, id));
 
-      return { success: true, message: `Compte "${targetUser.username}" supprimé.` };
+      return { success: true, message: `Compte "${targetUser.username}" supprimé définitivement.` };
     } catch (e) {
       console.error('Error deleting admin account:', e);
       return fail(500, { error: 'Erreur lors de la suppression du compte' });

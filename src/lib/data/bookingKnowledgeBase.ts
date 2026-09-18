@@ -40,7 +40,9 @@ export interface DynamicRoomSummary {
   nameFr?: string | null;
   nameEn?: string | null;
   category?: string | null;
-  pricePerNight: string | number;
+  pricePerNight?: string | number | null;
+  pricePerSeat?: string | number | null;
+  capacity?: number | null;
   maxGuests?: number | null;
   type?: string | null;
   status?: string | null;
@@ -56,8 +58,8 @@ export function formatLiveRoomPricing(rooms: DynamicRoomSummary[], locale: 'fr' 
 
   const lines = roomList.map(r => {
     const name = locale === 'fr' ? (r.nameFr || r.name) : (r.nameEn || r.name);
-    const priceNum = typeof r.pricePerNight === 'string' ? parseFloat(r.pricePerNight) : r.pricePerNight;
-    const formattedPrice = isNaN(priceNum) ? r.pricePerNight : priceNum.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US');
+    const priceNum = typeof r.pricePerNight === 'string' ? parseFloat(r.pricePerNight) : (r.pricePerNight || 0);
+    const formattedPrice = isNaN(priceNum) ? (r.pricePerNight || '0') : priceNum.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US');
     const guestLabel = r.maxGuests
       ? (locale === 'fr' ? ` (jusqu’à ${r.maxGuests} ${r.maxGuests > 1 ? 'personnes' : 'personne'})` : ` (up to ${r.maxGuests} ${r.maxGuests > 1 ? 'guests' : 'guest'})`)
       : '';
@@ -81,12 +83,13 @@ export function formatLiveHallPricing(halls: DynamicRoomSummary[], locale: 'fr' 
 
   const lines = hallList.map(h => {
     const name = locale === 'fr' ? (h.nameFr || h.name) : (h.nameEn || h.name);
-    const priceNum = typeof h.pricePerNight === 'string' ? parseFloat(h.pricePerNight) : h.pricePerNight;
-    const formattedPrice = isNaN(priceNum) ? h.pricePerNight : priceNum.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US');
-    const guestLabel = h.maxGuests
-      ? (locale === 'fr' ? ` (jusqu’à ${h.maxGuests} ${h.maxGuests > 1 ? 'convives' : 'convive'})` : ` (up to ${h.maxGuests} ${h.maxGuests > 1 ? 'guests' : 'guest'})`)
+    const priceNum = typeof h.pricePerSeat === 'string' ? parseFloat(h.pricePerSeat) : (h.pricePerSeat || 0);
+    const formattedPrice = isNaN(priceNum) ? (h.pricePerSeat || '0') : priceNum.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US');
+    const cap = h.capacity || h.maxGuests;
+    const guestLabel = cap
+      ? (locale === 'fr' ? ` (capacité jusqu’à ${cap} ${cap > 1 ? 'places' : 'place'})` : ` (capacity up to ${cap} ${cap > 1 ? 'seats' : 'seat'})`)
       : '';
-    return `• ${name} : ${formattedPrice} FCFA / ${locale === 'fr' ? 'jour' : 'day'}${guestLabel}`;
+    return `• ${name} : ${formattedPrice} FCFA / ${locale === 'fr' ? 'place' : 'seat'}${guestLabel}`;
   });
 
   if (locale === 'fr') {

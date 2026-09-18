@@ -1,9 +1,23 @@
 import type { PageServerLoad, Actions } from './$types';
 import { db, isDbHealthy } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
+import { validateSession } from '$lib/server/auth';
 
-export const load: PageServerLoad = async () => {
+async function ensureSuperAdmin(cookies: any, locals: any) {
+  const user = locals?.adminUser || (cookies.get('admin_session') ? await validateSession(cookies.get('admin_session')) : null);
+  if (!user || user.role !== 'super_admin') {
+    return null;
+  }
+  return user;
+}
+
+export const load: PageServerLoad = async ({ parent }) => {
+  const { user } = await parent();
+  if (!user || user.role !== 'super_admin') {
+    throw redirect(303, '/admin');
+  }
+
   let settings: Record<string, string> = {
     contact_email: '',
     contact_phone: '',
@@ -35,7 +49,10 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-  default: async ({ request }) => {
+  default: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const settingsObj: Record<string, string> = {};
     

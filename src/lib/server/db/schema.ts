@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, serial, timestamp, integer, decimal, jsonb, date, varchar, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, serial, timestamp, integer, decimal, jsonb, date, varchar, boolean, pgEnum } from 'drizzle-orm/pg-core';
+
+export const adminRoleEnum = pgEnum('admin_role', ['super_admin', 'staff']);
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -20,7 +22,9 @@ export const rooms = pgTable('rooms', {
   descriptionFr: text('description_fr').notNull().default(''),
   descriptionEn: text('description_en').notNull().default(''),
   category: varchar('category', { length: 50 }).default('suite').notNull(), // 'suite', 'deluxe', 'executive'
-  pricePerNight: decimal('price_per_night', { precision: 10, scale: 2 }).notNull(),
+  pricePerNight: decimal('price_per_night', { precision: 10, scale: 2 }),
+  pricePerSeat: decimal('price_per_seat', { precision: 10, scale: 2 }),
+  capacity: integer('capacity'), // Seating capacity for event halls
   maxGuests: integer('max_guests').notNull(),
   sizeSqM: integer('size_sqm').default(65),
   bedType: varchar('bed_type', { length: 100 }).default('King Size'),
@@ -107,7 +111,8 @@ export const adminUsers = pgTable('admin_users', {
   id: serial('id').primaryKey(),
   username: varchar('username', { length: 100 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  role: varchar('role', { length: 50 }).default('admin').notNull(),
+  role: adminRoleEnum('role').default('staff').notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -149,6 +154,8 @@ export type BookingExtension = typeof bookingExtensions.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type Faq = typeof faqs.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
+export type NewAdminUser = typeof adminUsers.$inferInsert;
+export type AdminRole = 'super_admin' | 'staff';
 export type AdminSession = typeof adminSessions.$inferSelect;
 export type Service = typeof services.$inferSelect;
 export type SiteSetting = typeof siteSettings.$inferSelect;

@@ -19,16 +19,49 @@
 
   function exportCSV() {
     if (!filteredPayments || filteredPayments.length === 0) return;
-    const headers = ['Date', 'ID Transaction', 'Methode', 'Ref Reservation', 'Client', 'Montant (FCFA)', 'Statut'];
-    const rows = filteredPayments.map((p: any) => [
-      p.createdAt ? new Date(p.createdAt).toISOString() : '',
-      `"${(p.paymentTransactionId || '').replace(/"/g, '""')}"`,
-      `"${(p.paymentMethod || '').replace(/"/g, '""')}"`,
-      `"${(p.bookingReference || '').replace(/"/g, '""')}"`,
-      `"${(p.guestName || '').replace(/"/g, '""')}"`,
-      p.totalPrice || '',
-      p.status || ''
-    ]);
+    const headers = [
+      'Date', 
+      'ID Transaction', 
+      'Methode', 
+      'Ref Reservation', 
+      'Client', 
+      'Hébergement / Salle',
+      'Détail Tarification', 
+      'Montant (FCFA)', 
+      'Statut'
+    ];
+    const rows = filteredPayments.map((p: any) => {
+      let nights = 1;
+      if (p.checkInDate && p.checkOutDate) {
+        const start = new Date(p.checkInDate);
+        const end = new Date(p.checkOutDate);
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        nights = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      }
+
+      let detailTarification = '';
+      if (p.roomType === 'hall') {
+        const guestsCount = p.guestsCount || 1;
+        const pricePerSeat = p.pricePerSeat ? parseFloat(p.pricePerSeat) : (p.totalPrice ? parseFloat(p.totalPrice) / (guestsCount * nights) : 0);
+        detailTarification = `${guestsCount} places x ${pricePerSeat} FCFA x ${nights} jour(s)`;
+      } else {
+        const pricePerNight = p.pricePerNight ? parseFloat(p.pricePerNight) : (p.totalPrice ? parseFloat(p.totalPrice) / nights : 0);
+        const roomsCount = p.guestsCount && p.guestsCount > 1 ? `${p.guestsCount} ch. x ` : '';
+        detailTarification = `${roomsCount}${pricePerNight} FCFA x ${nights} nuit(s)`;
+      }
+
+      return [
+        p.createdAt ? new Date(p.createdAt).toISOString() : '',
+        `"${(p.paymentTransactionId || '').replace(/"/g, '""')}"`,
+        `"${(p.paymentMethod || '').replace(/"/g, '""')}"`,
+        `"${(p.bookingReference || '').replace(/"/g, '""')}"`,
+        `"${(p.guestName || '').replace(/"/g, '""')}"`,
+        `"${(p.roomName || '').replace(/"/g, '""')}"`,
+        `"${detailTarification.replace(/"/g, '""')}"`,
+        p.totalPrice || '',
+        p.status || ''
+      ];
+    });
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e: any[]) => e.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');

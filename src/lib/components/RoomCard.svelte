@@ -40,7 +40,7 @@
         <span class="material-symbols-outlined text-sm text-muted-gold dark:text-muted-gold-dark">{room.type === 'hall' ? 'celebration' : 'group'}</span>
         <span>
           {#if room.type === 'hall'}
-            {i18n.locale === 'fr' ? `Jusqu'à ${room.maxGuests} convives` : `Up to ${room.maxGuests} attendees`}
+            {i18n.t.showcase.upToAttendees.replace('{n}', (room.capacity || 0).toString())}
           {:else}
             {i18n.t.showcase.upTo} {room.maxGuests} {i18n.t.showcase.guests}
           {/if}
@@ -58,7 +58,7 @@
         </span>
         {#if room.type === 'hall'}
           <span class="text-[9px] font-label-caps px-2 py-0.5 bg-muted-gold/15 dark:bg-muted-gold/20 text-muted-gold dark:text-muted-gold-dark border border-muted-gold/30 dark:border-muted-gold/40 rounded-full font-bold">
-            {i18n.locale === 'fr' ? 'Salle Événementielle' : 'Event Venue'}
+            {i18n.t.showcase.venueBadge}
           </span>
         {/if}
       </div>
@@ -92,10 +92,19 @@
         <div>
           <span class="text-[10px] font-label-caps text-on-surface-variant dark:text-neutral-400 block">{i18n.t.showcase.from}</span>
           <div class="flex items-baseline gap-1">
-            <span class="font-headline text-lg sm:text-xl font-bold text-deep-charcoal dark:text-neutral-100">
-              {formatPrice(room.pricePerNight)}
-            </span>
-            <span class="text-[10px] font-label-caps text-muted-gold">{i18n.t.showcase.perNight}</span>
+            {#if room.type === 'hall'}
+              <span class="font-headline text-lg sm:text-xl font-bold text-deep-charcoal dark:text-neutral-100">
+                {formatPrice(room.pricePerSeat || 0)}
+              </span>
+              <span class="text-[10px] font-label-caps text-muted-gold">
+                {i18n.t.showcase.perSeat}
+              </span>
+            {:else}
+              <span class="font-headline text-lg sm:text-xl font-bold text-deep-charcoal dark:text-neutral-100">
+                {formatPrice(room.pricePerNight || 0)}
+              </span>
+              <span class="text-[10px] font-label-caps text-muted-gold">{i18n.t.showcase.perNight}</span>
+            {/if}
           </div>
         </div>
       {/if}

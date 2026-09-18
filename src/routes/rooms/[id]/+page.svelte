@@ -19,8 +19,10 @@
     return [data.room.imageUrl, ...additionals];
   });
 
-  function formatPrice(amount: string | number) {
+  function formatPrice(amount: string | number | null | undefined) {
+    if (!amount) return '0';
     const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(num)) return '0';
     return new Intl.NumberFormat(i18n.locale === 'fr' ? 'fr-FR' : 'en-US').format(num);
   }
 
@@ -34,10 +36,22 @@
     return diffDays > 0 ? diffDays : 1;
   });
 
+  let attendeesCount = $state(50);
+  $effect(() => {
+    if (data.room.type === 'hall' && data.room.capacity) {
+      attendeesCount = Math.min(50, data.room.capacity);
+    }
+  });
+
   const totalPrice = $derived.by(() => {
-    const base = parseFloat(data.room.pricePerNight);
-    const count = data.room.type === 'hall' ? 1 : roomsCount;
-    return base * nights * count;
+    if (data.room.type === 'hall') {
+      const pricePerSeat = parseFloat(data.room.pricePerSeat || '0');
+      const count = Math.max(1, attendeesCount || 1);
+      return pricePerSeat * count * nights;
+    } else {
+      const base = parseFloat(data.room.pricePerNight || '0');
+      return base * nights * roomsCount;
+    }
   });
 
   const roomTitle = $derived(
@@ -86,9 +100,19 @@
         <span class="text-[11px] font-label-caps text-on-surface-variant dark:text-neutral-400 block">{i18n.t.roomDetails.fromPrice}</span>
         <div class="flex items-baseline md:justify-end gap-1.5">
           <span class="font-headline text-2xl sm:text-3xl font-bold text-deep-charcoal dark:text-neutral-100">
-            {formatPrice(data.room.pricePerNight)}
+            {#if data.room.type === 'hall'}
+              {formatPrice(data.room.pricePerSeat)}
+            {:else}
+              {formatPrice(data.room.pricePerNight)}
+            {/if}
           </span>
-          <span class="text-xs font-label-caps text-muted-gold">FCFA</span>
+          <span class="text-xs font-label-caps text-muted-gold">
+            {#if data.room.type === 'hall'}
+              FCFA / place
+            {:else}
+              FCFA {i18n.t.reserve.perNight}
+            {/if}
+          </span>
         </div>
         <span class="text-[10px] text-on-surface-variant dark:text-neutral-400">{i18n.t.roomDetails.servicesTax} {i18n.t.reserve.includedLabel.toLowerCase()}</span>
       </div>
@@ -136,12 +160,16 @@
           <div class="flex flex-col items-center gap-1">
             <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-lg">{data.room.type === 'hall' ? 'event_seat' : 'bed'}</span>
             <span class="font-headline text-sm sm:text-base text-deep-charcoal dark:text-neutral-100 font-bold">{data.room.bedType || (data.room.type === 'hall' ? 'Modulable' : 'Standard')}</span>
-            <span class="text-[9px] font-label-caps text-on-surface-variant dark:text-neutral-400">{data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Configuration' : 'Layout') : i18n.t.roomDetails.bed}</span>
+            <span class="text-[9px] font-label-caps text-on-surface-variant dark:text-neutral-400">{data.room.type === 'hall' ? i18n.t.roomDetails.configuration : i18n.t.roomDetails.bed}</span>
           </div>
           <div class="flex flex-col items-center gap-1">
             <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-lg">{data.room.type === 'hall' ? 'celebration' : 'group'}</span>
             <span class="font-headline text-sm sm:text-base text-deep-charcoal dark:text-neutral-100 font-bold">
-              {data.room.maxGuests} {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'convives' : 'attendees') : i18n.t.showcase.guests}
+              {#if data.room.type === 'hall'}
+                {data.room.capacity} {i18n.t.reserve.seatUnit}
+              {:else}
+                {data.room.maxGuests} {i18n.t.showcase.guests}
+              {/if}
             </span>
             <span class="text-[9px] font-label-caps text-on-surface-variant dark:text-neutral-400">{i18n.t.roomDetails.capacity}</span>
           </div>
@@ -149,25 +177,21 @@
             <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-lg">{data.room.type === 'hall' ? 'mic' : 'visibility'}</span>
             <span class="font-headline text-sm sm:text-base text-deep-charcoal dark:text-neutral-100 font-bold">
               {#if data.room.type === 'hall'}
-                {i18n.locale === 'fr' ? 'Régie & Son' : 'AV & Sound'}
+                {i18n.t.roomDetails.avSound}
               {:else}
-                {i18n.locale === 'fr' ? 'Panoramique' : 'Panoramic'}
+                {i18n.t.roomDetails.panoramic}
               {/if}
             </span>
-            <span class="text-[9px] font-label-caps text-on-surface-variant dark:text-neutral-400">{data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Équipement' : 'Equipments') : i18n.t.roomDetails.view}</span>
+            <span class="text-[9px] font-label-caps text-on-surface-variant dark:text-neutral-400">{data.room.type === 'hall' ? i18n.t.roomDetails.equipment : i18n.t.roomDetails.view}</span>
           </div>
         </div>
 
         <!-- Description -->
         <div>
-          <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 mb-3">{i18n.locale === 'fr' ? "L'Art de Vivre Madadjeu" : 'The Madadjeu Art of Living'}</h2>
+          <h2 class="font-headline text-xl sm:text-2xl text-deep-charcoal dark:text-neutral-100 mb-3">{i18n.t.roomDetails.artOfLiving}</h2>
           <div class="prose max-w-none text-on-surface-variant dark:text-neutral-300 font-body-md text-xs sm:text-sm leading-relaxed space-y-3">
             <p>{i18n.locale === 'fr' ? data.room.descriptionFr : data.room.descriptionEn}</p>
-            <p>
-              {i18n.locale === 'fr'
-                ? 'Conçue pour garantir une intimité absolue, cette demeure met à votre disposition des équipements technologiques de pointe, une insonorisation acoustique optimale et un service d’étage sur mesure face à la Garde Présidentielle.'
-                : 'Conceived to guarantee supreme privacy, this residence offers cutting-edge amenities, high-grade acoustic insulation, and tailored in-room service opposite the Presidential Guard.'}
-            </p>
+            <p>{i18n.t.roomDetails.artOfLivingDesc}</p>
           </div>
         </div>
 
@@ -188,23 +212,23 @@
 
         <!-- Policies -->
         <div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant/30 space-y-3">
-          <h4 class="font-label-caps text-[11px] text-muted-gold tracking-widest uppercase">{i18n.locale === 'fr' ? 'Informations Pratiques' : 'Practical Information'}</h4>
+          <h4 class="font-label-caps text-[11px] text-muted-gold tracking-widest uppercase">{i18n.t.roomDetails.practicalInfo}</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-on-surface-variant">
             <div>
               <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckIn}</strong>
-              {i18n.locale === 'fr' ? 'À partir de 14h00 (Arrivée anticipée sur demande)' : 'From 2:00 PM (Early check-in upon request)'}
+              {i18n.t.roomDetails.earlyCheckIn}
             </div>
             <div>
               <strong class="text-deep-charcoal block mb-0.5">{i18n.t.reserve.summaryCheckOut}</strong>
-              {i18n.locale === 'fr' ? 'Jusqu’à 12h00 (Départ tardif selon disponibilité)' : 'Until 12:00 PM (Late check-out subject to availability)'}
+              {i18n.t.roomDetails.lateCheckOut}
             </div>
             <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Petit-déjeuner :' : 'Breakfast:'}</strong>
-              {i18n.locale === 'fr' ? 'Servi de 06h30 à 10h30 au restaurant ou en appartement' : 'Served from 6:30 AM to 10:30 AM in restaurant or room'}
+              <strong class="text-deep-charcoal block mb-0.5">{i18n.t.roomDetails.breakfastLabel}</strong>
+              {i18n.t.roomDetails.breakfastDesc}
             </div>
             <div>
-              <strong class="text-deep-charcoal block mb-0.5">{i18n.locale === 'fr' ? 'Annulation :' : 'Cancellation:'}</strong>
-              {i18n.locale === 'fr' ? 'Gratuite jusqu’à 48h avant la date d’arrivée' : 'Free up to 48 hours before arrival date'}
+              <strong class="text-deep-charcoal block mb-0.5">{i18n.t.roomDetails.cancellationLabel}</strong>
+              {i18n.t.roomDetails.cancellationDesc}
             </div>
           </div>
         </div>
@@ -226,7 +250,7 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label for="checkIn" class="block font-label-caps text-[10px] text-on-surface-variant dark:text-neutral-400 mb-1.5">
-                  {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de début' : 'Start Date') : i18n.t.roomDetails.checkIn}
+                  {data.room.type === 'hall' ? i18n.t.roomDetails.startDate : i18n.t.roomDetails.checkIn}
                 </label>
                 <DatePicker
                   id="checkIn"
@@ -239,7 +263,7 @@
               </div>
               <div>
                 <label for="checkOut" class="block font-label-caps text-[10px] text-on-surface-variant dark:text-neutral-400 mb-1.5">
-                  {data.room.type === 'hall' ? (i18n.locale === 'fr' ? 'Date de fin' : 'End Date') : i18n.t.roomDetails.checkOut}
+                  {data.room.type === 'hall' ? i18n.t.roomDetails.endDate : i18n.t.roomDetails.checkOut}
                 </label>
                 <DatePicker
                   id="checkOut"
@@ -272,10 +296,30 @@
                 </select>
               </div>
             {:else}
-              <input type="hidden" name="rooms" value="1" />
-              <div class="p-3 bg-surface-container dark:bg-neutral-800 rounded-xl border border-outline-variant/30 dark:border-neutral-700 text-xs text-on-surface-variant dark:text-neutral-300 flex items-center gap-2">
-                <span class="material-symbols-outlined text-muted-gold dark:text-muted-gold-dark text-base">celebration</span>
-                <span>{i18n.locale === 'fr' ? 'Réservation exclusive de la salle avec régie technique' : 'Exclusive venue rental with technical AV'}</span>
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="attendeesCount" class="block font-label-caps text-[10px] text-on-surface-variant dark:text-neutral-400">
+                    {i18n.t.roomDetails.attendeesCount}
+                  </label>
+                  <span class="text-[10px] font-semibold text-muted-gold dark:text-muted-gold-dark">
+                    {i18n.t.roomDetails.maxCapacitySeats.replace('{n}', (data.room.capacity || 0).toString())}
+                  </span>
+                </div>
+                <input
+                  id="attendeesCount"
+                  name="guests"
+                  type="number"
+                  bind:value={attendeesCount}
+                  min="1"
+                  max={data.room.capacity}
+                  oninput={() => {
+                    if (data.room.capacity && attendeesCount > data.room.capacity) {
+                      attendeesCount = data.room.capacity;
+                    }
+                  }}
+                  class="w-full bg-surface-container dark:bg-neutral-800 border border-outline-variant/50 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-deep-charcoal dark:text-neutral-100 focus:outline-none focus:border-muted-gold dark:focus:border-muted-gold-dark font-body-md"
+                  required
+                />
               </div>
             {/if}
 
@@ -283,7 +327,7 @@
             <div class="bg-surface-container dark:bg-neutral-800/60 p-4 rounded-xl space-y-2 text-xs text-on-surface-variant dark:text-neutral-400 mt-2">
               <div class="flex justify-between">
                 {#if data.room.type === 'hall'}
-                  <span>{formatPrice(data.room.pricePerNight)} FCFA × {nights} {nights > 1 ? (i18n.locale === 'fr' ? 'jours' : 'days') : (i18n.locale === 'fr' ? 'jour' : 'day')}</span>
+                  <span>{formatPrice(data.room.pricePerSeat)} FCFA × {attendeesCount || 1} {i18n.t.reserve.seatUnit} {nights > 1 ? `× ${nights} ${i18n.t.reserve.dayUnitSingle}.` : ''}</span>
                 {:else}
                   <span>{formatPrice(data.room.pricePerNight)} FCFA × {nights} × {roomsCount}</span>
                 {/if}
@@ -318,9 +362,10 @@
 
     <!-- Other Lodgings Suggestions -->
     {#if data.otherRooms.length > 0}
+      {@const colsClass = data.otherRooms.length === 1 ? 'grid-cols-1' : data.otherRooms.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}
       <div class="mt-24 pt-16 border-t border-outline-variant/30 dark:border-neutral-800">
-        <h3 class="font-headline text-2xl sm:text-3xl text-deep-charcoal dark:text-neutral-100 mb-8">{i18n.locale === 'fr' ? 'Découvrez également nos autres logements' : 'Explore Our Other Accommodations'}</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h3 class="font-headline text-2xl sm:text-3xl text-deep-charcoal dark:text-neutral-100 mb-8">{i18n.t.roomDetails.exploreOther}</h3>
+        <div class="grid {colsClass} gap-6 w-full">
           {#each data.otherRooms as otherRoom}
             <RoomCard room={otherRoom} showPrice={true} />
           {/each}

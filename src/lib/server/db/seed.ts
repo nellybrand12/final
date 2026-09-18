@@ -133,14 +133,14 @@ export async function seedDatabase() {
       await dbInstance.insert(schema.adminUsers).values({
         username: "Leblanc",
         passwordHash,
-        role: "super-admin",
+        role: "super_admin",
       });
       console.log("[Seed] Admin user seeded.");
     } else {
-      if (existingAdmin[0].role !== "super-admin") {
+      if (existingAdmin[0].role !== "super_admin") {
         await dbInstance
           .update(schema.adminUsers)
-          .set({ role: "super-admin" })
+          .set({ role: "super_admin" })
           .where(eq(schema.adminUsers.username, "Leblanc"));
       }
       console.log("[Seed] Admin user already exists.");

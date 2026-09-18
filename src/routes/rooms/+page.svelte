@@ -12,13 +12,13 @@
   const filteredRooms = $derived(
     data.rooms.filter(room => {
       const matchCat = selectedCategory === 'all' || 
-        (selectedCategory === 'prestige' && room.category.toLowerCase().includes('prestige')) ||
-        (selectedCategory === 'junior' && room.category.toLowerCase().includes('junior')) ||
-        (selectedCategory === 'chambre' && room.category.toLowerCase().includes('chambre')) ||
+        (selectedCategory === 'appartement' && (room.type === 'apartment' || room.category.toLowerCase().includes('appartement'))) ||
+        (selectedCategory === 'chambre' && (room.type === 'room' && !room.category.toLowerCase().includes('appartement'))) ||
         (selectedCategory === 'hall' && (room.type === 'hall' || room.category.toLowerCase().includes('salle') || room.category.toLowerCase().includes('salon')));
       
+      const effectiveCap = room.type === 'hall' ? room.capacity : room.maxGuests;
       const matchGuests = selectedGuests === 'all' || 
-        room.maxGuests >= parseInt(selectedGuests);
+        (effectiveCap || 0) >= parseInt(selectedGuests);
 
       return matchCat && matchGuests;
     })
@@ -89,7 +89,7 @@
           onclick={() => (selectedCategory = 'hall')}
           class="px-3.5 py-1.5 font-label-caps text-[10px] sm:text-[11px] transition-all cursor-pointer {selectedCategory === 'hall' ? 'bg-deep-charcoal dark:bg-neutral-100 text-soft-cream dark:text-neutral-950 shadow-sm font-bold' : 'bg-surface-container-lowest dark:bg-neutral-800 text-on-surface dark:text-neutral-300 hover:bg-surface-variant dark:hover:bg-neutral-700'}"
         >
-          {i18n.locale === 'fr' ? "Salles d'Événements" : 'Event Halls'}
+          {i18n.t.rooms.hallsCat}
         </button>
       </div>
 
@@ -104,8 +104,8 @@
           <option value="2">{i18n.t.rooms.twoPlusGuests}</option>
           <option value="3">{i18n.t.rooms.threePlusGuests}</option>
           <option value="4">{i18n.t.rooms.fourPlusGuests}</option>
-          <option value="20">20+ {i18n.locale === 'fr' ? 'pers. (Salles)' : 'pers. (Halls)'}</option>
-          <option value="50">50+ {i18n.locale === 'fr' ? 'pers. (Grandes salles)' : 'pers. (Grand halls)'}</option>
+          <option value="20">{i18n.t.rooms.capacityHalls20}</option>
+          <option value="50">{i18n.t.rooms.capacityHalls50}</option>
         </select>
       </div>
     </div>

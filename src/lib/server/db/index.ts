@@ -105,13 +105,15 @@ export const INITIAL_ROOMS: schema.Room[] = [
     name: 'Appartement Supérieur',
     nameFr: 'Appartement Supérieur',
     nameEn: 'Superior Apartment',
-    type: 'room',
+    type: 'apartment',
     taglineFr: 'Le summum du raffinement résidentiel et de la distinction',
     taglineEn: 'The pinnacle of residential refinement and distinction',
     descriptionFr: 'Un vaste appartement résidentiel de 120m² alliant boiseries artisanales, marbre noble et vue imprenable sur Yaoundé. Doté d’un grand salon indépendant, cuisine équipée, lit King-Size haut de gamme et salle de bain avec baignoire balnéo.',
     descriptionEn: 'A spacious 120sqm residential apartment blending handcrafted woodwork, noble marble, and breathtaking views of Yaoundé. Featuring a large separate living room, fully equipped kitchen, premium King-size bed, and bathroom with whirlpool bath.',
     category: 'Appartement de Prestige',
     pricePerNight: '150000.00',
+    pricePerSeat: null,
+    capacity: null,
     maxGuests: 4,
     sizeSqM: 120,
     bedType: 'King Size Impérial',
@@ -136,13 +138,15 @@ export const INITIAL_ROOMS: schema.Room[] = [
     name: 'Appartement Classique',
     nameFr: 'Appartement Classique',
     nameEn: 'Classic Apartment',
-    type: 'room',
+    type: 'apartment',
     taglineFr: 'Élégance moderne, espace séjour et confort résidentiel complet',
     taglineEn: 'Modern elegance, living space and complete residential comfort',
     descriptionFr: 'Un appartement chaleureux de 75m² conçu pour les séjours prolongés et professionnels. Espace salon, kitchenette équipée, bureau ergonomique et salle de bain avec douche à l’italienne.',
     descriptionEn: 'A warm 75sqm apartment designed for extended and business stays. Living area, equipped kitchenette, ergonomic desk and bathroom with walk-in shower.',
     category: 'Appartement Exécutif',
     pricePerNight: '95000.00',
+    pricePerSeat: null,
+    capacity: null,
     maxGuests: 3,
     sizeSqM: 75,
     bedType: 'King Size Confort',
@@ -173,6 +177,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     descriptionEn: 'Well-appointed 45sqm room decorated in soothing tones with artisanal woodwork. Private balcony, reading lounge area and high quality Queen-size bed.',
     category: 'Chambre Confort',
     pricePerNight: '65000.00',
+    pricePerSeat: null,
+    capacity: null,
     maxGuests: 2,
     sizeSqM: 45,
     bedType: 'Queen Size Luxe',
@@ -202,6 +208,8 @@ export const INITIAL_ROOMS: schema.Room[] = [
     descriptionEn: 'Elegant 35sqm room offering all essential comfort: premium bedding, superior soundproofing, modern bathroom and connected desk.',
     category: 'Chambre Standard',
     pricePerNight: '50000.00',
+    pricePerSeat: null,
+    capacity: null,
     maxGuests: 2,
     sizeSqM: 35,
     bedType: 'Double Confort Supérieur',
@@ -230,7 +238,9 @@ export const INITIAL_ROOMS: schema.Room[] = [
     descriptionFr: 'Vaste salle polyvalente climatisée de 350m² dotée d’une scène d’honneur, régie audiovisuelle complète, sonorisation surround, éclairage scénique modulable et cuisine relais traiteur dédiée. Idéale pour célébrations privées, banquets et séminaires d’envergure.',
     descriptionEn: 'Spacious 350sqm air-conditioned multipurpose hall featuring a stage of honor, complete AV control booth, surround sound system, modular stage lighting, and a dedicated catering staging kitchen. Ideal for private celebrations, banquets, and major corporate seminars.',
     category: 'Salle de Réception',
-    pricePerNight: '350000.00',
+    pricePerNight: null,
+    pricePerSeat: '15000.00',
+    capacity: 250,
     maxGuests: 250,
     sizeSqM: 350,
     bedType: 'Configuration Modulable',
@@ -270,7 +280,9 @@ export const INITIAL_ROOMS: schema.Room[] = [
     descriptionFr: 'Salon exécutif insonorisé de 100m² avec vue panoramique, écran interactif 4K 85", équipement de visioconférence professionnel, table de conférence en marbre noble et acajou, salon lounge privatif et service pause-café haut de gamme.',
     descriptionEn: 'A soundproofed 100sqm executive lounge with panoramic views, 85" 4K interactive screen, professional video conferencing setup, noble marble and mahogany boardroom table, private lounge area, and tailored catering service.',
     category: 'Salon de Conférence',
-    pricePerNight: '180000.00',
+    pricePerNight: null,
+    pricePerSeat: '7000.00',
+    capacity: 50,
     maxGuests: 50,
     sizeSqM: 100,
     bedType: 'Configuration Conférence & Lounge',
@@ -369,7 +381,7 @@ const inMemoryMessages: schema.ContactMessage[] = [];
 export async function getAllRooms(options?: { includeArchived?: boolean }): Promise<schema.Room[]> {
   if (dbInstance && isDbHealthy) {
     try {
-      const result = await dbInstance.select().from(schema.rooms);
+      const result = await dbInstance.select().from(schema.rooms).orderBy(asc(schema.rooms.id));
       if (result.length > 0) {
         if (!options?.includeArchived) {
           return result.filter(r => r.status !== 'archived' && r.status !== 'inactive');
@@ -380,10 +392,11 @@ export async function getAllRooms(options?: { includeArchived?: boolean }): Prom
       handleDbError('getAllRooms', e);
     }
   }
+  const fallback = [...INITIAL_ROOMS].sort((a, b) => a.id - b.id);
   if (!options?.includeArchived) {
-    return INITIAL_ROOMS.filter(r => r.status !== 'archived' && r.status !== 'inactive');
+    return fallback.filter(r => r.status !== 'archived' && r.status !== 'inactive');
   }
-  return INITIAL_ROOMS;
+  return fallback;
 }
 
 export async function getRoomBySlug(slug: string): Promise<schema.Room | null> {
@@ -497,10 +510,11 @@ export async function checkAvailability(roomId: number, checkInDate: string, che
     const extension = pendingExtensions.find(e => e.bookingId === booking.id);
     const effectiveCheckOut = extension ? extension.requestedCheckoutDate : booking.checkOutDate;
     const interval = getBookingInterval(booking.checkInDate, effectiveCheckOut, room.type);
+    const bookingUnits = room.type === 'hall' ? 1 : booking.guestsCount;
     
     if (interval.start.getTime() < requestedInterval.end.getTime() && interval.end.getTime() > requestedInterval.start.getTime()) {
-      events.push({ time: interval.start.getTime(), type: 'start', count: booking.guestsCount });
-      events.push({ time: interval.end.getTime(), type: 'end', count: booking.guestsCount });
+      events.push({ time: interval.start.getTime(), type: 'start', count: bookingUnits });
+      events.push({ time: interval.end.getTime(), type: 'end', count: bookingUnits });
     }
   }
   
@@ -532,9 +546,10 @@ export async function checkAvailability(roomId: number, checkInDate: string, che
     const extension = pendingExtensions.find(e => e.bookingId === booking.id);
     const effectiveCheckOut = extension ? extension.requestedCheckoutDate : booking.checkOutDate;
     const interval = getBookingInterval(booking.checkInDate, effectiveCheckOut, room.type);
+    const bookingUnits = room.type === 'hall' ? 1 : booking.guestsCount;
     
     if (interval.start.getTime() <= requestedInterval.start.getTime() && interval.end.getTime() > requestedInterval.start.getTime()) {
-      concurrentAtStart += booking.guestsCount;
+      concurrentAtStart += bookingUnits;
     }
   }
   if (concurrentAtStart > maxConcurrent) {

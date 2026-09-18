@@ -365,7 +365,7 @@ export async function generateBookingReceiptPdf(
     color: colorMuted,
   });
   const durationText = isHall
-    ? `${nights} jour(s) - 1 salle`
+    ? `${nights} jour(s) - ${booking.guestsCount || 1} place(s)`
     : `${nights} nuit(s) - ${roomsCount} chambre(s)`;
   page.drawText(cleanPdfText(durationText), {
     x: rightBoxX + 85,
@@ -422,7 +422,7 @@ export async function generateBookingReceiptPdf(
 
   y -= rowHeight;
 
-  // Row 1: Room rate
+  // Row 1: Room rate / Hall seat rate
   page.drawRectangle({
     x: tableX,
     y: y - rowHeight,
@@ -433,13 +433,24 @@ export async function generateBookingReceiptPdf(
     borderWidth: 0.5,
   });
 
-  const unitRate = room?.pricePerNight
-    ? parseFloat(room.pricePerNight)
-    : parseFloat(booking.totalPrice) / (nights * roomsCount);
+  const unitRate = isHall
+    ? (room?.pricePerSeat ? parseFloat(room.pricePerSeat) : parseFloat(booking.totalPrice) / (nights * (booking.guestsCount || 1)))
+    : (room?.pricePerNight ? parseFloat(room.pricePerNight) : parseFloat(booking.totalPrice) / (nights * roomsCount));
+
+  const designation = isHall
+    ? `${room?.name || "Salle d'Evenements"} - ${booking.guestsCount || 1} places x ${nights} jour(s)`
+    : `${room?.name || "Hebergement"} - ${nights} nuit(s) x ${roomsCount} ch.`;
+
+  const qteText = isHall
+    ? `${(booking.guestsCount || 1) * nights}`
+    : `${nights * roomsCount}`;
+
+  const unitRateText = isHall
+    ? `${formatPriceFCFA(unitRate)} FCFA/pl.`
+    : `${formatPriceFCFA(unitRate)} FCFA`;
+
   page.drawText(
-    cleanPdfText(
-      `${room?.name || "Hebergement"} - ${nights} nuit(s) x ${roomsCount} ch.`,
-    ),
+    cleanPdfText(designation),
     {
       x: tableX + 12,
       y: y - 16,
@@ -448,14 +459,14 @@ export async function generateBookingReceiptPdf(
       color: colorCharcoal,
     },
   );
-  page.drawText(cleanPdfText(`${nights * roomsCount}`), {
+  page.drawText(cleanPdfText(qteText), {
     x: tableX + 275,
     y: y - 16,
     size: 8,
     font: fontRegular,
     color: colorCharcoal,
   });
-  page.drawText(cleanPdfText(`${formatPriceFCFA(unitRate)} FCFA`), {
+  page.drawText(cleanPdfText(unitRateText), {
     x: tableX + 325,
     y: y - 16,
     size: 8,

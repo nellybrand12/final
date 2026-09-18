@@ -9,6 +9,7 @@
     RotateCcw, 
     Building2, 
     BedDouble, 
+    Home,
     Users, 
     Maximize2, 
     Calendar,
@@ -22,17 +23,18 @@
   
   let rooms = $derived(data.rooms || []);
 
-  let activeTab = $state<'all' | 'room' | 'hall' | 'archived'>('all');
+  let activeTab = $state<'all' | 'room' | 'apartment' | 'hall' | 'archived'>('all');
   let isCreateOpen = $state(false);
 
-  // New room/hall form state
-  let newType = $state<'room' | 'hall'>('hall');
+  // New room/apartment/hall form state
+  let newType = $state<'room' | 'apartment' | 'hall'>('hall');
 
   let filteredRooms = $derived(
     rooms.filter((r: any) => {
       if (activeTab === 'all') return r.status !== 'archived';
       if (activeTab === 'archived') return r.status === 'archived';
       if (activeTab === 'room') return r.type === 'room' && r.status !== 'archived';
+      if (activeTab === 'apartment') return r.type === 'apartment' && r.status !== 'archived';
       if (activeTab === 'hall') return r.type === 'hall' && r.status !== 'archived';
       return true;
     })
@@ -41,6 +43,7 @@
   let counts = $derived({
     all: rooms.filter((r: any) => r.status !== 'archived').length,
     room: rooms.filter((r: any) => r.type === 'room' && r.status !== 'archived').length,
+    apartment: rooms.filter((r: any) => r.type === 'apartment' && r.status !== 'archived').length,
     hall: rooms.filter((r: any) => r.type === 'hall' && r.status !== 'archived').length,
     archived: rooms.filter((r: any) => r.status === 'archived').length
   });
@@ -111,8 +114,18 @@
       class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'room' ? 'bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 shadow-sm' : 'text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 hover:bg-gray-100 dark:hover:bg-neutral-800'}"
     >
       <BedDouble size={16} />
-      <span>Chambres & Suites</span>
+      <span>Chambres</span>
       <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'room' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300'} font-semibold">{counts.room}</span>
+    </button>
+
+    <button 
+      type="button"
+      onclick={() => activeTab = 'apartment'}
+      class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap {activeTab === 'apartment' ? 'bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 shadow-sm' : 'text-gray-600 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-neutral-100 hover:bg-gray-100 dark:hover:bg-neutral-800'}"
+    >
+      <Home size={16} />
+      <span>Appartements</span>
+      <span class="text-xs px-2 py-0.5 rounded-full {activeTab === 'apartment' ? 'bg-white/20 dark:bg-black/20 text-white dark:text-neutral-900' : 'bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-neutral-300'} font-semibold">{counts.apartment}</span>
     </button>
 
     <button 
@@ -154,6 +167,11 @@
                 <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-burgundy/10 text-brand-burgundy dark:text-brand-burgundy-dark border border-brand-burgundy/20 dark:border-brand-burgundy-dark/30">
                   <Building2 size={12} />
                   Salle d'Événements
+                </span>
+              {:else if room.type === 'apartment'}
+                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900/50">
+                  <Home size={12} />
+                  Appartement Résidentiel
                 </span>
               {:else}
                 <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50">
@@ -214,7 +232,11 @@
                 </div>
               {/if}
               <div class="absolute bottom-2 right-2 bg-black/75 backdrop-blur-md text-white px-2.5 py-1 rounded text-xs font-bold font-mono">
-                {formatPrice(room.pricePerNight)} FCFA {room.type === 'hall' ? '/ évént' : '/ nuit'}
+                {#if room.type === 'hall'}
+                  {formatPrice(room.pricePerSeat)} FCFA / place
+                {:else}
+                  {formatPrice(room.pricePerNight)} FCFA / nuit
+                {/if}
               </div>
             </div>
 
@@ -235,7 +257,11 @@
             <div class="grid grid-cols-2 gap-2 text-xs bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-lg border border-gray-100 dark:border-neutral-800 text-gray-600 dark:text-neutral-400">
               <div class="flex items-center gap-1.5">
                 <Users size={14} class="text-gray-400 dark:text-neutral-500" />
-                <span>Max: <strong class="text-gray-900 dark:text-neutral-200">{room.maxGuests} {room.type === 'hall' ? 'convives' : 'pers.'}</strong></span>
+                {#if room.type === 'hall'}
+                  <span>Capacité: <strong class="text-gray-900 dark:text-neutral-200">{room.capacity} places</strong></span>
+                {:else}
+                  <span>Max: <strong class="text-gray-900 dark:text-neutral-200">{room.maxGuests} pers.</strong></span>
+                {/if}
               </div>
               <div class="flex items-center gap-1.5">
                 <Maximize2 size={14} class="text-gray-400 dark:text-neutral-500" />
@@ -272,6 +298,7 @@
                   class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 font-medium"
                 >
                   <option value="room" selected={room.type === 'room'}>Chambre / Suite</option>
+                  <option value="apartment" selected={room.type === 'apartment'}>Appartement Résidentiel</option>
                   <option value="hall" selected={room.type === 'hall'}>Salle d'Événements</option>
                 </select>
               </div>
@@ -294,18 +321,33 @@
               </div>
 
               <div>
-                <label for="pricePerNight_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
-                  {room.type === 'hall' ? 'Tarif par Événement' : 'Tarif par Nuit'} (FCFA)
-                </label>
-                <input 
-                  type="number" 
-                  name="pricePerNight" 
-                  id="pricePerNight_{room.id}" 
-                  value={room.pricePerNight} 
-                  step="1000"
-                  required
-                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
-                />
+                {#if room.type === 'hall'}
+                  <label for="pricePerSeat_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                    Tarif par Place (FCFA) *
+                  </label>
+                  <input 
+                    type="number" 
+                    name="pricePerSeat" 
+                    id="pricePerSeat_{room.id}" 
+                    value={room.pricePerSeat} 
+                    step="500"
+                    required
+                    class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+                  />
+                {:else}
+                  <label for="pricePerNight_{room.id}" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                    Tarif par Nuit (FCFA) *
+                  </label>
+                  <input 
+                    type="number" 
+                    name="pricePerNight" 
+                    id="pricePerNight_{room.id}" 
+                    value={room.pricePerNight} 
+                    step="1000"
+                    required
+                    class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+                  />
+                {/if}
               </div>
 
               <div>
@@ -327,17 +369,32 @@
             <!-- Row 3: Dimensions, Capacity & Inventory -->
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 p-3 bg-gray-50 dark:bg-neutral-800/40 rounded-xl border border-gray-200 dark:border-neutral-800">
               <div>
-                <label for="maxGuests_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
-                  {room.type === 'hall' ? 'Convives max' : 'Hôtes max'}
-                </label>
-                <input 
-                  type="number" 
-                  name="maxGuests" 
-                  id="maxGuests_{room.id}" 
-                  value={room.maxGuests} 
-                  min="1"
-                  class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
-                />
+                {#if room.type === 'hall'}
+                  <label for="capacity_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
+                    Capacité assise *
+                  </label>
+                  <input 
+                    type="number" 
+                    name="capacity" 
+                    id="capacity_{room.id}" 
+                    value={room.capacity} 
+                    min="1"
+                    required
+                    class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
+                  />
+                {:else}
+                  <label for="maxGuests_{room.id}" class="block text-xs font-medium text-gray-600 dark:text-neutral-400 mb-1">
+                    Hôtes max
+                  </label>
+                  <input 
+                    type="number" 
+                    name="maxGuests" 
+                    id="maxGuests_{room.id}" 
+                    value={room.maxGuests} 
+                    min="1"
+                    class="block w-full border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm py-1.5 px-2.5 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100" 
+                  />
+                {/if}
               </div>
 
               <div>
@@ -537,23 +594,32 @@
           <span class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
             Type d'espace
           </span>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button 
               type="button" 
               onclick={() => newType = 'hall'}
-              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'hall' ? 'border-brand-burgundy dark:border-brand-burgundy-dark bg-brand-burgundy/5 dark:bg-brand-burgundy-dark/10 text-brand-burgundy dark:text-brand-burgundy-dark ring-2 ring-brand-burgundy/20 dark:ring-brand-burgundy-dark/30' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
+              class="flex items-center justify-center gap-2 p-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all {newType === 'hall' ? 'border-brand-burgundy dark:border-brand-burgundy-dark bg-brand-burgundy/5 dark:bg-brand-burgundy-dark/10 text-brand-burgundy dark:text-brand-burgundy-dark ring-2 ring-brand-burgundy/20 dark:ring-brand-burgundy-dark/30' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
             >
-              <Building2 size={18} />
-              <span>Salle d'Événements & Banquets</span>
+              <Building2 size={16} />
+              <span>Salle d'Événements</span>
             </button>
 
             <button 
               type="button" 
               onclick={() => newType = 'room'}
-              class="flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all {newType === 'room' ? 'border-deep-charcoal dark:border-neutral-400 bg-deep-charcoal/5 dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 ring-2 ring-deep-charcoal/20' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
+              class="flex items-center justify-center gap-2 p-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all {newType === 'room' ? 'border-deep-charcoal dark:border-neutral-400 bg-deep-charcoal/5 dark:bg-neutral-800 text-deep-charcoal dark:text-neutral-100 ring-2 ring-deep-charcoal/20' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
             >
-              <BedDouble size={18} />
-              <span>Chambre d'Hôtel ou Suite</span>
+              <BedDouble size={16} />
+              <span>Chambre d'Hôtel</span>
+            </button>
+
+            <button 
+              type="button" 
+              onclick={() => newType = 'apartment'}
+              class="flex items-center justify-center gap-2 p-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all {newType === 'apartment' ? 'border-purple-600 dark:border-purple-400 bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-300 ring-2 ring-purple-600/20' : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600 text-gray-600 dark:text-neutral-400'}"
+            >
+              <Home size={16} />
+              <span>Appartement</span>
             </button>
           </div>
           <input type="hidden" name="type" value={newType} />
@@ -570,7 +636,7 @@
               name="name" 
               id="create_name" 
               required 
-              placeholder={newType === 'hall' ? 'Ex: Grand Salon Majestueux' : 'Ex: Suite Royale Panoramique'}
+              placeholder={newType === 'hall' ? 'Ex: Grand Salon Majestueux' : (newType === 'apartment' ? 'Ex: Appartement Haussmannien' : 'Ex: Suite Royale Panoramique')}
               class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
@@ -584,8 +650,8 @@
               name="category" 
               id="create_category" 
               required 
-              placeholder={newType === 'hall' ? 'Ex: Salle de Réception & Banquet' : 'Ex: Suite Exécutive'}
-              value={newType === 'hall' ? 'Salle de Réception' : 'Suite Luxe'}
+              placeholder={newType === 'hall' ? 'Ex: Salle de Réception & Banquet' : (newType === 'apartment' ? 'Ex: Appartement Résidentiel' : 'Ex: Suite Exécutive')}
+              value={newType === 'hall' ? 'Salle de Réception' : (newType === 'apartment' ? 'Appartement' : 'Suite Luxe')}
               class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
             />
           </div>
@@ -593,48 +659,94 @@
 
         <!-- Pricing & Capacity -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label for="create_price" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
-              {newType === 'hall' ? 'Tarif par Événement' : 'Tarif par Nuit'} (FCFA) *
-            </label>
-            <input 
-              type="number" 
-              name="pricePerNight" 
-              id="create_price" 
-              required 
-              step="1000"
-              placeholder={newType === 'hall' ? '250000' : '85000'}
-              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
-            />
-          </div>
+          {#if newType === 'hall'}
+            <div>
+              <label for="create_price_seat" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Tarif par Place (FCFA) *
+              </label>
+              <input 
+                type="number" 
+                name="pricePerSeat" 
+                id="create_price_seat" 
+                required 
+                step="500"
+                placeholder="15000"
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
 
-          <div>
-            <label for="create_guests" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
-              Capacité max ({newType === 'hall' ? 'convives' : 'hôtes'})
-            </label>
-            <input 
-              type="number" 
-              name="maxGuests" 
-              id="create_guests" 
-              min="1"
-              value={newType === 'hall' ? 150 : 2}
-              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
-            />
-          </div>
+            <div>
+              <label for="create_capacity" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Capacité assise (places) *
+              </label>
+              <input 
+                type="number" 
+                name="capacity" 
+                id="create_capacity" 
+                min="1"
+                required
+                value="150"
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
 
-          <div>
-            <label for="create_size" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
-              Superficie (m²)
-            </label>
-            <input 
-              type="number" 
-              name="sizeSqM" 
-              id="create_size" 
-              min="10"
-              value={newType === 'hall' ? 200 : 55}
-              class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
-            />
-          </div>
+            <div>
+              <label for="create_size" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Superficie (m²)
+              </label>
+              <input 
+                type="number" 
+                name="sizeSqM" 
+                id="create_size" 
+                min="10"
+                value="200"
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
+          {:else}
+            <div>
+              <label for="create_price" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Tarif par Nuit (FCFA) *
+              </label>
+              <input 
+                type="number" 
+                name="pricePerNight" 
+                id="create_price" 
+                required 
+                step="1000"
+                placeholder={newType === 'apartment' ? '120000' : '85000'}
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm font-semibold bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
+
+            <div>
+              <label for="create_guests" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Capacité max (hôtes)
+              </label>
+              <input 
+                type="number" 
+                name="maxGuests" 
+                id="create_guests" 
+                min="1"
+                value="2"
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
+
+            <div>
+              <label for="create_size" class="block text-xs font-semibold text-gray-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
+                Superficie (m²)
+              </label>
+              <input 
+                type="number" 
+                name="sizeSqM" 
+                id="create_size" 
+                min="10"
+                value={newType === 'apartment' ? 90 : 55}
+                class="block w-full border border-gray-300 dark:border-neutral-700 rounded-lg shadow-sm py-2 px-3 text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-neutral-100 focus:ring-2 focus:ring-deep-charcoal dark:focus:ring-brand-burgundy-dark focus:border-deep-charcoal dark:focus:border-brand-burgundy-dark" 
+              />
+            </div>
+          {/if}
         </div>
 
         <!-- Disposition / Bedding & Inventory -->

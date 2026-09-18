@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ShieldCheck, Plus, Trash2, AlertCircle, CheckCircle2, UserCheck, Shield, KeyRound, Eye, EyeOff } from 'lucide-svelte';
+  import { ShieldCheck, Plus, Trash2, AlertCircle, CheckCircle2, UserCheck, UserX, Shield, KeyRound, Eye, EyeOff } from 'lucide-svelte';
 
   let { data, form } = $props();
 
@@ -27,10 +27,10 @@
     <div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-neutral-100 tracking-tight flex items-center gap-2.5">
         <ShieldCheck class="text-[#661f23] dark:text-[#bc9347]" size={28} />
-        <span>Gestion des Administrateurs</span>
+        <span>Gestion des Utilisateurs Admin</span>
       </h1>
       <p class="text-sm text-gray-500 dark:text-neutral-400 mt-1">
-        Créez et administrez les accès du personnel au tableau de bord.
+        Créez, activez ou désactivez les accès du personnel au tableau de bord.
       </p>
     </div>
     <button
@@ -38,7 +38,7 @@
       class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2.5 rounded-md text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2 self-start sm:self-auto cursor-pointer shadow-sm"
     >
       <Plus size={16} />
-      <span>{showCreateModal ? 'Fermer le formulaire' : 'Nouvel Administrateur'}</span>
+      <span>{showCreateModal ? 'Fermer le formulaire' : 'Nouvel Utilisateur Staff'}</span>
     </button>
   </div>
 
@@ -46,8 +46,10 @@
   <div class="bg-surface-container dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800 p-4 rounded-xl text-xs text-on-surface-variant dark:text-neutral-300 leading-relaxed flex items-start gap-3">
     <Shield size={18} class="text-[#661f23] dark:text-[#bc9347] shrink-0 mt-0.5" />
     <div>
-      <strong class="font-semibold text-deep-charcoal dark:text-neutral-100 block mb-0.5">Hiérarchie des Rôles :</strong>
-      Tous les administrateurs bénéficient d'un accès identique aux réservations, chambres, services, paiements et paramètres du site. Seul le <strong class="text-[#661f23] dark:text-[#bc9347]">Super Administrateur</strong> a l'autorisation de créer ou gérer les comptes d’accès.
+      <strong class="font-semibold text-deep-charcoal dark:text-neutral-100 block mb-0.5">Hiérarchie des Rôles (RBAC) :</strong>
+      <span>
+        Le <strong class="text-[#661f23] dark:text-[#bc9347]">Super Administrateur</strong> a un accès total (gestion des contenus, paramètres, réservations, utilisateurs). Le rôle <strong class="text-amber-700 dark:text-amber-400">Personnel (Staff)</strong> est restreint à l'usage de réception : consultation des indicateurs et paiements, et saisie manuelle de nouvelles réservations au comptoir.
+      </span>
     </div>
   </div>
 
@@ -135,7 +137,7 @@
         <!-- Role preview note -->
         <div class="bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-lg border border-gray-200/60 dark:border-neutral-700/60 text-xs text-gray-600 dark:text-neutral-300 flex items-center gap-2">
           <KeyRound size={16} class="text-[#bc9347] shrink-0" />
-          <span>Rôle attribué : <strong>Administrateur standard</strong> (accès opérationnel complet, sans droit de gestion d'utilisateurs).</span>
+          <span>Rôle attribué : <strong>Personnel (Staff)</strong> (restreint au comptoir et à la réception : tableau de bord, paiements et création walk-in uniquement).</span>
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
@@ -174,6 +176,7 @@
           <tr class="bg-gray-50 dark:bg-neutral-800/60 border-b border-gray-200 dark:border-neutral-800 text-xs font-semibold text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
             <th class="py-3.5 px-6">Utilisateur</th>
             <th class="py-3.5 px-6">Rôle & Permissions</th>
+            <th class="py-3.5 px-6">Statut</th>
             <th class="py-3.5 px-6">Créé le</th>
             <th class="py-3.5 px-6 text-right">Actions</th>
           </tr>
@@ -184,7 +187,7 @@
               <!-- Username -->
               <td class="py-4 px-6 font-medium text-gray-900 dark:text-neutral-100">
                 <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-full {admin.role === 'super-admin' ? 'bg-[#661f23] text-white dark:bg-[#bc9347] dark:text-neutral-950' : 'bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-200'} flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                  <div class="w-9 h-9 rounded-full {admin.role === 'super_admin' ? 'bg-[#661f23] text-white dark:bg-[#bc9347] dark:text-neutral-950' : 'bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-neutral-200'} flex items-center justify-center font-bold text-xs uppercase shrink-0">
                     {admin.username[0] || 'A'}
                   </div>
                   <div>
@@ -196,18 +199,33 @@
 
               <!-- Role & Permissions -->
               <td class="py-4 px-6">
-                {#if admin.role === 'super-admin'}
+                {#if admin.role === 'super_admin'}
                   <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#661f23]/10 text-[#661f23] dark:bg-[#bc9347]/20 dark:text-[#bc9347] border border-[#661f23]/20 dark:border-[#bc9347]/30">
                     <ShieldCheck size={14} />
                     <span>Super Administrateur</span>
                   </div>
                   <span class="block text-[11px] text-gray-500 dark:text-neutral-400 mt-1">Accès total + gestion des comptes</span>
                 {:else}
-                  <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300 border border-gray-200 dark:border-neutral-700">
+                  <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/50">
                     <UserCheck size={14} />
-                    <span>Administrateur</span>
+                    <span>Personnel (Staff)</span>
                   </div>
-                  <span class="block text-[11px] text-gray-500 dark:text-neutral-400 mt-1">Accès opérationnel complet</span>
+                  <span class="block text-[11px] text-gray-500 dark:text-neutral-400 mt-1">Réception : tableau de bord & walk-in</span>
+                {/if}
+              </td>
+
+              <!-- Statut -->
+              <td class="py-4 px-6">
+                {#if admin.isActive}
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>
+                    <span>Actif</span>
+                  </span>
+                {:else}
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600 dark:bg-rose-400"></span>
+                    <span>Désactivé</span>
+                  </span>
                 {/if}
               </td>
 
@@ -218,31 +236,68 @@
 
               <!-- Actions -->
               <td class="py-4 px-6 text-right">
-                {#if admin.role === 'super-admin'}
+                {#if admin.role === 'super_admin'}
                   <span class="text-xs text-gray-400 dark:text-neutral-600 italic">Protégé</span>
                 {:else}
-                  <form method="POST" action="?/deleteAdmin" class="inline-block">
-                    <input type="hidden" name="id" value={admin.id} />
-                    <button
-                      type="submit"
-                      onclick={(e) => {
-                        if (!confirm(`Confirmez-vous la suppression du compte administrateur "${admin.username}" ?`)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      class="text-red-600 dark:text-rose-400 hover:text-red-800 dark:hover:text-rose-300 bg-red-50 dark:bg-rose-950/40 hover:bg-red-100 p-2 rounded-md transition-colors cursor-pointer border border-red-200/60 dark:border-rose-900/40"
-                      title="Supprimer ce compte"
-                      aria-label="Supprimer ce compte"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </form>
+                  <div class="flex items-center justify-end gap-2">
+                    <!-- Toggle Active/Deactivate Form -->
+                    <form method="POST" action="?/toggleStatus" class="inline-block">
+                      <input type="hidden" name="id" value={admin.id} />
+                      {#if admin.isActive}
+                        <button
+                          type="submit"
+                          onclick={(e) => {
+                            if (!confirm(`Désactiver l'accès pour "${admin.username}" ? L'utilisateur ne pourra plus se connecter et ses sessions seront révoquées.`)) {
+                              e.preventDefault();
+                            }
+                          }}
+                          class="text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 p-2 rounded-md transition-colors cursor-pointer border border-amber-200/60 dark:border-amber-900/40"
+                          title="Désactiver ce compte"
+                          aria-label="Désactiver ce compte"
+                        >
+                          <UserX size={16} />
+                        </button>
+                      {:else}
+                        <button
+                          type="submit"
+                          onclick={(e) => {
+                            if (!confirm(`Réactiver l'accès pour "${admin.username}" ?`)) {
+                              e.preventDefault();
+                            }
+                          }}
+                          class="text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 p-2 rounded-md transition-colors cursor-pointer border border-emerald-200/60 dark:border-emerald-900/40"
+                          title="Réactiver ce compte"
+                          aria-label="Réactiver ce compte"
+                        >
+                          <UserCheck size={16} />
+                        </button>
+                      {/if}
+                    </form>
+
+                    <!-- Delete Admin Form -->
+                    <form method="POST" action="?/deleteAdmin" class="inline-block">
+                      <input type="hidden" name="id" value={admin.id} />
+                      <button
+                        type="submit"
+                        onclick={(e) => {
+                          if (!confirm(`Confirmez-vous la suppression DÉFINITIVE du compte "${admin.username}" ?`)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        class="text-red-600 dark:text-rose-400 hover:text-red-800 dark:hover:text-rose-300 bg-red-50 dark:bg-rose-950/40 hover:bg-red-100 p-2 rounded-md transition-colors cursor-pointer border border-red-200/60 dark:border-rose-900/40"
+                        title="Supprimer ce compte définitivement"
+                        aria-label="Supprimer ce compte"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </form>
+                  </div>
                 {/if}
               </td>
             </tr>
           {:else}
             <tr>
-              <td colspan="4" class="p-8 text-center text-gray-500 dark:text-neutral-400">
+              <td colspan="5" class="p-8 text-center text-gray-500 dark:text-neutral-400">
                 Aucun administrateur trouvé.
               </td>
             </tr>

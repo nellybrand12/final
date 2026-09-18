@@ -2,9 +2,23 @@ import type { PageServerLoad, Actions } from './$types';
 import { db, isDbHealthy } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
+import { validateSession } from '$lib/server/auth';
 
-export const load: PageServerLoad = async () => {
+async function ensureSuperAdmin(cookies: any, locals: any) {
+  const user = locals?.adminUser || (cookies.get('admin_session') ? await validateSession(cookies.get('admin_session')) : null);
+  if (!user || user.role !== 'super_admin') {
+    return null;
+  }
+  return user;
+}
+
+export const load: PageServerLoad = async ({ parent }) => {
+  const { user } = await parent();
+  if (!user || user.role !== 'super_admin') {
+    throw redirect(303, '/admin');
+  }
+
   let services: any[] = [];
 
   if (db && isDbHealthy) {
@@ -19,7 +33,10 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-  createService: async ({ request }) => {
+  createService: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = data.get('id')?.toString() || '';
     if (!id || !db || !isDbHealthy) return fail(400, { error: 'Slug (ID) is required' });
@@ -49,7 +66,10 @@ export const actions: Actions = {
     return { success: true, created: true };
   },
 
-  deleteService: async ({ request }) => {
+  deleteService: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = data.get('id')?.toString();
     if (!id || !db || !isDbHealthy) return fail(400, { error: 'Missing ID' });
@@ -63,7 +83,10 @@ export const actions: Actions = {
     return { success: true, deleted: true };
   },
 
-  updateService: async ({ request }) => {
+  updateService: async ({ request, cookies, locals }) => {
+    const admin = await ensureSuperAdmin(cookies, locals);
+    if (!admin) return fail(403, { error: 'Action réservée au Super Administrateur.' });
+
     const data = await request.formData();
     const id = data.get('id')?.toString();
     

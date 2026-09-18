@@ -4,7 +4,10 @@ import * as schema from '$lib/server/db/schema';
 import { desc, eq, sql, asc } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ url }) => {
+import { validateSession } from '$lib/server/auth';
+
+export const load: PageServerLoad = async ({ url, parent }) => {
+  const { user } = await parent();
   let reservations: any[] = [];
   let rooms: any[] = [];
   
@@ -12,31 +15,34 @@ export const load: PageServerLoad = async ({ url }) => {
 
   if (db && isDbHealthy) {
     try {
-      let query = db.select({
-        id: schema.bookings.id,
-        bookingReference: schema.bookings.bookingReference,
-        guestName: schema.bookings.guestName,
-        guestPhone: schema.bookings.guestPhone,
-        checkInDate: schema.bookings.checkInDate,
-        checkOutDate: schema.bookings.checkOutDate,
-        totalPrice: schema.bookings.totalPrice,
-        status: schema.bookings.status,
-        paymentMethod: schema.bookings.paymentMethod,
-        paymentTransactionId: schema.bookings.paymentTransactionId,
-        guestsCount: schema.bookings.guestsCount,
-        roomName: schema.rooms.name,
-        roomType: schema.rooms.type,
-        createdAt: schema.bookings.createdAt
-      })
-      .from(schema.bookings)
-      .leftJoin(schema.rooms, eq(schema.bookings.roomId, schema.rooms.id))
-      .$dynamic();
+      // Only super_admin can view the full reservations list and query bookings
+      if (user?.role === 'super_admin') {
+        let query = db.select({
+          id: schema.bookings.id,
+          bookingReference: schema.bookings.bookingReference,
+          guestName: schema.bookings.guestName,
+          guestPhone: schema.bookings.guestPhone,
+          checkInDate: schema.bookings.checkInDate,
+          checkOutDate: schema.bookings.checkOutDate,
+          totalPrice: schema.bookings.totalPrice,
+          status: schema.bookings.status,
+          paymentMethod: schema.bookings.paymentMethod,
+          paymentTransactionId: schema.bookings.paymentTransactionId,
+          guestsCount: schema.bookings.guestsCount,
+          roomName: schema.rooms.name,
+          roomType: schema.rooms.type,
+          createdAt: schema.bookings.createdAt
+        })
+        .from(schema.bookings)
+        .leftJoin(schema.rooms, eq(schema.bookings.roomId, schema.rooms.id))
+        .$dynamic();
 
-      if (statusFilter && statusFilter !== 'all') {
-        query = query.where(eq(schema.bookings.status, statusFilter as any));
+        if (statusFilter && statusFilter !== 'all') {
+          query = query.where(eq(schema.bookings.status, statusFilter as any));
+        }
+
+        reservations = await query.orderBy(desc(schema.bookings.createdAt));
       }
-
-      reservations = await query.orderBy(desc(schema.bookings.createdAt));
 
       rooms = await db.select({
         id: schema.rooms.id,
@@ -140,13 +146,51 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur lors de la vérification de disponibilité.' });
     }
 
-    // Compute total price (same pricing logic as public booking flow)
+    // Compute total price
     const start = new Date(checkInDate);
     const end = new Date(checkOutDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-    const pricePerNight = parseFloat(room.pricePerNight);
-    const totalPrice = (pricePerNight * diffDays * requestedCount).toFixed(2);
+
+    let totalPrice: string;
+    let bookingGuestsCount: number;
+
+    if (isHall) {
+      if (!room.pricePerSeat || !room.capacity) {
+        return fail(400, { 
+          error: 'Tarif par place ou capacité non configuré pour cette salle.',
+          walkInValues: { guestName, guestPhone, roomIdStr, checkInDate, checkOutDate }
+        });
+      }
+      const attendeesRaw = data.get('guestsCount')?.toString() || data.get('attendeesCount')?.toString() || data.get('roomsCount')?.toString();
+      const attendees = parseInt(attendeesRaw || '0', 10);
+      if (attendees < 1) {
+        return fail(400, { 
+          error: 'Le nombre de convives / places doit être d’au moins 1 personne.',
+          walkInValues: { guestName, guestPhone, roomIdStr, checkInDate, checkOutDate }
+        });
+      }
+      if (attendees > room.capacity) {
+        return fail(400, { 
+          error: `Le nombre de convives (${attendees}) dépasse la capacité maximale de la salle (${room.capacity} places).`,
+          walkInValues: { guestName, guestPhone, roomIdStr, checkInDate, checkOutDate }
+        });
+      }
+      bookingGuestsCount = attendees;
+      const pricePerSeat = parseFloat(room.pricePerSeat);
+      totalPrice = (pricePerSeat * diffDays * attendees).toFixed(2);
+    } else {
+      if (!room.pricePerNight) {
+        return fail(400, { 
+          error: 'Tarif par nuit non configuré pour cet hébergement.',
+          walkInValues: { guestName, guestPhone, roomIdStr, checkInDate, checkOutDate }
+        });
+      }
+      const roomsCount = parseInt(roomsCountStr, 10) || 1;
+      bookingGuestsCount = roomsCount;
+      const pricePerNight = parseFloat(room.pricePerNight);
+      totalPrice = (pricePerNight * diffDays * roomsCount).toFixed(2);
+    }
 
     // Generate unique reference and cash transaction ID
     const randomSuffix = Math.floor(10000 + Math.random() * 90000);
@@ -163,7 +207,7 @@ export const actions: Actions = {
         roomId,
         checkInDate,
         checkOutDate,
-        guestsCount: requestedCount,
+        guestsCount: bookingGuestsCount,
         specialRequests,
         eventType: isHall ? eventType : null,
         totalPrice,
@@ -186,38 +230,51 @@ export const actions: Actions = {
     }
   },
 
-  updateStatus: async ({ request }) => {
+  updateStatus: async ({ request, cookies, locals }) => {
+    const sessionId = cookies.get('admin_session');
+    const user = locals.adminUser || (sessionId ? await validateSession(sessionId) : null);
+    if (!user || user.role !== 'super_admin') {
+      return fail(403, { error: 'Action réservée au Super Administrateur.' });
+    }
+
     const data = await request.formData();
     const idStr = data.get('id')?.toString();
     const status = data.get('status')?.toString();
 
-    if (!idStr || !status) return fail(400, { error: 'Missing data' });
+    if (!idStr || !status) return fail(400, { error: 'Données manquantes' });
     const id = parseInt(idStr);
 
     if (db && isDbHealthy) {
       try {
         const [booking] = await db.select().from(schema.bookings).where(eq(schema.bookings.id, id));
-        if (!booking) return fail(404, { error: 'Booking not found' });
+        if (!booking) return fail(404, { error: 'Réservation introuvable' });
 
         if (['pending', 'confirmed', 'cancelled', 'completed'].includes(status)) {
            await updateBookingStatus(booking.bookingReference, status as any);
         }
+        return { success: true };
       } catch (e) {
         console.error('Error updating status:', e);
-        return fail(500, { error: 'Database error' });
+        return fail(500, { error: 'Erreur base de données' });
       }
     }
   },
 
-  delete: async ({ request }) => {
+  delete: async ({ request, cookies, locals }) => {
+    const sessionId = cookies.get('admin_session');
+    const user = locals.adminUser || (sessionId ? await validateSession(sessionId) : null);
+    if (!user || user.role !== 'super_admin') {
+      return fail(403, { error: 'Action réservée au Super Administrateur.' });
+    }
+
     const data = await request.formData();
     const idStr = data.get('id')?.toString();
-    if (!idStr) return fail(400, { error: 'Missing id' });
+    if (!idStr) return fail(400, { error: 'Identifiant manquant' });
     const id = parseInt(idStr);
     
     const success = await hardDeleteBooking(id);
     if (!success) {
-      return fail(500, { error: 'Failed to delete booking' });
+      return fail(500, { error: 'Échec de la suppression de la réservation' });
     }
     return { success: true };
   }

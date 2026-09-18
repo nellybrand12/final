@@ -257,7 +257,7 @@ Nous vous souhaitons un agréable séjour parmi nous.
         };
       }
 
-      console.log(`[Email Service] Confirmation email sent successfully to ${booking.guestEmail} (ID: ${responseData.id})`);
+      console.log(`[Email Service] Confirmation email sent successfully to ${(booking as any).guestEmail || booking.guestName} (ID: ${responseData.id})`);
       return {
         success: true,
         messageId: responseData.id,
@@ -274,7 +274,7 @@ Nous vous souhaitons un agréable séjour parmi nous.
     }
   } else {
     // Graceful simulation mode: logs dispatch details cleanly
-    console.log(`[Email Service] [SIMULATED] Automated confirmation email dispatched to ${booking.guestEmail} for reservation ${booking.bookingReference} with attached PDF receipt (${pdfByteLength} bytes).`);
+    console.log(`[Email Service] [SIMULATED] Automated confirmation email dispatched to ${(booking as any).guestEmail || booking.guestName} for reservation ${booking.bookingReference} with attached PDF receipt (${pdfByteLength} bytes).`);
     return {
       success: true,
       simulated: true,

@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ params }) => {
     getRoomImages(room.id)
   ]);
 
-  const otherRooms = allRooms.filter(r => r.id !== room.id).slice(0, 2);
+  const otherRooms = allRooms.filter(r => r.id !== room.id).slice(0, 3);
 
   return {
     room,

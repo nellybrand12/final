@@ -51,6 +51,16 @@ export async function validateSession(sessionId: string): Promise<schema.AdminUs
       return null;
     }
 
+    // Check if account is active
+    if (!user.isActive) {
+      try {
+        await db.delete(schema.adminSessions).where(eq(schema.adminSessions.id, sessionId));
+      } catch (e) {
+        console.error('[Auth Error] Failed to clean up session for inactive user:', e);
+      }
+      return null;
+    }
+
     // Extend session if valid and less than 12 hours left
     const timeRemaining = session.expiresAt.getTime() - Date.now();
     if (timeRemaining < 12 * 60 * 60 * 1000) {

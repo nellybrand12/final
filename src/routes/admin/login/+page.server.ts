@@ -42,6 +42,10 @@ export const actions: Actions = {
         return fail(401, { error: 'Identifiants invalides', username });
       }
 
+      if (!user.isActive) {
+        return fail(403, { error: 'Ce compte utilisateur a été désactivé. Veuillez contacter un super administrateur.', username });
+      }
+
       const deviceId = request.headers.get('user-agent') || 'unknown';
       const sessionId = await createSession(user.id, deviceId);
 

@@ -7,8 +7,18 @@
   let rooms = $derived(data.rooms || []);
   let searchQuery = $state('');
 
-  // Walk-in Form Visibility (Hidden by default in list view)
+  // Staff role restriction check
+  let isStaff = $derived(data.user?.role === 'staff');
+
+  // Walk-in Form Visibility (Always open for staff, toggleable for super_admin)
   let isFormOpen = $state(false);
+
+  $effect(() => {
+    if (isStaff) {
+      isFormOpen = true;
+      initFormDefaults();
+    }
+  });
 
   // Walk-in Form Fields
   let guestName = $state('');
@@ -17,6 +27,7 @@
   let checkInDate = $state('');
   let checkOutDate = $state('');
   let roomsCount = $state(1);
+  let attendeesCount = $state(50);
   let specialRequests = $state('');
   let eventType = $state('');
 
@@ -56,6 +67,16 @@
 
   const isHall = $derived(selectedRoom?.type === 'hall');
 
+  $effect(() => {
+    if (isHall && selectedRoom?.capacity) {
+      if (attendeesCount > selectedRoom.capacity) {
+        attendeesCount = selectedRoom.capacity;
+      } else if (attendeesCount < 1) {
+        attendeesCount = 1;
+      }
+    }
+  });
+
   // Pricing calculation matching public flow
   const nights = $derived.by(() => {
     if (!checkInDate || !checkOutDate) return 1;
@@ -68,9 +89,15 @@
 
   const totalAmount = $derived.by(() => {
     if (!selectedRoom) return 0;
-    const base = parseFloat(selectedRoom.pricePerNight);
-    const count = isHall ? 1 : roomsCount;
-    return base * nights * count;
+    if (isHall) {
+      if (!selectedRoom.pricePerSeat) return 0;
+      const perSeat = parseFloat(selectedRoom.pricePerSeat);
+      return perSeat * nights * (attendeesCount || 1);
+    } else {
+      if (!selectedRoom.pricePerNight) return 0;
+      const base = parseFloat(selectedRoom.pricePerNight);
+      return base * nights * roomsCount;
+    }
   });
 
   // Reactive dynamic availability check
@@ -187,21 +214,23 @@
       <p class="text-xs text-gray-500 dark:text-neutral-400 mt-1">Gestion des réservations en ligne et enregistrement des clients au comptoir.</p>
     </div>
 
-    <!-- Toggle Walk-in Reservation Form Button (No redirect link) -->
-    <button
-      type="button"
-      onclick={toggleForm}
-      class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-black dark:hover:bg-white transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:shadow active:scale-[0.99]"
-      aria-expanded={isFormOpen}
-    >
-      {#if isFormOpen}
-        <X size={16} />
-        <span>Fermer le formulaire</span>
-      {:else}
-        <Plus size={16} />
-        <span>Ajouter une réservation</span>
-      {/if}
-    </button>
+    {#if !isStaff}
+      <!-- Toggle Walk-in Reservation Form Button (No redirect link) -->
+      <button
+        type="button"
+        onclick={toggleForm}
+        class="bg-deep-charcoal text-white dark:bg-neutral-100 dark:text-neutral-900 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-black dark:hover:bg-white transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:shadow active:scale-[0.99]"
+        aria-expanded={isFormOpen}
+      >
+        {#if isFormOpen}
+          <X size={16} />
+          <span>Fermer le formulaire</span>
+        {:else}
+          <Plus size={16} />
+          <span>Ajouter une réservation</span>
+        {/if}
+      </button>
+    {/if}
   </div>
 
   <!-- Success Notification Banner -->
@@ -365,24 +394,31 @@
                 required
                 class="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#661f23] dark:focus:ring-[#bc9347] focus:border-transparent transition-all cursor-pointer"
               >
-                <optgroup label="Chambres & Suites Résidentielles">
-                  {#each rooms.filter((r: any) => r.type !== 'hall') as room}
+                <optgroup label="Chambres & Suites">
+                  {#each rooms.filter((r: any) => r.type === 'room') as room}
                     <option value={room.id}>
                       {room.name} — {formatCurrency(room.pricePerNight)} / nuit ({room.availableRooms} dispo)
                     </option>
                   {/each}
                 </optgroup>
-                <optgroup label="Salles de Réception & Conférences">
+                <optgroup label="Appartements Résidentiels">
+                  {#each rooms.filter((r: any) => r.type === 'apartment') as apt}
+                    <option value={apt.id}>
+                      {apt.name} — {formatCurrency(apt.pricePerNight)} / nuit ({apt.availableRooms} dispo)
+                    </option>
+                  {/each}
+                </optgroup>
+                <optgroup label="Salles d'Événements & Banquets">
                   {#each rooms.filter((r: any) => r.type === 'hall') as hall}
                     <option value={hall.id}>
-                      {hall.name} — {formatCurrency(hall.pricePerNight)} / jour
+                      {hall.name} — {formatCurrency(hall.pricePerSeat)} / place (Capacité: {hall.capacity} places)
                     </option>
                   {/each}
                 </optgroup>
               </select>
             </div>
 
-            <!-- Number of Rooms (for room/suite) OR Event Type (for halls) -->
+            <!-- Number of Rooms (for room/apartment) OR Attendees & Event Type (for halls) -->
             {#if !isHall}
               <div>
                 <label for="walkInRoomsCount" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1.5">
@@ -400,20 +436,42 @@
                   <option value={4}>4 hébergements</option>
                   <option value={5}>5 hébergements</option>
                 </select>
+                <input type="hidden" name="guestsCount" value={roomsCount} />
               </div>
             {:else}
-              <div>
-                <label for="walkInEventType" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1.5">
-                  Type d'événement / Configuration
-                </label>
-                <input
-                  id="walkInEventType"
-                  type="text"
-                  name="eventType"
-                  bind:value={eventType}
-                  placeholder="Ex: Conférence, Mariage, Séminaire, Gala..."
-                  class="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-[#661f23] dark:focus:ring-[#bc9347] focus:border-transparent transition-all"
-                />
+              <div class="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3">
+                <div>
+                  <label for="walkInAttendees" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1.5">
+                    Places / Convives <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="walkInAttendees"
+                    type="number"
+                    name="guestsCount"
+                    bind:value={attendeesCount}
+                    min="1"
+                    max={selectedRoom?.capacity || 500}
+                    required
+                    placeholder="50"
+                    class="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-[#661f23] dark:focus:ring-[#bc9347] focus:border-transparent transition-all"
+                  />
+                  <p class="text-[10px] text-gray-500 dark:text-neutral-400 mt-1">
+                    Max: {selectedRoom?.capacity || 0} places
+                  </p>
+                </div>
+                <div>
+                  <label for="walkInEventType" class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1.5">
+                    Type d'événement
+                  </label>
+                  <input
+                    id="walkInEventType"
+                    type="text"
+                    name="eventType"
+                    bind:value={eventType}
+                    placeholder="Ex: Conférence, Mariage..."
+                    class="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg text-gray-900 dark:text-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-[#661f23] dark:focus:ring-[#bc9347] focus:border-transparent transition-all"
+                  />
+                </div>
               </div>
             {/if}
           </div>
@@ -521,11 +579,19 @@
                 Calcul automatique du tarif (Plein tarif comptant)
               </span>
               <div class="text-xs text-gray-600 dark:text-neutral-300 mt-1 space-x-1">
-                <span>{formatCurrency(selectedRoom?.pricePerNight || 0)}</span>
-                <span>×</span>
-                <span>{nights} {isHall ? (nights > 1 ? 'jours' : 'jour') : (nights > 1 ? 'nuits' : 'nuit')}</span>
-                {#if !isHall && roomsCount > 1}
-                  <span>× {roomsCount} chambres</span>
+                {#if isHall}
+                  <span>{formatCurrency(selectedRoom?.pricePerSeat || 0)}</span>
+                  <span>×</span>
+                  <span>{attendeesCount} places</span>
+                  <span>×</span>
+                  <span>{nights} {nights > 1 ? 'jours' : 'jour'}</span>
+                {:else}
+                  <span>{formatCurrency(selectedRoom?.pricePerNight || 0)}</span>
+                  <span>×</span>
+                  <span>{nights} {nights > 1 ? 'nuits' : 'nuit'}</span>
+                  {#if roomsCount > 1}
+                    <span>× {roomsCount} chambres</span>
+                  {/if}
                 {/if}
               </div>
             </div>
@@ -548,11 +614,21 @@
             <div class="flex items-center gap-3 shrink-0">
               <button
                 type="button"
-                onclick={toggleForm}
+                onclick={() => {
+                  if (isStaff) {
+                    guestName = '';
+                    guestPhone = '';
+                    specialRequests = '';
+                    eventType = '';
+                    initFormDefaults();
+                  } else {
+                    toggleForm();
+                  }
+                }}
                 disabled={isSubmitting}
                 class="px-4 py-2 text-xs font-medium text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors cursor-pointer"
               >
-                Annuler
+                {isStaff ? 'Réinitialiser' : 'Annuler'}
               </button>
 
               <button
@@ -575,13 +651,14 @@
     </div>
   {/if}
 
-  <!-- RESERVATION LIST TABLE CARD -->
-  <div class="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800 overflow-hidden">
-    <div class="p-4 border-b border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div class="relative w-full sm:max-w-xs">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search size={16} class="text-gray-400 dark:text-neutral-500" />
-        </div>
+  {#if !isStaff}
+    <!-- RESERVATION LIST TABLE CARD -->
+    <div class="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800 overflow-hidden">
+      <div class="p-4 border-b border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="relative w-full sm:max-w-xs">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={16} class="text-gray-400 dark:text-neutral-500" />
+          </div>
         <input
           type="text"
           bind:value={searchQuery}
@@ -730,4 +807,5 @@
       </table>
     </div>
   </div>
+  {/if}
 </div>

@@ -139,7 +139,19 @@ export const actions: Actions = {
       const msPerDay = 1000 * 60 * 60 * 24;
       const extraNights = Math.ceil((requestedCheckOut.getTime() - currentCheckOut.getTime()) / msPerDay);
       const roomCount = room.type === 'hall' ? 1 : booking.guestsCount;
-      const additionalCharge = extraNights * parseFloat(room.pricePerNight) * roomCount;
+
+      let additionalCharge: number;
+      if (room.type === 'hall') {
+        if (!room.pricePerSeat) {
+          return fail(400, { extendError: 'Tarif par place non configuré pour cette salle.' });
+        }
+        additionalCharge = extraNights * parseFloat(room.pricePerSeat) * (booking.guestsCount || 1);
+      } else {
+        if (!room.pricePerNight) {
+          return fail(400, { extendError: 'Tarif par nuit non configuré pour cet hébergement.' });
+        }
+        additionalCharge = extraNights * parseFloat(room.pricePerNight) * booking.guestsCount;
+      }
 
       // 5. Check availability for the extension window
       const { checkAvailability } = await import('$lib/server/db');

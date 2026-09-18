@@ -7,9 +7,43 @@ try {
   // Ignored if not supported in environment
 }
 
-import type { Handle } from '@sveltejs/kit';
+import { redirect, error, type Handle } from '@sveltejs/kit';
+import { validateSession } from '$lib/server/auth';
 
 export const handle: Handle = async ({ event, resolve }) => {
+  const pathname = event.url.pathname;
+
+  // Admin authentication and RBAC guards
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && pathname !== '/admin/logout') {
+    const sessionId = event.cookies.get('admin_session');
+    if (!sessionId) {
+      if (event.request.method === 'GET') {
+        throw redirect(303, '/admin/login');
+      }
+      throw error(401, 'Non authentifié');
+    }
+
+    const user = await validateSession(sessionId);
+    if (!user) {
+      event.cookies.delete('admin_session', { path: '/' });
+      if (event.request.method === 'GET') {
+        throw redirect(303, '/admin/login');
+      }
+      throw error(401, 'Session expirée ou invalide');
+    }
+
+    event.locals.adminUser = user;
+
+    // Staff role restrictions: blocked from content management and admin management
+    const isStaffBlocked = pathname.startsWith('/admin/content') || pathname.startsWith('/admin/admins');
+    if (user.role === 'staff' && isStaffBlocked) {
+      if (event.request.method === 'GET') {
+        throw redirect(303, '/admin');
+      }
+      throw error(403, 'Action non autorisée pour le personnel');
+    }
+  }
+
   const langParam = event.url.searchParams.get('lang');
   const langCookie = event.cookies.get('madadjeu_lang');
   const lang = (langParam === 'en' || (!langParam && langCookie === 'en')) ? 'en' : 'fr';
@@ -23,7 +57,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set('Expires', '0');
 
   // Enforce noindex HTTP header for all admin and confirmation routes
-  if (event.url.pathname.startsWith('/admin') || event.url.pathname.startsWith('/confirmation')) {
+  if (pathname.startsWith('/admin') || pathname.startsWith('/confirmation')) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
 

@@ -81,24 +81,24 @@
           </div>
         </div>
 
-        <div class="px-3">
-          {#if sidebarOpen}
-            <p class="px-2 text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider mb-2">Contenu</p>
-          {/if}
-          <div class="space-y-1">
-            {#each contentItems as item}
-              {@const Icon = item.icon}
-              <a href={item.href} class="flex items-center gap-3 px-3 py-2 rounded-md transition-colors {$page.url.pathname === item.href ? 'bg-gray-100 text-deep-charcoal dark:bg-neutral-800 dark:text-white font-medium' : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 hover:dark:bg-neutral-800/60 hover:text-gray-900 hover:dark:text-white'}">
-                <Icon size={20} class="shrink-0" />
-                {#if sidebarOpen}
-                  <span class="truncate">{item.name}</span>
-                {/if}
-              </a>
-            {/each}
+        {#if data.user?.role === 'super_admin'}
+          <div class="px-3">
+            {#if sidebarOpen}
+              <p class="px-2 text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider mb-2">Contenu</p>
+            {/if}
+            <div class="space-y-1">
+              {#each contentItems as item}
+                {@const Icon = item.icon}
+                <a href={item.href} class="flex items-center gap-3 px-3 py-2 rounded-md transition-colors {$page.url.pathname === item.href ? 'bg-gray-100 text-deep-charcoal dark:bg-neutral-800 dark:text-white font-medium' : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 hover:dark:bg-neutral-800/60 hover:text-gray-900 hover:dark:text-white'}">
+                  <Icon size={20} class="shrink-0" />
+                  {#if sidebarOpen}
+                    <span class="truncate">{item.name}</span>
+                  {/if}
+                </a>
+              {/each}
+            </div>
           </div>
-        </div>
 
-        {#if data.user?.role === 'super-admin'}
           <div class="px-3 mt-6">
             {#if sidebarOpen}
               <p class="px-2 text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider mb-2">Accès & Rôles</p>
@@ -118,17 +118,17 @@
       <!-- User profile bottom -->
       <div class="p-4 border-t border-gray-200 dark:border-neutral-800">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full {data.user?.role === 'super-admin' ? 'bg-[#661f23]/10 text-[#661f23] dark:bg-[#bc9347]/20 dark:text-[#bc9347]' : 'bg-gray-200 dark:bg-neutral-800 text-gray-600 dark:text-neutral-300'} flex items-center justify-center shrink-0">
+          <div class="w-9 h-9 rounded-full {data.user?.role === 'super_admin' ? 'bg-[#661f23]/10 text-[#661f23] dark:bg-[#bc9347]/20 dark:text-[#bc9347]' : 'bg-gray-200 dark:bg-neutral-800 text-gray-600 dark:text-neutral-300'} flex items-center justify-center shrink-0">
             <User size={18} />
           </div>
           {#if sidebarOpen}
             <div class="flex flex-col flex-1 overflow-hidden">
               <div class="flex items-center gap-1.5 truncate">
                 <span class="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">{data.user?.username || 'Admin'}</span>
-                {#if data.user?.role === 'super-admin'}
+                {#if data.user?.role === 'super_admin'}
                   <span class="px-1.5 py-0.2 text-[9px] font-bold bg-[#661f23]/10 text-[#661f23] dark:bg-[#bc9347]/20 dark:text-[#bc9347] rounded uppercase tracking-wider shrink-0">Super</span>
                 {:else}
-                  <span class="px-1.5 py-0.2 text-[9px] font-medium bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-300 rounded uppercase tracking-wider shrink-0">Admin</span>
+                  <span class="px-1.5 py-0.2 text-[9px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 rounded uppercase tracking-wider shrink-0">Staff</span>
                 {/if}
               </div>
               <a href="/admin/logout" class="text-xs text-red-500 hover:text-red-400 truncate">Déconnexion</a>

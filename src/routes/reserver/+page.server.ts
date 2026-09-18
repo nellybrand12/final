@@ -10,9 +10,10 @@ export const load: PageServerLoad = async ({ url }) => {
   const checkOutParam = url.searchParams.get('checkOut') || '';
   const roomsParam = parseInt(url.searchParams.get('rooms') || url.searchParams.get('guests') || '1', 10);
 
+  const defaultRoom = rooms.find(r => r.type === 'room') || rooms.find(r => r.type === 'apartment') || rooms[0];
   const preselectedRoom = requestedRoomId 
-    ? rooms.find(r => r.id === parseInt(requestedRoomId, 10)) || rooms[0]
-    : rooms[0];
+    ? rooms.find(r => r.id === parseInt(requestedRoomId, 10)) || defaultRoom
+    : defaultRoom;
 
   return {
     rooms,
@@ -47,14 +48,40 @@ export const actions: Actions = {
       return fail(400, { error: 'Chambre invalide.' });
     }
 
-    // Calculate nights & total
+    // Calculate nights & total based on accommodation category
     const start = new Date(checkInDate);
     const end = new Date(checkOutDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
-    const roomsCount = parseInt(roomsCountStr, 10) || 1;
-    const pricePerNight = parseFloat(room.pricePerNight);
-    const totalPrice = (pricePerNight * diffDays * roomsCount).toFixed(2);
+
+    let totalPrice = '0.00';
+    let bookingGuestsCount = 1;
+
+    if (room.type === 'hall') {
+      if (!room.pricePerSeat || !room.capacity) {
+        return fail(400, { error: 'Tarif par place ou capacité non configuré pour cette salle.' });
+      }
+      const guestCount = parseInt(data.get('guestsCount')?.toString() || data.get('expectedAttendees')?.toString() || '0', 10);
+      if (guestCount < 1) {
+        return fail(400, { error: 'Le nombre de participants doit être d’au moins 1 personne.' });
+      }
+      if (guestCount > room.capacity) {
+        return fail(400, { 
+          error: `Le nombre de participants (${guestCount}) dépasse la capacité maximale de la salle (${room.capacity} places).` 
+        });
+      }
+      bookingGuestsCount = guestCount;
+      const pricePerSeat = parseFloat(room.pricePerSeat);
+      totalPrice = (pricePerSeat * diffDays * guestCount).toFixed(2);
+    } else {
+      if (!room.pricePerNight) {
+        return fail(400, { error: 'Tarif par nuit non configuré pour cet hébergement.' });
+      }
+      const roomsCount = parseInt(roomsCountStr, 10) || 1;
+      bookingGuestsCount = roomsCount;
+      const pricePerNight = parseFloat(room.pricePerNight);
+      totalPrice = (pricePerNight * diffDays * roomsCount).toFixed(2);
+    }
 
     // Generate reference code
     const randomSuffix = Math.floor(10000 + Math.random() * 90000);
@@ -68,13 +95,13 @@ export const actions: Actions = {
         roomId,
         checkInDate,
         checkOutDate,
-        guestsCount: roomsCount, // Maps rooms count to guestsCount in DB schema
+        guestsCount: bookingGuestsCount,
         specialRequests: specialRequests || null,
         totalPrice,
         paymentMethod: 'hotel',
         paymentTransactionId: null,
         status: 'confirmed',
-        eventType: data.get('eventType')?.toString() || null
+        eventType: room.type === 'hall' ? (data.get('eventType')?.toString() || null) : null
       });
 
       // Send confirmation notification with PDF receipt
