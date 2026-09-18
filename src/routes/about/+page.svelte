@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24">
       <div class="lg:col-span-6 relative aspect-[4/3] overflow-hidden shadow-2xl bg-deep-charcoal dark:bg-neutral-900 border border-outline-variant/30 dark:border-neutral-800">
         <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8PUJUNBR7ctKWpwe_9_QigkskPI6qps06I0FcaVikbAK3Iv_KpQsaIMKz9aEZUxPX284hBmQB0GoP7yFx8m2kt70RZCwoalRY7Y51xULlEPBNh7qZSJvZayX3bs4JMOG4Qu2QHHB3iYPjM8dvGSrMvQOSEyZKGZah72lgGWvgsjOC-34RHXbFAJqcM5QVawKLduh8i0JLVv_E5Paxzq5ncpnZ4OQ69PyUWVm22SutoP-qKiycuWh-"
+          src="/images/About.jpg"
           alt={i18n.locale === 'fr' ? "Espace salon feutré et architecture raffinée de l'Hôtel Résidence Madadjeu" : "Sophisticated lounge area and refined interior of Hotel Residence Madadjeu"}
           class="w-full h-full object-cover"
         />

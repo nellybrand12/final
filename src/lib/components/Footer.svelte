@@ -12,13 +12,12 @@
       <div class="col-span-1 md:col-span-2 flex flex-col items-start gap-6">
         <a href="/" class="inline-block">
           <img
-            alt="Hotel Résidence Madadjeu Logo"
-            class="h-9 w-auto object-contain brightness-0 invert"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t"
+            src="/images/madadjeu-logo.png"
+            alt="Hôtel Résidence Madadjeu"
+            width="1899"
+            height="412"
+            class="site-logo site-logo--footer"
           />
-          <span class="font-headline text-lg sm:text-xl tracking-[0.25em] uppercase text-soft-cream">
-            Madadjeu
-          </span>
         </a>
         <p class="font-headline-md text-base sm:text-lg text-soft-cream/80 max-w-md font-light italic leading-relaxed">
           {i18n.t.footer.tagline}

@@ -5,6 +5,7 @@
   import SEO from '$lib/components/SEO.svelte';
   import { i18n } from '$lib/i18n.svelte';
   import { introManager } from '$lib/introState.svelte';
+  import { neighborhoodPlaces } from '$lib/data/neighborhoods';
 
   let { data }: { data: PageData } = $props();
 
@@ -22,7 +23,14 @@
 
   // Wallace-Style Peeking Neighborhood Strategic Location Carousel State (5s Autoplay + Manual Reset)
   let activeNeighborhoodIndex = $state(0);
-  const neighborhoodSlides = $derived(i18n.t.neighborhoods.slides);
+  // Shared facts (photo, distance, travel times) merged with the active
+  // locale's text, so both languages always render the same set of slides.
+  const neighborhoodSlides = $derived(
+    neighborhoodPlaces.map((place) => ({
+      ...place,
+      ...i18n.t.neighborhoods.slides[place.id as keyof typeof i18n.t.neighborhoods.slides],
+    }))
+  );
   let prevNeighborhoodIndex = $derived((activeNeighborhoodIndex - 1 + neighborhoodSlides.length) % neighborhoodSlides.length);
   let nextNeighborhoodIndex = $derived((activeNeighborhoodIndex + 1) % neighborhoodSlides.length);
   let neighborhoodAutoplayTimer: any;
@@ -130,10 +138,10 @@
     "alternateName": "Résidence Madadjeu Yaoundé",
     "description": homeDesc,
     "url": "https://residence-madadjeu.com",
-    "logo": "https://lh3.googleusercontent.com/aida-public/AB6AXuCDRdcu8uUN5wGIRfh5vUGwijfogXufOv1BE2m6lWJBkKsWZaoz0jBTPUH8jGV5WMHR8_jPxR5L9-h564W1x3k3z8Wh16qweorvfIFzqZiR6duxv06Xo0sD3j4D3IkTE1mBhp2PzttmQmtkK00f5lJWbgs8SLJsEgyOVs-yODOw1hI6vj26sa7Vf5xm965vU3xD_iVBkxzWcCLkhTAgaGi9eSDIJv8AMjdwGAzs1dcYbhGTrRvV4s5t",
+    "logo": "https://residence-madadjeu.com/images/madadjeu-logo.png",
     "image": "https://residence-madadjeu.com/images/og-image.jpg",
-    "telephone": "+237699000000",
-    "email": "contact@residence-madadjeu.com",
+    "telephone": "+237691234567",
+    "email": "madadjeuhotel2026@gmail.com",
     "priceRange": "50 000 - 350 000 XAF",
     "currenciesAccepted": "XAF",
     "paymentAccepted": "Cash, Credit Card, Mobile Money (MTN MoMo, Orange Money)",
@@ -226,24 +234,19 @@
         ? 'opacity-100 translate-y-0 scale-100'
         : 'opacity-0 translate-y-16 scale-95 pointer-events-none'}"
     >
-      <!-- Location Pill: sole kicker element above the headline -->
-      <div class="hero-location-pill">
-        <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
-        <span>{i18n.t.hero.locationPill}</span>
-      </div>
+      <!-- Headline, tagline and CTA centred as a single block -->
+      <div class="hero-text-block">
+        <!-- Main Headline -->
+        <h1 class="hero-title font-display-lg text-soft-cream mb-3 leading-[1.14] drop-shadow-2xl uppercase">
+          {i18n.t.hero.showcaseTitle}
+        </h1>
 
-      <!-- Main Headline -->
-      <h1 class="hero-title font-display-lg text-soft-cream mb-3 max-w-4xl mx-auto leading-[1.14] drop-shadow-2xl uppercase">
-        {i18n.t.hero.showcaseTitle}
-      </h1>
+        <!-- Subtitle -->
+        <p class="hero-subtitle font-headline text-soft-cream/90 mb-7 font-light italic">
+          {i18n.t.hero.showcaseSubtitle}
+        </p>
 
-      <!-- Subtitle -->
-      <p class="hero-subtitle font-headline text-sm sm:text-base md:text-lg text-soft-cream/90 max-w-2xl mx-auto mb-7 font-light italic">
-        {i18n.t.hero.showcaseSubtitle}
-      </p>
-
-      <!-- Centered Action Button inside Luxury Double-Bordered Rectangular Frame -->
-      <div class="flex items-center justify-center w-full max-w-md">
+        <!-- Centered Action Button inside Luxury Double-Bordered Rectangular Frame -->
         <a
           href="/rooms"
           class="btn-luxury-primary text-xs py-2.5 px-6 sm:px-8"
@@ -598,17 +601,17 @@
                   {activeSlide.description}
                 </p>
 
-                <!-- Drive Time and Walk Time (Distance removed) -->
+                <!-- Drive / Walk time, each followed by the distance to the place -->
                 <div class="pt-3 border-t border-neutral-200/80 dark:border-neutral-800 flex items-center justify-center gap-3 sm:gap-6 flex-wrap font-mono text-[10px] sm:text-[11px] text-deep-charcoal/80 dark:text-neutral-300 uppercase tracking-wider">
                   <span class="inline-flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_car</span>
-                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.driveTime}</strong></span>
+                    <span>{i18n.locale === 'fr' ? 'Voiture :' : 'Drive:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.driveTime}</strong><span class="text-neutral-300 dark:text-neutral-600 mx-1">·</span><span class="text-muted-gold dark:text-muted-gold-dark font-semibold">{activeSlide.distance}</span></span>
                   </span>
                   {#if activeSlide.walkTime !== 'N/A'}
                     <span class="text-neutral-300 dark:text-neutral-600">•</span>
                     <span class="inline-flex items-center gap-1.5">
                       <span class="material-symbols-outlined text-xs text-muted-gold dark:text-muted-gold-dark">directions_walk</span>
-                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.walkTime}</strong></span>
+                      <span>{i18n.locale === 'fr' ? 'À pied :' : 'Walk:'} <strong class="text-deep-charcoal dark:text-neutral-100 font-bold">{activeSlide.walkTime}</strong><span class="text-neutral-300 dark:text-neutral-600 mx-1">·</span><span class="text-muted-gold dark:text-muted-gold-dark font-semibold">{activeSlide.distance}</span></span>
                     </span>
                   {/if}
                 </div>

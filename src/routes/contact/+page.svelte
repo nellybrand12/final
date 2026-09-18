@@ -154,10 +154,10 @@
             {i18n.t.contact.directPhoneDesc}
           </p>
           <div class="space-y-1">
-            <a href="tel:+237699000000" class="font-headline text-base font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
-              +237 6 99 00 00 00
+            <a href="tel:+237691234567" class="font-headline text-base font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
+              +237 6 91 23 45 67
             </a>
-            <a href="https://wa.me/237699000000" target="_blank" rel="noopener noreferrer" class="text-xs text-green-600 font-medium flex items-center gap-1 hover:underline">
+            <a href="https://wa.me/237691234567" target="_blank" rel="noopener noreferrer" class="text-xs text-green-600 font-medium flex items-center gap-1 hover:underline">
               <span>{i18n.t.contact.chatWhatsapp}</span>
               <span class="material-symbols-outlined text-xs">arrow_forward</span>
             </a>
@@ -173,8 +173,8 @@
           <p class="text-xs text-on-surface-variant dark:text-neutral-400 leading-relaxed">
             {i18n.t.contact.emailDesc}
           </p>
-          <a href="mailto:contact@residence-madadjeu.com" class="font-headline text-sm font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
-            contact@residence-madadjeu.com
+          <a href="mailto:madadjeuhotel2026@gmail.com" class="font-headline text-sm font-bold text-deep-charcoal hover:text-muted-gold transition-colors block">
+            madadjeuhotel2026@gmail.com
           </a>
         </div>
 
